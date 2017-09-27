@@ -1,6 +1,5 @@
 package moe.shizuku.notocjk.provider.api;
 
-import android.annotation.SuppressLint;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
@@ -13,30 +12,28 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
 import moe.shizuku.notocjk.provider.IFontProvider;
-import moe.shizuku.notocjk.provider.api.compat.FontFamilyCompat26;
-import moe.shizuku.notocjk.provider.api.compat.TypefaceCompat26;
+import moe.shizuku.notocjk.provider.api.compat.FontFamilyCompat24;
+import moe.shizuku.notocjk.provider.api.compat.TypefaceCompat24;
 import moe.shizuku.notocjk.provider.api.utils.FontFamilyHelper;
 
 /**
- * Created by rikka on 2017/9/26.
+ * Created by rikka on 2017/9/27.
  */
 
-@RequiresApi(api = Build.VERSION_CODES.O)
-public class TypefaceReplacerImpl26 extends TypefaceReplacerImpl {
+@RequiresApi(api = Build.VERSION_CODES.N)
+public class TypefaceReplacerImpl24 extends TypefaceReplacerImpl  {
 
-    private static final String TAG = "TypefaceReplacerImpl26";
+    private static final String TAG = "TypefaceReplacerImpl24";
 
-    private static FontFamilyCompat26 createFamilyFromBuffer(ByteBuffer buffer, String lang, int weight, int ttcIndex, int isItalic) {
-        FontFamilyCompat26 fontFamily = FontFamilyCompat26.create(lang, 0);
+    private static FontFamilyCompat24 addFontWeightStyle(ByteBuffer buffer, String lang, int weight, int ttcIndex, boolean style) {
+        FontFamilyCompat24 fontFamily = FontFamilyCompat24.create(lang, null);
         if (fontFamily == null) {
             return null;
         }
 
-        if (fontFamily.addFontFromBuffer(
-                buffer, ttcIndex, null, weight, isItalic)) {
-            if (!fontFamily.freeze()) {
-                return null;
-            }
+        if (!fontFamily.addFontWeightStyle(
+                buffer, ttcIndex, null, weight, style)) {
+            return null;
         }
 
         return fontFamily;
@@ -45,17 +42,17 @@ public class TypefaceReplacerImpl26 extends TypefaceReplacerImpl {
     public static boolean replace(ByteBuffer font, String fontFamily) {
         int weight = FontFamilyHelper.getWeight(fontFamily);
 
-        FontFamilyCompat26[] fontFamilyCompat = new FontFamilyCompat26[4];
-        fontFamilyCompat[0] = createFamilyFromBuffer(font, "zh-Hans", weight, 2, 0);
-        fontFamilyCompat[1] = createFamilyFromBuffer(font, "zh-Hant", weight, 3, 0);
-        fontFamilyCompat[2] = createFamilyFromBuffer(font, "ja", weight, 0, 0);
-        fontFamilyCompat[3] = createFamilyFromBuffer(font, "kr", weight, 1, 0);
+        FontFamilyCompat24[] fontFamilyCompat = new FontFamilyCompat24[4];
+        fontFamilyCompat[0] = addFontWeightStyle(font, "zh-Hans", weight, 2, false);
+        fontFamilyCompat[1] = addFontWeightStyle(font, "zh-Hant", weight, 3, false);
+        fontFamilyCompat[2] = addFontWeightStyle(font, "ja", weight, 0, false);
+        fontFamilyCompat[3] = addFontWeightStyle(font, "kr", weight, 1, false);
 
         boolean serif = !fontFamily.startsWith("sans-serif");
 
-        Object families = Array.newInstance(FontFamilyCompat26.Class(), serif ? 4 : 5);
+        Object families = Array.newInstance(FontFamilyCompat24.Class(), serif ? 4 : 5);
 
-        Object fallbackFonts = TypefaceCompat26.getFallbackFontsArray();
+        Object fallbackFonts = TypefaceCompat24.getFallbackFontsArray();
         if (fallbackFonts != null) {
             // to serif fonts we don't need put sans-serif first
             int i = serif ? -1 : 0;
@@ -68,10 +65,10 @@ public class TypefaceReplacerImpl26 extends TypefaceReplacerImpl {
             Array.set(families, 4 + i, fontFamilyCompat[3].getFontFamily());
         }
 
-        Typeface typeface = TypefaceCompat26.createFromFamiliesWithDefault(families, weight, 0);
+        Typeface typeface = TypefaceCompat24.createFromFamiliesWithDefault(families);
         if (typeface != null
-                && TypefaceCompat26.getSystemFontMap() != null) {
-            TypefaceCompat26.getSystemFontMap().put(fontFamily, typeface);
+                && TypefaceCompat24.getSystemFontMap() != null) {
+            TypefaceCompat24.getSystemFontMap().put(fontFamily, typeface);
             return true;
         }
         return false;
@@ -97,7 +94,7 @@ public class TypefaceReplacerImpl26 extends TypefaceReplacerImpl {
             FileChannel fileChannel = is.getChannel();
             ByteBuffer byteBuffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, size);
 
-            return TypefaceReplacerImpl26.replace(byteBuffer, family);
+            return TypefaceReplacerImpl24.replace(byteBuffer, family);
         } catch (Exception e) {
             e.printStackTrace();
             return false;

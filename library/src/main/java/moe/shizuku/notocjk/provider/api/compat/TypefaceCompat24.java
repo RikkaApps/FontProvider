@@ -15,8 +15,8 @@ import java.util.Map;
  */
 
 @SuppressLint("PrivateApi")
-@RequiresApi(api = Build.VERSION_CODES.O)
-public class TypefaceCompat26 {
+@RequiresApi(api = Build.VERSION_CODES.N)
+public class TypefaceCompat24 {
 
     private static boolean available = true;
 
@@ -34,11 +34,11 @@ public class TypefaceCompat26 {
             sSystemFontMapField.setAccessible(true);
 
             createFromFamiliesMethod = Typeface.class.getDeclaredMethod("createFromFamilies",
-                    FontFamilyCompat26.ArrayClass());
+                    FontFamilyCompat24.ArrayClass());
             createFromFamiliesMethod.setAccessible(true);
 
             createFromFamiliesWithDefaultMethod = Typeface.class.getDeclaredMethod("createFromFamiliesWithDefault",
-                            FontFamilyCompat26.ArrayClass(), Integer.TYPE, Integer.TYPE);
+                    FontFamilyCompat24.ArrayClass());
             createFromFamiliesWithDefaultMethod.setAccessible(true);
         } catch (NoSuchFieldException | NoSuchMethodException e) {
             e.printStackTrace();
@@ -87,14 +87,13 @@ public class TypefaceCompat26 {
         }
     }
 
-    public static Typeface createFromFamiliesWithDefault(Object families, int weight, int italic) {
+    public static Typeface createFromFamiliesWithDefault(Object families) {
         if (!available) {
             return null;
         }
 
         try {
-            return (Typeface) createFromFamiliesWithDefaultMethod.invoke(null, families,
-                    weight, italic);
+            return (Typeface) createFromFamiliesWithDefaultMethod.invoke(null, families);
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
             return null;

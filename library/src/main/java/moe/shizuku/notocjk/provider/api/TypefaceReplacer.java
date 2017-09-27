@@ -34,6 +34,8 @@ public class TypefaceReplacer {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             sImpl = new TypefaceReplacerImpl26();
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            sImpl = new TypefaceReplacerImpl24();
         } else {
             throw new IllegalStateException("unsupported system version");
         }

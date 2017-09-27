@@ -15,6 +15,7 @@ public class MainActivity extends Activity {
     @SuppressLint({"PrivateApi", "SetTextI18n"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // init only need be called once
         TypefaceReplacer.init(this,
                 new String[]{"sans-serif-light", "sans-serif-medium", "serif", "serif-medium", "serif-light"});
 
