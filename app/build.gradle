@@ -1,0 +1,32 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion "26.0.1"
+    defaultConfig {
+        applicationId "moe.shizuku.notocjk.provider"
+        minSdkVersion 24
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        buildConfigField "int", "NotoSansCJK_Light_Size",    file("src/main/assets/NotoSansCJK-Light.ttc").size().toString()
+        buildConfigField "int", "NotoSansCJK_Medium_Size",   file("src/main/assets/NotoSansCJK-Medium.ttc").size().toString()
+        buildConfigField "int", "NotoSerifCJK_Light_Size",   file("src/main/assets/NotoSerifCJK-Light.ttc").size().toString()
+        buildConfigField "int", "NotoSerifCJK_Regular_Size", file("src/main/assets/NotoSerifCJK-Regular.ttc").size().toString()
+        buildConfigField "int", "NotoSerifCJK_Medium_Size",  file("src/main/assets/NotoSerifCJK-Medium.ttc").size().toString()
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "com.android.support:support-annotations:$supportLibraryVersion"
+    compile project(path: ':library')
+}
