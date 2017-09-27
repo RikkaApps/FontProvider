@@ -27,7 +27,17 @@
 
 ### 技术细节
 
-调用 `TypefaceReplacer.init` 后将通过绑定服务向 NotoCJK Provider 的 `FontProviderService` 索要字体文件的 `FileDescriptor`，
+调用 `TypefaceReplacer.init` 后将通过绑定服务向 NotoCJK Provider 应用的 `FontProviderService` 索要字体文件的 `FileDescriptor`，
 之后将通过反射使用私有 API 创建对应的 `Typeface`，并替换 `Typeface` 中的对应缓存，因此对应用开发者几乎透明。
 
 由于绑定服务需要时间，因此在完成前已经创建的 `Typeface` 将不会被替换。
+
+### FAQ
+
+##### 用户如果没有安装会发生什么？
+
+什么也不会发生。
+
+##### 和直接使用公开的 API 有什么区别呢？
+
+可以决定回退顺序，包含语言字重等信息。
