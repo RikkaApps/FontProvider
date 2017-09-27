@@ -6,10 +6,10 @@ android {
 
 
     defaultConfig {
-        minSdkVersion 24
-        targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -31,7 +31,7 @@ dependencies {
 
 ext {
     libraryName = 'NotoCJKReplacer'
-    libraryDescription = 'Replace Typeface with NotoCJK fonts.'
+    libraryDescription = 'Helper library used to request font from NotoCJK Provider app and replace cached Typeface.'
     libraryVersion = versionName
     artifact = 'api'
     bintrayName = 'api'

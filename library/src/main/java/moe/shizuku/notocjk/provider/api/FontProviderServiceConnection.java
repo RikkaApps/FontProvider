@@ -11,7 +11,7 @@ import moe.shizuku.notocjk.provider.IFontProvider;
  * Created by rikka on 2017/9/27.
  */
 
-public class FontProviderServiceConnection implements ServiceConnection {
+class FontProviderServiceConnection implements ServiceConnection {
 
     private static final String TAG = "TypefaceReplacer";
 
@@ -34,6 +34,8 @@ public class FontProviderServiceConnection implements ServiceConnection {
                 Log.w(TAG, "failed to replace family " + family);
             }
         }
+
+        TypefaceReplacer.unbind();
     }
 
     @Override

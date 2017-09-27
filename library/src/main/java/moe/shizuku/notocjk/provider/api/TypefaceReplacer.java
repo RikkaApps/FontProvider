@@ -1,9 +1,12 @@
 package moe.shizuku.notocjk.provider.api;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Typeface;
 import android.os.ParcelFileDescriptor;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.FileInputStream;
@@ -26,6 +29,10 @@ public class TypefaceReplacer {
     private static final String ACTION = "moe.shizuku.notocjk.provider.FontProviderService.BIND";
     private static final String PACKAGE = "moe.shizuku.notocjk.provider";
 
+    @SuppressLint("StaticFieldLeak")
+    private static Context sContext;
+    private static ServiceConnection sServiceConnection;
+
     /**
      * Replace cached Typefaces in Typeface class with fonts from FontProviderService.
      *
@@ -33,14 +40,35 @@ public class TypefaceReplacer {
      * @param requestFonts fontFamilies to be replace
      */
     public static void init(Context context, String[] requestFonts) {
+        sContext = context.getApplicationContext();
+
         Intent intent = new Intent(ACTION)
                 .setPackage(PACKAGE);
 
+        sServiceConnection = new FontProviderServiceConnection(requestFonts);
+
         try {
-            context.bindService(intent, new FontProviderServiceConnection(requestFonts), Context.BIND_AUTO_CREATE);
+            sContext.bindService(intent, sServiceConnection, Context.BIND_AUTO_CREATE);
         } catch (Exception e) {
             Log.i(TAG, "can't bindService", e);
+
+            unbind();
         }
+    }
+
+    static void unbind() {
+        if (sContext != null
+                && sServiceConnection != null) {
+            sContext.unbindService(sServiceConnection);
+        }
+
+        sContext = null;
+        sServiceConnection = null;
+    }
+
+    @Nullable
+    public static ServiceConnection getServiceConnection() {
+        return sServiceConnection;
     }
 
     private static final String[] sIndexToLang = new String[]{"zh-Hans", "zh-Hant", "ja", "kr"};

@@ -2,17 +2,21 @@ package moe.shizuku.notocjk.provider;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import java.util.Locale;
 
 import moe.shizuku.notocjk.provider.api.TypefaceReplacer;
 
-public class MainActivity extends Activity {
+public class PreviewActivity extends Activity {
 
-    @SuppressLint({"PrivateApi", "SetTextI18n"})
+    @SuppressLint({"SetTextI18n"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // init only need be called once
@@ -20,7 +24,7 @@ public class MainActivity extends Activity {
                 new String[]{"sans-serif-light", "sans-serif-medium", "serif", "serif-medium", "serif-light"});
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_preview);
 
         final TextView title = findViewById(R.id.text_title);
         final TextView textSans300 = findViewById(R.id.text_sans_serif_300);
@@ -56,7 +60,31 @@ public class MainActivity extends Activity {
                 textSerif500.setTypeface(Typeface.create("serif-medium", Typeface.NORMAL));
             }
         }, 500);
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
 
+        if (TypefaceReplacer.getServiceConnection() != null) {
+            unbindService(TypefaceReplacer.getServiceConnection());
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_hide:
+                getPackageManager().setComponentEnabledSetting(new ComponentName(this, PreviewActivity.class),
+                        PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

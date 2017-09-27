@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">NotoCJK Provider</string>
+    <string name="action_hide">Hide from launcher</string>
 </resources>
