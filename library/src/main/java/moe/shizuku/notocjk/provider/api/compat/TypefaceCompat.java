@@ -3,7 +3,6 @@ package moe.shizuku.notocjk.provider.api.compat;
 import android.annotation.SuppressLint;
 import android.graphics.Typeface;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -15,15 +14,13 @@ import java.util.Map;
  */
 
 @SuppressLint("PrivateApi")
-@RequiresApi(api = Build.VERSION_CODES.O)
-public class TypefaceCompat26 {
+public class TypefaceCompat {
 
     private static boolean available = true;
 
     private static Field sFallbackFontsField;
     private static Field sSystemFontMapField;
     private static Method createFromFamiliesMethod;
-    private static Method createFromFamiliesWithDefaultMethod;
 
     static {
         try {
@@ -34,12 +31,8 @@ public class TypefaceCompat26 {
             sSystemFontMapField.setAccessible(true);
 
             createFromFamiliesMethod = Typeface.class.getDeclaredMethod("createFromFamilies",
-                    FontFamilyCompat26.ArrayClass());
+                    FontFamilyCompat.getFontFamilyArrayClass());
             createFromFamiliesMethod.setAccessible(true);
-
-            createFromFamiliesWithDefaultMethod = Typeface.class.getDeclaredMethod("createFromFamiliesWithDefault",
-                            FontFamilyCompat26.ArrayClass(), Integer.TYPE, Integer.TYPE);
-            createFromFamiliesWithDefaultMethod.setAccessible(true);
         } catch (NoSuchFieldException | NoSuchMethodException e) {
             e.printStackTrace();
 
@@ -88,16 +81,12 @@ public class TypefaceCompat26 {
     }
 
     public static Typeface createFromFamiliesWithDefault(Object families, int weight, int italic) {
-        if (!available) {
-            return null;
-        }
-
-        try {
-            return (Typeface) createFromFamiliesWithDefaultMethod.invoke(null, families,
-                    weight, italic);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-            return null;
+        if (Build.VERSION.SDK_INT >= 26) {
+            return TypefaceCompatApi26.createFromFamiliesWithDefault(families, weight, italic);
+        } else if (Build.VERSION.SDK_INT >= 24) {
+            return TypefaceCompatApi24.createFromFamiliesWithDefault(families);
+        } else {
+            throw new IllegalStateException("unsupported system version");
         }
     }
 }
