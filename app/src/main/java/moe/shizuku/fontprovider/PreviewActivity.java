@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -28,15 +29,15 @@ public class PreviewActivity extends Activity {
         TypefaceReplacer.init(this,
                 TypefaceReplacer.NOTO_SANS_CJK_THIN,
                 TypefaceReplacer.NOTO_SANS_CJK_LIGHT,
+                TypefaceReplacer.NOTO_SANS_CJK_REGULAR,
                 TypefaceReplacer.NOTO_SANS_CJK_MEDIUM,
-                TypefaceReplacer.NOTO_SANS_CJK_BOLD,
-                TypefaceReplacer.NOTO_SANS_CJK_MEDIUM,
+                //TypefaceReplacer.NOTO_SANS_CJK_BOLD,
                 TypefaceReplacer.NOTO_SANS_CJK_BLACK,
                 TypefaceReplacer.NOTO_SERIF_CJK_THIN,
                 TypefaceReplacer.NOTO_SERIF_CJK_LIGHT,
                 TypefaceReplacer.NOTO_SERIF_CJK_REGULAR,
                 TypefaceReplacer.NOTO_SERIF_CJK_MEDIUM,
-                TypefaceReplacer.NOTO_SERIF_CJK_BOLD,
+                //TypefaceReplacer.NOTO_SERIF_CJK_BOLD,
                 TypefaceReplacer.NOTO_SERIF_CJK_BLACK
         );
 
@@ -84,14 +85,14 @@ public class PreviewActivity extends Activity {
                 textSans300.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
                 textSans400.setTypeface(Typeface.create("sans-serif", Typeface.NORMAL));
                 textSans500.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
-                textSans700.setTypeface(Typeface.create("sans-serif-bold", Typeface.NORMAL));
+                textSans700.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
                 textSans900.setTypeface(Typeface.create("sans-serif-black", Typeface.NORMAL));
 
                 textSerif100.setTypeface(Typeface.create("serif-thin", Typeface.NORMAL));
                 textSerif300.setTypeface(Typeface.create("serif-light", Typeface.NORMAL));
                 textSerif400.setTypeface(Typeface.create("serif", Typeface.NORMAL));
                 textSerif500.setTypeface(Typeface.create("serif-medium", Typeface.NORMAL));
-                textSerif700.setTypeface(Typeface.create("serif-bold", Typeface.NORMAL));
+                textSerif700.setTypeface(Typeface.create("serif", Typeface.BOLD));
                 textSerif900.setTypeface(Typeface.create("serif-black", Typeface.NORMAL));
             }
         }, 500);
@@ -117,6 +118,8 @@ public class PreviewActivity extends Activity {
                 return true;
             case R.id.action_download:
                 download();
+            case R.id.action_free:
+                FontProviderService.closeAll();
                 return true;
         }
         return super.onOptionsItemSelected(item);

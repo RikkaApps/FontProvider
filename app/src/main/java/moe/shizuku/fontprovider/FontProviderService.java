@@ -38,6 +38,14 @@ public class FontProviderService extends Service {
         sFileSize = BuildConfig.BUILT_IN_FONTS_SIZE;
     }
 
+    public static void closeAll() {
+        for (Map.Entry<String, MemoryFile> entry: sCache.entrySet()) {
+            entry.getValue().close();
+        }
+
+        sCache.clear();
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();

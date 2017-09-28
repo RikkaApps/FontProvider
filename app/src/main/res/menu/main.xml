@@ -7,6 +7,11 @@
         android:showAsAction="never"/>
 
     <item
+        android:id="@+id/action_free"
+        android:title="@string/action_free"
+        android:showAsAction="never"/>
+
+    <item
         android:id="@+id/action_download"
         android:title="@string/action_download"
         android:showAsAction="never"/>

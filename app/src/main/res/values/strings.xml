@@ -2,4 +2,5 @@
     <string name="app_name">Font Provider</string>
     <string name="action_hide">Hide from launcher</string>
     <string name="action_download">Download required fonts</string>
+    <string name="action_free">Free memory</string>
 </resources>
