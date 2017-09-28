@@ -1,4 +1,4 @@
-package moe.shizuku.notocjk.provider.utils;
+package moe.shizuku.fontprovider.utils;
 
 import android.os.ParcelFileDescriptor;
 

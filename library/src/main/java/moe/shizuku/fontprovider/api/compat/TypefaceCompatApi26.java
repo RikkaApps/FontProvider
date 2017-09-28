@@ -1,14 +1,12 @@
-package moe.shizuku.notocjk.provider.api.compat;
+package moe.shizuku.fontprovider.api.compat;
 
 import android.annotation.SuppressLint;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Map;
 
 /**
  * Created by rikka on 2017/9/27.

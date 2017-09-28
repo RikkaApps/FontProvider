@@ -1,6 +1,6 @@
-<manifest package="moe.shizuku.notocjk.provider.api"
+<manifest package="moe.shizuku.fontprovider.api"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-permission android:name="moe.shizuku.notocjk.provider.BIND"/>
+    <uses-permission android:name="moe.shizuku.fontprovider.BIND"/>
 
 </manifest>

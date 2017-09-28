@@ -1,4 +1,4 @@
-package moe.shizuku.notocjk.provider;
+package moe.shizuku.fontprovider;
 
 import android.app.Service;
 import android.content.Intent;
@@ -13,9 +13,9 @@ import java.io.FileDescriptor;
 import java.util.HashMap;
 import java.util.Map;
 
-import moe.shizuku.notocjk.provider.utils.AssetUtils;
-import moe.shizuku.notocjk.provider.utils.MemoryFileUtils;
-import moe.shizuku.notocjk.provider.utils.ParcelFileDescriptorUtils;
+import moe.shizuku.fontprovider.utils.AssetUtils;
+import moe.shizuku.fontprovider.utils.MemoryFileUtils;
+import moe.shizuku.fontprovider.utils.ParcelFileDescriptorUtils;
 
 /**
  * Created by rikka on 2017/9/27.

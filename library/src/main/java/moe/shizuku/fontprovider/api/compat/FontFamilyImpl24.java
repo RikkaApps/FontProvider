@@ -1,4 +1,4 @@
-package moe.shizuku.notocjk.provider.api.compat;
+package moe.shizuku.fontprovider.api.compat;
 
 import android.annotation.SuppressLint;
 import android.os.Build;

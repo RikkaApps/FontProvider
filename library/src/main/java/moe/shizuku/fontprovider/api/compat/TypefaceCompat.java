@@ -1,4 +1,4 @@
-package moe.shizuku.notocjk.provider.api.compat;
+package moe.shizuku.fontprovider.api.compat;
 
 import android.annotation.SuppressLint;
 import android.graphics.Typeface;
@@ -40,6 +40,9 @@ public class TypefaceCompat {
         }
     }
 
+    /**
+     * Return Typeface.sFallbackFonts.
+     */
     public static Object getFallbackFontsArray() {
         if (!available) {
             return null;
@@ -53,6 +56,9 @@ public class TypefaceCompat {
         }
     }
 
+    /**
+     * Return Typeface.sSystemFontMap.
+     */
     @SuppressWarnings("unchecked")
     public static Map<String, Typeface> getSystemFontMap() {
         if (!available) {
@@ -67,6 +73,12 @@ public class TypefaceCompat {
         }
     }
 
+    /**
+     * Create Typeface with the order of your fontFamilies.
+     *
+     * @param families FontFamily array Object
+     * @return Typeface object
+     */
     public static Typeface createFromFamilies(Object families) {
         if (!available) {
             return null;
@@ -80,6 +92,14 @@ public class TypefaceCompat {
         }
     }
 
+    /**
+     * Create a new typeface from an array of font families, including
+     * also the font families in the fallback list.
+     * @param weight the weight for this family, required on API 26+.
+     * @param italic the italic information for this family, required on API 26+.
+     * @param families array of font families.
+     * @return Typeface object
+     */
     public static Typeface createFromFamiliesWithDefault(Object families, int weight, int italic) {
         if (Build.VERSION.SDK_INT >= 26) {
             return TypefaceCompatApi26.createFromFamiliesWithDefault(families, weight, italic);

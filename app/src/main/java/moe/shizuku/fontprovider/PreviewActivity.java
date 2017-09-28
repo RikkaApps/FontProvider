@@ -1,4 +1,4 @@
-package moe.shizuku.notocjk.provider;
+package moe.shizuku.fontprovider;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import java.util.Locale;
 
-import moe.shizuku.notocjk.provider.api.TypefaceReplacer;
+import moe.shizuku.fontprovider.api.TypefaceReplacer;
 
 public class PreviewActivity extends Activity {
 
@@ -21,7 +21,11 @@ public class PreviewActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         // init only need be called once
         TypefaceReplacer.init(this,
-                new String[]{"sans-serif-light", "sans-serif-medium", "serif", "serif-medium", "serif-light"});
+                TypefaceReplacer.NOTO_SANS_CJK_LIGHT,
+                TypefaceReplacer.NOTO_SANS_CJK_MEDIUM,
+                TypefaceReplacer.NOTO_SERIF_CJK_LIGHT,
+                TypefaceReplacer.NOTO_SERIF_CJK_REGULAR,
+                TypefaceReplacer.NOTO_SERIF_CJK_MEDIUM);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preview);
@@ -41,7 +45,7 @@ public class PreviewActivity extends Activity {
         textSans400.setText("400 " + testText);
         textSans500.setText("500 " + testText);
         textSerif300.setText("300 " + testText);
-        textSerif400.setText("500 " + testText);
+        textSerif400.setText("400 " + testText);
         textSerif500.setText("500 " + testText);
 
         getWindow().getDecorView().postDelayed(new Runnable() {
@@ -66,9 +70,8 @@ public class PreviewActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
 
-        if (TypefaceReplacer.getServiceConnection() != null) {
-            unbindService(TypefaceReplacer.getServiceConnection());
-        }
+        // not init in Application so need unbind manually
+        TypefaceReplacer.unbind();
     }
 
     @Override

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="moe.shizuku.notocjk.provider">
+    package="moe.shizuku.fontprovider">
 
-    <permission android:name="moe.shizuku.notocjk.provider.BIND" android:protectionLevel="normal"/>
+    <permission android:name="moe.shizuku.fontprovider.BIND" android:protectionLevel="normal"/>
 
     <application
         android:allowBackup="false"
@@ -23,10 +23,10 @@
             android:name=".FontProviderService"
             android:enabled="true"
             android:exported="true"
-            android:permission="moe.shizuku.notocjk.provider.BIND">
+            android:permission="moe.shizuku.fontprovider.BIND">
 
             <intent-filter>
-                <action android:name="moe.shizuku.notocjk.provider.FontProviderService.BIND" />
+                <action android:name="moe.shizuku.fontprovider.action.BIND" />
             </intent-filter>
 
         </service>

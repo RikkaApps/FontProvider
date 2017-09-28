@@ -12,8 +12,6 @@ android {
         versionName rootProject.ext.versionName
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
-        aidlPackageWhiteList "moe/shizuku/notocjk/provider/IFontProvider.aidl"
     }
 
     buildTypes {
@@ -30,8 +28,8 @@ dependencies {
 }
 
 ext {
-    libraryName = 'NotoCJKReplacer'
-    libraryDescription = 'Helper library used to request font from NotoCJK Provider app and replace cached Typeface.'
+    libraryName = 'TypeReplacer'
+    libraryDescription = 'Helper library used to init font from Font Provider app and replace cached Typeface.'
     libraryVersion = versionName
     artifact = 'api'
     bintrayName = 'api'

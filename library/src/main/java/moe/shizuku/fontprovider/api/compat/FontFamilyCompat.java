@@ -1,4 +1,4 @@
-package moe.shizuku.notocjk.provider.api.compat;
+package moe.shizuku.fontprovider.api.compat;
 
 import android.annotation.SuppressLint;
 import android.os.Build;
@@ -31,12 +31,6 @@ public class FontFamilyCompat {
         return Array.newInstance(cls, 0).getClass();
     }
 
-    private Object mFontFamily;
-
-    public Object getFontFamily() {
-        return mFontFamily;
-    }
-
     private static FontFamilyImpl sImpl;
 
     private static FontFamilyImpl getImpl() {
@@ -54,7 +48,14 @@ public class FontFamilyCompat {
         return sImpl;
     }
 
+    private Object mFontFamily;
 
+    /**
+     * Create FontFamily with lang and variant.
+     *
+     * @param lang Language
+     * @param variant Variant (0, 1 - compact, 2 - elegant)
+     */
     public FontFamilyCompat(String lang, int variant) {
         this(getImpl().create(lang, variant));
     }
@@ -63,10 +64,35 @@ public class FontFamilyCompat {
         mFontFamily = fontFamily;
     }
 
+
+    /**
+     * Get real android.graphics.FontFamily object.
+     *
+     * @return FontFamily object
+     */
+    public Object getFontFamily() {
+        return mFontFamily;
+    }
+
+    /**
+     * Add font to this FontFamily.
+     *
+     * @param font font file buffer
+     * @param ttcIndex ttc index
+     * @param weight The weight of the font.
+     * @param italic Whether this font is italic.
+     * @return returns false if some error happens in native code.
+     */
     public boolean addFont(ByteBuffer font, int ttcIndex, int weight, int italic) {
         return getImpl().addFont(getFontFamily(), font, ttcIndex, weight, italic);
     }
 
+    /**
+     * Finalize the FontFamily creation, always return true on pre-API 26.
+     *
+     * @return boolean returns false if some error happens in native code, e.g. broken font file is
+     *                 passed, etc.
+     */
     public boolean freeze() {
         return getImpl().freeze(getFontFamily());
     }

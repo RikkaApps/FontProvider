@@ -1,4 +1,4 @@
-package moe.shizuku.notocjk.provider;
+package moe.shizuku.fontprovider;
 
 interface IFontProvider {
     ParcelFileDescriptor getFontFileDescriptor(String filename);
