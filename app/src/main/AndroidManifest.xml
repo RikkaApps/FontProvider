@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="moe.shizuku.fontprovider">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <permission android:name="moe.shizuku.fontprovider.BIND" android:protectionLevel="normal"/>
 
     <application

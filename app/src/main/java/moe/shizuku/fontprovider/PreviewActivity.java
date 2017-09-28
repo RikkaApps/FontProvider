@@ -2,17 +2,22 @@ package moe.shizuku.fontprovider;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.content.ComponentName;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import moe.shizuku.fontprovider.api.TypefaceReplacer;
+import moe.shizuku.fontprovider.utils.ContextUtils;
 
 public class PreviewActivity extends Activity {
 
@@ -21,11 +26,19 @@ public class PreviewActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         // init only need be called once
         TypefaceReplacer.init(this,
+                TypefaceReplacer.NOTO_SANS_CJK_THIN,
                 TypefaceReplacer.NOTO_SANS_CJK_LIGHT,
                 TypefaceReplacer.NOTO_SANS_CJK_MEDIUM,
+                TypefaceReplacer.NOTO_SANS_CJK_BOLD,
+                TypefaceReplacer.NOTO_SANS_CJK_MEDIUM,
+                TypefaceReplacer.NOTO_SANS_CJK_BLACK,
+                TypefaceReplacer.NOTO_SERIF_CJK_THIN,
                 TypefaceReplacer.NOTO_SERIF_CJK_LIGHT,
                 TypefaceReplacer.NOTO_SERIF_CJK_REGULAR,
-                TypefaceReplacer.NOTO_SERIF_CJK_MEDIUM);
+                TypefaceReplacer.NOTO_SERIF_CJK_MEDIUM,
+                TypefaceReplacer.NOTO_SERIF_CJK_BOLD,
+                TypefaceReplacer.NOTO_SERIF_CJK_BLACK
+        );
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preview);
@@ -71,14 +84,14 @@ public class PreviewActivity extends Activity {
                 textSans300.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
                 textSans400.setTypeface(Typeface.create("sans-serif", Typeface.NORMAL));
                 textSans500.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
-                textSans700.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
+                textSans700.setTypeface(Typeface.create("sans-serif-bold", Typeface.NORMAL));
                 textSans900.setTypeface(Typeface.create("sans-serif-black", Typeface.NORMAL));
 
                 textSerif100.setTypeface(Typeface.create("serif-thin", Typeface.NORMAL));
                 textSerif300.setTypeface(Typeface.create("serif-light", Typeface.NORMAL));
                 textSerif400.setTypeface(Typeface.create("serif", Typeface.NORMAL));
                 textSerif500.setTypeface(Typeface.create("serif-medium", Typeface.NORMAL));
-                textSerif700.setTypeface(Typeface.create("serif", Typeface.BOLD));
+                textSerif700.setTypeface(Typeface.create("serif-bold", Typeface.NORMAL));
                 textSerif900.setTypeface(Typeface.create("serif-black", Typeface.NORMAL));
             }
         }, 500);
@@ -87,9 +100,6 @@ public class PreviewActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        // not init in Application so need unbind manually
-        TypefaceReplacer.unbind();
     }
 
     @Override
@@ -105,7 +115,51 @@ public class PreviewActivity extends Activity {
                 getPackageManager().setComponentEnabledSetting(new ComponentName(this, PreviewActivity.class),
                         PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
                 return true;
+            case R.id.action_download:
+                download();
+                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private static final Map<String, String> sFonts;
+
+    static {
+        sFonts = new HashMap<>();
+
+        sFonts.put("NotoSansCJK-Thin.ttc",          "https://github.com/googlei18n/noto-cjk/raw/master/NotoSansCJK-Thin.ttc");
+        sFonts.put("NotoSansCJK-Light.ttc",         "https://github.com/googlei18n/noto-cjk/raw/master/NotoSansCJK-Light.ttc");
+        sFonts.put("NotoSansCJK-Regular.ttc",       "https://github.com/googlei18n/noto-cjk/raw/master/NotoSansCJK-Regular.ttc");
+        sFonts.put("NotoSansCJK-Medium.ttc",        "https://github.com/googlei18n/noto-cjk/raw/master/NotoSansCJK-Medium.ttc");
+        sFonts.put("NotoSansCJK-Bold.ttc",          "https://github.com/googlei18n/noto-cjk/raw/master/NotoSansCJK-Bold.ttc");
+        sFonts.put("NotoSansCJK-Black.ttc",         "https://github.com/googlei18n/noto-cjk/raw/master/NotoSansCJK-Black.ttc");
+
+        sFonts.put("NotoSerif-Regular.ttf",         "https://github.com/googlei18n/noto-fonts/raw/master/hinted/NotoSerif-Regular.ttf");
+        sFonts.put("NotoSerif-Italic.ttf",          "https://github.com/googlei18n/noto-fonts/raw/master/hinted/NotoSerif-Italic.ttf");
+        sFonts.put("NotoSerif-Bold.ttf",            "https://github.com/googlei18n/noto-fonts/raw/master/hinted/NotoSerif-Bold.ttf");
+        sFonts.put("NotoSerif-BoldItalic.ttf",      "https://github.com/googlei18n/noto-fonts/raw/master/hinted/NotoSerif-BoldItalic.ttf");
+
+        sFonts.put("NotoSerifCJK-ExtraLight.ttc",   "https://github.com/googlei18n/noto-cjk/raw/master/NotoSerifCJK-ExtraLight.ttc");
+        sFonts.put("NotoSerifCJK-Light.ttc",        "https://github.com/googlei18n/noto-cjk/raw/master/NotoSerifCJK-Light.ttc");
+        sFonts.put("NotoSerifCJK-Regular.ttc",      "https://github.com/googlei18n/noto-cjk/raw/master/NotoSerifCJK-Regular.ttc");
+        sFonts.put("NotoSerifCJK-Medium.ttc",       "https://github.com/googlei18n/noto-cjk/raw/master/NotoSerifCJK-Medium.ttc");
+        sFonts.put("NotoSerifCJK-Bold.ttc",         "https://github.com/googlei18n/noto-cjk/raw/master/NotoSerifCJK-Bold.ttc");
+        sFonts.put("NotoSerifCJK-Black.ttc",        "https://github.com/googlei18n/noto-cjk/raw/master/NotoSerifCJK-Black.ttc");
+    }
+
+    private void download() {
+        for (String file : sFonts.keySet()) {
+            if (!ContextUtils.getFile(this, file).exists()) {
+                download(sFonts.get(file), file);
+            }
+        }
+    }
+
+    private void download(String uri, String filename) {
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(uri))
+                .setDestinationInExternalFilesDir(this, null, filename)
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
+        DownloadManager downloadManager = getSystemService(DownloadManager.class);
+        downloadManager.enqueue(request);
     }
 }

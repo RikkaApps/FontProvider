@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Font Provider</string>
     <string name="action_hide">Hide from launcher</string>
+    <string name="action_download">Download required fonts</string>
 </resources>

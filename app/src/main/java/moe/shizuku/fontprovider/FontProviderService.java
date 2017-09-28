@@ -56,7 +56,10 @@ public class FontProviderService extends Service {
 
         Log.i(TAG, "loading file " + fileName);
 
-        mf = MemoryFileUtils.fromAsset(getAssets(), fileName, sFileSize.get(fileName));
+        if (sFileSize.containsKey(fileName)) {
+            mf = MemoryFileUtils.fromAsset(getAssets(), fileName, sFileSize.get(fileName));
+        }
+
         if (mf == null) {
             File file = ContextUtils.getFile(this, fileName);
             if (file.exists()) {

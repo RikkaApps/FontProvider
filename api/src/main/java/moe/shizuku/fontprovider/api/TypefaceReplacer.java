@@ -60,7 +60,7 @@ public class TypefaceReplacer {
         );
 
         NOTO_SANS_CJK_THIN = new FontRequest("sans-serif-thin",
-                FontFamily.createFromTtc("NotoSansCJK-Light.ttc", NOTO_CJK_LANGUAGE, 100));
+                FontFamily.createFromTtc("NotoSansCJK-Thin.ttc", NOTO_CJK_LANGUAGE, 100));
 
         NOTO_SANS_CJK_LIGHT = new FontRequest("sans-serif-light",
                 FontFamily.createFromTtc("NotoSansCJK-Light.ttc", NOTO_CJK_LANGUAGE, 300));
@@ -72,13 +72,13 @@ public class TypefaceReplacer {
                 FontFamily.createFromTtc("NotoSansCJK-Medium.ttc", NOTO_CJK_LANGUAGE, 500));
 
         NOTO_SANS_CJK_BOLD = new FontRequest("sans-serif-bold",
-                FontFamily.createFromTtc("NotoSansCJK-Medium.ttc", NOTO_CJK_LANGUAGE, 700));
+                FontFamily.createFromTtc("NotoSansCJK-Bold.ttc", NOTO_CJK_LANGUAGE, 700));
 
         NOTO_SANS_CJK_BLACK = new FontRequest("sans-serif-black",
-                FontFamily.createFromTtc("NotoSansCJK-Medium.ttc", NOTO_CJK_LANGUAGE, 900));
+                FontFamily.createFromTtc("NotoSansCJK-Black.ttc", NOTO_CJK_LANGUAGE, 900));
 
         NOTO_SERIF_CJK_THIN = new FontRequest("serif-thin", true,
-                combine(NOTO_SERIF, FontFamily.createFromTtc("NotoSerifCJK-Thin.ttc", NOTO_CJK_LANGUAGE, 100)));
+                combine(NOTO_SERIF, FontFamily.createFromTtc("NotoSerifCJK-ExtraLight.ttc", NOTO_CJK_LANGUAGE, 100)));
 
         NOTO_SERIF_CJK_LIGHT = new FontRequest("serif-light", true,
                 combine(NOTO_SERIF, FontFamily.createFromTtc("NotoSerifCJK-Light.ttc", NOTO_CJK_LANGUAGE, 300)));
