@@ -4,12 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.ParcelFileDescriptor;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.FileInputStream;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import moe.shizuku.fontprovider.IFontProvider;
 import moe.shizuku.fontprovider.api.compat.FontFamilyCompat;
@@ -29,92 +33,208 @@ public class TypefaceReplacer {
     private static FontProviderServiceConnection sServiceConnection;
 
     public static final FontRequest NOTO_SANS_CJK_LIGHT;
+    public static final FontRequest NOTO_SANS_CJK_REGULAR;
     public static final FontRequest NOTO_SANS_CJK_MEDIUM;
     public static final FontRequest NOTO_SERIF_CJK_LIGHT;
     public static final FontRequest NOTO_SERIF_CJK_REGULAR;
     public static final FontRequest NOTO_SERIF_CJK_MEDIUM;
 
+    public static final FontFamily NOTO_SERIF;
+
+    public static final String[] NOTO_CJK_LANGUAGE = {"jp", "kr", "zh-Hans", "zh-Hant"};
+
     static {
-        NOTO_SANS_CJK_LIGHT = new FontRequest(
-                "sans-serif-light",
-                "NotoSansCJK-Light.ttc",
-                new FontInfo(300, "ja", "kr", "zh-Hans", "zh-Hant")
+        NOTO_SERIF = new FontFamily(null,
+                new Font("NotoSerif-Regular.ttf", 0, 400, false),
+                new Font("NotoSerif-Bold.ttf", 0, 700, false),
+                new Font("NotoSerif-Italic.ttf", 0, 400, true),
+                new Font("NotoSerif-BoldItalic.ttf", 0, 700, true)
         );
 
-        NOTO_SANS_CJK_MEDIUM = new FontRequest(
-                "sans-serif-medium",
-                "NotoSansCJK-Medium.ttc",
-                new FontInfo(500, "ja", "kr", "zh-Hans", "zh-Hant")
-        );
+        NOTO_SANS_CJK_LIGHT = new FontRequest("sans-serif-light",
+                FontFamily.createFromTtc("NotoSansCJK-Light.ttc", NOTO_CJK_LANGUAGE, 300));
 
-        NOTO_SERIF_CJK_LIGHT = new FontRequest(
-                "serif-light",
-                "NotoSerifCJK-Light.ttc",
-                new FontInfo(300, true, "ja", "kr", "zh-Hans", "zh-Hant")
-        );
+        NOTO_SANS_CJK_REGULAR = new FontRequest("sans-serif",
+                FontFamily.createFromTtc("NotoSansCJK-Regular.ttc", NOTO_CJK_LANGUAGE, 400));
 
-        NOTO_SERIF_CJK_REGULAR = new FontRequest(
-                "serif",
-                "NotoSerifCJK-Regular.ttc",
-                new FontInfo(400, true, "ja", "kr", "zh-Hans", "zh-Hant")
-        );
+        NOTO_SANS_CJK_MEDIUM = new FontRequest("sans-serif-medium",
+                FontFamily.createFromTtc("NotoSansCJK-Medium.ttc", NOTO_CJK_LANGUAGE, 500));
 
-        NOTO_SERIF_CJK_MEDIUM = new FontRequest(
-                "serif-medium",
-                "NotoSerifCJK-Medium.ttc",
-                new FontInfo(500, true, "ja", "kr", "zh-Hans", "zh-Hant")
-        );
+        NOTO_SERIF_CJK_LIGHT = new FontRequest("serif-light", true,
+                combine(NOTO_SERIF, FontFamily.createFromTtc("NotoSerifCJK-Light.ttc", NOTO_CJK_LANGUAGE, 300)));
+
+        NOTO_SERIF_CJK_REGULAR = new FontRequest("serif", true,
+                combine(NOTO_SERIF, FontFamily.createFromTtc("NotoSerifCJK-Regular.ttc", NOTO_CJK_LANGUAGE, 400)));
+
+        NOTO_SERIF_CJK_MEDIUM = new FontRequest("serif-medium", true,
+                combine(NOTO_SERIF, FontFamily.createFromTtc("NotoSerifCJK-Medium.ttc", NOTO_CJK_LANGUAGE, 500)));
+    }
+
+    private static FontFamily[] combine(FontFamily a, FontFamily[] b) {
+        FontFamily[] result = new FontFamily[b.length + 1];
+        result[0] = a;
+        System.arraycopy(b, 0, result, 1, b.length);
+        return result;
+    }
+
+    private static FontFamily[] combine(FontFamily[]... arrays) {
+        int length = 0;
+        for (FontFamily[] array : arrays){
+            length += array.length;
+        }
+
+        FontFamily[] result = new FontFamily[length];
+        length = 0;
+        for (FontFamily[] array : arrays) {
+            System.arraycopy(array, 0, result, length, array.length);
+            length += array.length;
+        }
+        return result;
     }
 
     public static class FontRequest {
 
-        private final String fontFamily;
-        private final String filename;
-        private final FontInfo fontInfo;
+        private final String name;
+        private final int weight;
+        private final FontFamily[] fontFamilies;
+        private final boolean ignoreDefault;
 
-        public FontRequest(String fontFamily, String filename, FontInfo fontInfo) {
-            this.fontFamily = fontFamily;
-            this.filename = filename;
-            this.fontInfo = fontInfo;
+        public FontRequest(String name, FontFamily... fontFamilies) {
+            this(name, false, fontFamilies);
+        }
+
+        public FontRequest(String name, int weight, FontFamily... fontFamilies) {
+            this(name, false, weight, fontFamilies);
+        }
+
+        public FontRequest(String name, boolean ignoreDefault, FontFamily... fontFamilies) {
+            this(name, ignoreDefault, resolveWeight(name), fontFamilies);
+        }
+
+        public FontRequest(String name, boolean ignoreDefault, int weight, FontFamily... fontFamilies) {
+            this.name = name;
+            this.ignoreDefault = ignoreDefault;
+            this.fontFamilies = fontFamilies;
+            this.weight = weight;
+        }
+
+        private static int resolveWeight(String name) {
+            if (TextUtils.isEmpty(name)) {
+                return 400;
+            }
+
+            if (name.endsWith("-thin")) {
+                return 100;
+            } else if (name.endsWith("-demilight")) {
+                return 200;
+            } else if (name.endsWith("-light")) {
+                return 300;
+            } else if (name.endsWith("-medium")) {
+                return 500;
+            } else if (name.endsWith("-bold")) {
+                return 700;
+            } else if (name.endsWith("-black")) {
+                return 900;
+            } else  {
+                return 400;
+            }
         }
 
         @Override
         public String toString() {
             return "FontRequest{" +
-                    "fontFamily='" + fontFamily + '\'' +
-                    ", filename='" + filename + '\'' +
-                    ", fontInfo=" + fontInfo +
+                    "name='" + name + '\'' +
+                    ", weight=" + weight +
+                    ", fontFamilies=" + Arrays.toString(fontFamilies) +
+                    ", ignoreDefault=" + ignoreDefault +
                     '}';
         }
     }
 
-    public static class FontInfo {
+    public static class FontFamily {
 
-        private final boolean serif;
+        private final int variant;
+        private final String language;
+        private final Font[] fonts;
+
+        public static FontFamily[] createFromTtc(String filename, String[] languages) {
+            return createFromTtc(filename, languages, null);
+        }
+
+        public static FontFamily[] createFromTtc(String filename, String[] languages, int weight) {
+            return createFromTtc(filename, languages, null, weight, 0, false);
+        }
+
+        public static FontFamily[] createFromTtc(String filename, String[] languages, int[] ttcIndex) {
+            return createFromTtc(filename, languages, ttcIndex, -1, 0, false);
+        }
+
+        public static FontFamily[] createFromTtc(String filename, String[] languages, int[] ttcIndex, int weight, int variant, boolean italic) {
+            FontFamily[] fontFamilies = new FontFamily[languages.length];
+            for (int i = 0; i < languages.length; i++) {
+                fontFamilies[i] = new FontFamily(
+                        languages[i], variant,
+                        new Font(filename, ttcIndex == null ? i : ttcIndex[i], weight, italic));
+            }
+            return fontFamilies;
+        }
+
+        public FontFamily(String language, Font... fonts) {
+            this(language, 0, fonts);
+        }
+
+        public FontFamily(String language, int variant, Font... fonts) {
+            this.language = language;
+            this.variant = variant;
+            this.fonts = fonts;
+        }
+
+        @Override
+        public String toString() {
+            return "FontFamily{" +
+                    "variant=" + variant +
+                    ", language='" + language + '\'' +
+                    ", fonts=" + Arrays.toString(fonts) +
+                    '}';
+        }
+    }
+
+    public static class Font {
+
+        private final String filename;
+        private final int ttcIndex;
         private final int weight;
-        private final boolean isItalic;
-        private final String[] languages;
+        private final boolean italic;
 
-        public FontInfo(int weight, String... languages) {
-            this(weight, false, languages);
+        public Font(String filename) {
+            this(filename, false);
         }
 
-        public FontInfo(int weight, boolean serif, String... languages) {
-            this(weight, serif, false, languages);
+        public Font(String filename, boolean italic) {
+            this(filename, 0, -1, italic);
         }
 
-        public FontInfo(int weight, boolean serif, boolean isItalic, String... languages) {
-            this.serif = serif;
+        public Font(String filename, int ttcIndex, int weight, boolean italic) {
+            this.filename = filename;
+            this.ttcIndex = ttcIndex;
             this.weight = weight;
-            this.languages = languages;
-            this.isItalic = isItalic;
+            this.italic = italic;
+        }
+
+        @Override
+        public String toString() {
+            return "Font{" +
+                    "filename='" + filename + '\'' +
+                    ", ttcIndex=" + ttcIndex +
+                    ", weight=" + weight +
+                    ", italic=" + italic +
+                    '}';
         }
     }
 
     /**
      * Replace cached or add new Typefaces in Typeface class with fonts from FontProviderService.
-     *
-     * @param context Context
+     *  @param context Context
      * @param fontRequests fontRequests
      */
     public static void init(Context context, FontRequest... fontRequests) {
@@ -123,6 +243,7 @@ public class TypefaceReplacer {
         Intent intent = new Intent(ACTION)
                 .setPackage(PACKAGE);
 
+        sBufferCache.clear();
         sServiceConnection = new FontProviderServiceConnection(context, fontRequests);
 
         try {
@@ -142,82 +263,78 @@ public class TypefaceReplacer {
         sServiceConnection = null;
     }
 
-    static boolean replace(IFontProvider fontProvider, FontRequest request) {
-        String filename = request.filename;
+    private static Map<String, ByteBuffer> sBufferCache = new HashMap<>();
 
-        if (filename == null) {
-            return false;
+    static boolean request(IFontProvider fontProvider, FontRequest fontRequest) {
+        Object families;
+        if (!fontRequest.ignoreDefault) {
+            families = Array.newInstance(FontFamilyCompat.getFontFamilyClass(), fontRequest.fontFamilies.length + 1);
+        } else {
+            families = Array.newInstance(FontFamilyCompat.getFontFamilyClass(), fontRequest.fontFamilies.length);
         }
 
-        try {
-            ParcelFileDescriptor pfd = fontProvider.getFontFileDescriptor(filename);
-            int size = fontProvider.getFontFileSize(filename);
-            if (pfd == null) {
-                Log.w(TAG, "ParcelFileDescriptor is null");
-                return false;
-            }
-
-            FileInputStream is = new FileInputStream(pfd.getFileDescriptor());
-            FileChannel fileChannel = is.getChannel();
-            ByteBuffer byteBuffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, size);
-
-            return replace(byteBuffer, request);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    private static boolean replace(ByteBuffer buffer, FontRequest request) {
-        FontInfo fontInfo = request.fontInfo;
-        int weight = fontInfo.weight;
-
+        int i = 0;
         Object fallbackFonts = TypefaceCompat.getFallbackFontsArray();
-        if (fallbackFonts == null) {
+        if (fallbackFonts == null
+                || Array.getLength(fallbackFonts) == 0) {
             return false;
         }
 
-        boolean serif = fontInfo.serif;
-        int length = fontInfo.languages.length;
-        length += serif ? 0 : 1;
-        int index = serif ? 0 : 1;
-
-        Object families = Array.newInstance(FontFamilyCompat.getFontFamilyClass(), length);
-
-        // if not serif, 0 (san-serif) need to be the first
-        if (!serif) {
-            Array.set(families, 0, Array.get(fallbackFonts, 0));
+        if (!fontRequest.ignoreDefault) {
+            Array.set(families, i++, Array.get(fallbackFonts, 0));
         }
 
-        for (int count = 0; index < length; index++, count++) {
-            FontFamilyCompat fontFamilyCompat = createFontFamily(buffer, fontInfo.languages[count], weight, count, fontInfo.isItalic ? 1 : 0);
-            if (fontFamilyCompat == null) {
+        for (FontFamily fontFamily : fontRequest.fontFamilies) {
+            FontFamilyCompat fontFamilyCompat = new FontFamilyCompat(fontFamily.language, fontFamily.variant);
+            if (fontFamilyCompat.getFontFamily() == null) {
                 return false;
             }
-            Array.set(families, index, fontFamilyCompat.getFontFamily());
+
+            for (Font font : fontFamily.fonts) {
+                ByteBuffer byteBuffer = sBufferCache.get(font.filename);
+
+                if (byteBuffer == null) {
+                    try {
+                        ParcelFileDescriptor pfd = fontProvider.getFontFileDescriptor(font.filename);
+                        int size = fontProvider.getFontFileSize(font.filename);
+                        if (pfd == null) {
+                            Log.w(TAG, "ParcelFileDescriptor is null");
+                            return false;
+                        }
+
+                        FileInputStream is = new FileInputStream(pfd.getFileDescriptor());
+                        FileChannel fileChannel = is.getChannel();
+                        byteBuffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, size);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return false;
+                    }
+                }
+
+                if (byteBuffer == null) {
+                    return false;
+                }
+
+                int weight = font.weight != -1 ? font.weight : fontRequest.weight;
+                if (!fontFamilyCompat.addFont(byteBuffer, font.ttcIndex, weight, font.italic ? 1 : 0)) {
+                    return false;
+                }
+            }
+
+            if (!fontFamilyCompat.freeze()) {
+                return false;
+            }
+
+            Array.set(families, i++, fontFamilyCompat.getFontFamily());
         }
 
-        Typeface typeface = TypefaceCompat.createFromFamiliesWithDefault(families, weight, 0);
+        Typeface typeface = TypefaceCompat.createFromFamiliesWithDefault(families, fontRequest.weight, 0);
         if (typeface != null
                 && TypefaceCompat.getSystemFontMap() != null) {
-            TypefaceCompat.getSystemFontMap().put(request.fontFamily, typeface);
+            TypefaceCompat.getSystemFontMap().put(fontRequest.name, typeface);
             return true;
+        } else {
+            return false;
         }
-        return false;
-    }
-
-    private static FontFamilyCompat createFontFamily(ByteBuffer buffer, String lang, int weight, int ttcIndex, int isItalic) {
-        FontFamilyCompat fontFamily = new FontFamilyCompat(lang, 0);
-        if (fontFamily.getFontFamily() == null) {
-            return null;
-        }
-
-        if (fontFamily.addFont(buffer, ttcIndex, weight, isItalic)) {
-            if (!fontFamily.freeze()) {
-                return null;
-            }
-        }
-
-        return fontFamily;
     }
 }

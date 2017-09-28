@@ -21,6 +21,7 @@ public class TypefaceCompat {
     private static Field sFallbackFontsField;
     private static Field sSystemFontMapField;
     private static Method createFromFamiliesMethod;
+    private static Method setDefaultMethod;
 
     static {
         try {
@@ -33,6 +34,10 @@ public class TypefaceCompat {
             createFromFamiliesMethod = Typeface.class.getDeclaredMethod("createFromFamilies",
                     FontFamilyCompat.getFontFamilyArrayClass());
             createFromFamiliesMethod.setAccessible(true);
+
+            setDefaultMethod = Typeface.class.getDeclaredMethod("setDefault",
+                    Typeface.class);
+            setDefaultMethod.setAccessible(true);
         } catch (NoSuchFieldException | NoSuchMethodException e) {
             e.printStackTrace();
 
@@ -70,6 +75,18 @@ public class TypefaceCompat {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public static void setDefault(Typeface typeface) {
+        if (!available) {
+            return;
+        }
+
+        try {
+            setDefaultMethod.invoke(null, typeface);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
         }
     }
 

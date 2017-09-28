@@ -15,6 +15,13 @@
             android:textSize="@dimen/text_size"/>
 
         <TextView
+            android:layout_marginTop="8dp"
+            android:id="@+id/text_sans_serif_100"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size"/>
+
+        <TextView
             android:id="@+id/text_sans_serif_300"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -33,6 +40,25 @@
             android:textSize="@dimen/text_size"/>
 
         <TextView
+            android:id="@+id/text_sans_serif_700"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size"/>
+
+        <TextView
+            android:id="@+id/text_sans_serif_900"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size"/>
+
+        <TextView
+            android:layout_marginTop="8dp"
+            android:id="@+id/text_serif_100"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size"/>
+
+        <TextView
             android:id="@+id/text_serif_300"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -46,6 +72,18 @@
 
         <TextView
             android:id="@+id/text_serif_500"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size"/>
+
+        <TextView
+            android:id="@+id/text_serif_700"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size"/>
+
+        <TextView
+            android:id="@+id/text_serif_900"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size"/>

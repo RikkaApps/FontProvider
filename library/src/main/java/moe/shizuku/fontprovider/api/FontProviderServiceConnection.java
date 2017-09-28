@@ -30,7 +30,7 @@ class FontProviderServiceConnection implements ServiceConnection {
         IFontProvider fontProvider = IFontProvider.Stub.asInterface(binder);
 
         for (TypefaceReplacer.FontRequest request : mFontRequests) {
-            boolean succeed = TypefaceReplacer.replace(fontProvider, request);
+            boolean succeed = TypefaceReplacer.request(fontProvider, request);
 
             if (succeed) {
                 Log.i(TAG, "succeed: " + request.toString());

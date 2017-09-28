@@ -29,7 +29,7 @@ dependencies {
 
 ext {
     libraryName = 'TypeReplacer'
-    libraryDescription = 'Helper library used to init font from Font Provider app and replace cached Typeface.'
+    libraryDescription = 'Helper library used to replace font from Font Provider app and replace cached Typeface.'
     libraryVersion = versionName
     artifact = 'api'
     bintrayName = 'api'
