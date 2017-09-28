@@ -1,3 +1,5 @@
+import java.util.function.Consumer
+
 apply plugin: 'com.android.application'
 
 android {
@@ -11,11 +13,16 @@ android {
         versionName rootProject.ext.versionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
-        buildConfigField "int", "NotoSansCJK_Light_Size",    file("src/main/assets/NotoSansCJK-Light.ttc").size().toString()
-        buildConfigField "int", "NotoSansCJK_Medium_Size",   file("src/main/assets/NotoSansCJK-Medium.ttc").size().toString()
-        buildConfigField "int", "NotoSerifCJK_Light_Size",   file("src/main/assets/NotoSerifCJK-Light.ttc").size().toString()
-        buildConfigField "int", "NotoSerifCJK_Regular_Size", file("src/main/assets/NotoSerifCJK-Regular.ttc").size().toString()
-        buildConfigField "int", "NotoSerifCJK_Medium_Size",  file("src/main/assets/NotoSerifCJK-Medium.ttc").size().toString()
+        String mapValue = 'new java.util.HashMap<String, Integer>() {{'
+        fileTree("src/main/assets").files.forEach(new Consumer<File>() {
+            @Override
+            void accept(File file) {
+                mapValue += 'put("' + file.name + '", ' + file.size() + ');'
+            }
+        })
+        mapValue += '}}'
+
+        buildConfigField ("java.util.Map<String, Integer>", "BUILT_IN_FONTS_SIZE", mapValue)
     }
     signingConfigs {
         sign

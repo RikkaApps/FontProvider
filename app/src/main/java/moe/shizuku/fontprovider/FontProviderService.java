@@ -33,14 +33,7 @@ public class FontProviderService extends Service {
     static {
         sCache = new HashMap<>();
 
-        sFileSize = new HashMap<>();
-
-        sFileSize.put("NotoSansCJK-Light.ttc",      BuildConfig.NotoSansCJK_Light_Size);
-        sFileSize.put("NotoSansCJK-Medium.ttc",     BuildConfig.NotoSansCJK_Medium_Size);
-
-        sFileSize.put("NotoSerifCJK-Light.ttc",     BuildConfig.NotoSerifCJK_Light_Size);
-        sFileSize.put("NotoSerifCJK-Regular.ttc",   BuildConfig.NotoSerifCJK_Regular_Size);
-        sFileSize.put("NotoSerifCJK-Medium.ttc",    BuildConfig.NotoSerifCJK_Medium_Size);
+        sFileSize = BuildConfig.BUILT_IN_FONTS_SIZE;
     }
 
     @Override
