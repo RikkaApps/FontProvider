@@ -42,7 +42,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "com.android.support:support-annotations:$supportLibraryVersion"
-    compile project(path: ':library')
+    compile project(path: ':api')
 }
 
 apply from: rootProject.file('signing.gradle')

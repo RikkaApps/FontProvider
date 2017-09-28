@@ -28,11 +28,11 @@ dependencies {
 }
 
 ext {
-    libraryName = 'TypeReplacer'
+    libraryName = 'TypefaceReplacer'
     libraryDescription = 'Helper library used to replace font from Font Provider app and replace cached Typeface.'
     libraryVersion = versionName
-    artifact = 'api'
-    bintrayName = 'api'
+    artifact = project.name
+    bintrayName = project.name
 }
 
 apply from: project.rootProject.file('bintray.gradle')
