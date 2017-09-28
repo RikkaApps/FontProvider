@@ -36,19 +36,19 @@ public class TypefaceReplacer {
     public static final FontRequest NOTO_SANS_CJK_LIGHT;
     public static final FontRequest NOTO_SANS_CJK_REGULAR;
     public static final FontRequest NOTO_SANS_CJK_MEDIUM;
-    public static final FontRequest NOTO_SANS_CJK_BOLD;
+    //public static final FontRequest NOTO_SANS_CJK_BOLD;
     public static final FontRequest NOTO_SANS_CJK_BLACK;
 
     public static final FontRequest NOTO_SERIF_CJK_THIN;
     public static final FontRequest NOTO_SERIF_CJK_LIGHT;
     public static final FontRequest NOTO_SERIF_CJK_REGULAR;
     public static final FontRequest NOTO_SERIF_CJK_MEDIUM;
-    public static final FontRequest NOTO_SERIF_CJK_BOLD;
+    //public static final FontRequest NOTO_SERIF_CJK_BOLD;
     public static final FontRequest NOTO_SERIF_CJK_BLACK;
 
     public static final FontFamily NOTO_SERIF;
 
-    public static final String[] NOTO_CJK_LANGUAGE = {"jp", "kr", "zh-Hans", "zh-Hant"};
+    public static final String[] NOTO_CJK_LANGUAGE = {"ja", "ko", "zh-Hans", "zh-Hant"};
 
 
     static {
@@ -71,8 +71,8 @@ public class TypefaceReplacer {
         NOTO_SANS_CJK_MEDIUM = new FontRequest("sans-serif-medium",
                 FontFamily.createFromTtc("NotoSansCJK-Medium.ttc", NOTO_CJK_LANGUAGE, 500));
 
-        NOTO_SANS_CJK_BOLD = new FontRequest("sans-serif-bold",
-                FontFamily.createFromTtc("NotoSansCJK-Bold.ttc", NOTO_CJK_LANGUAGE, 700));
+        /*NOTO_SANS_CJK_BOLD = new FontRequest("sans-serif-bold",
+                FontFamily.createFromTtc("NotoSansCJK-Bold.ttc", NOTO_CJK_LANGUAGE, 700));*/
 
         NOTO_SANS_CJK_BLACK = new FontRequest("sans-serif-black",
                 FontFamily.createFromTtc("NotoSansCJK-Black.ttc", NOTO_CJK_LANGUAGE, 900));
@@ -89,8 +89,8 @@ public class TypefaceReplacer {
         NOTO_SERIF_CJK_MEDIUM = new FontRequest("serif-medium", true,
                 combine(NOTO_SERIF, FontFamily.createFromTtc("NotoSerifCJK-Medium.ttc", NOTO_CJK_LANGUAGE, 500)));
 
-        NOTO_SERIF_CJK_BOLD = new FontRequest("serif-bold", true,
-                combine(NOTO_SERIF, FontFamily.createFromTtc("NotoSerifCJK-Bold.ttc", NOTO_CJK_LANGUAGE, 700)));
+        /*NOTO_SERIF_CJK_BOLD = new FontRequest("serif-bold", true,
+                combine(NOTO_SERIF, FontFamily.createFromTtc("NotoSerifCJK-Bold.ttc", NOTO_CJK_LANGUAGE, 700)));*/
 
         NOTO_SERIF_CJK_BLACK = new FontRequest("serif-black", true,
                 combine(NOTO_SERIF, FontFamily.createFromTtc("NotoSerifCJK-Black.ttc", NOTO_CJK_LANGUAGE, 900)));
