@@ -17,4 +17,12 @@ public class ContextUtils {
             return new File(context.getExternalCacheDir(), name);
         }
     }
+
+    public static File getFile(Context context, String name) {
+        if (context.getExternalFilesDir(null) == null) {
+            return new File(context.getFilesDir(), name);
+        } else {
+            return new File(context.getExternalFilesDir(null), name);
+        }
+    }
 }

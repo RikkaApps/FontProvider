@@ -32,16 +32,24 @@ public class TypefaceReplacer {
 
     private static FontProviderServiceConnection sServiceConnection;
 
+    public static final FontRequest NOTO_SANS_CJK_THIN;
     public static final FontRequest NOTO_SANS_CJK_LIGHT;
     public static final FontRequest NOTO_SANS_CJK_REGULAR;
     public static final FontRequest NOTO_SANS_CJK_MEDIUM;
+    public static final FontRequest NOTO_SANS_CJK_BOLD;
+    public static final FontRequest NOTO_SANS_CJK_BLACK;
+
+    public static final FontRequest NOTO_SERIF_CJK_THIN;
     public static final FontRequest NOTO_SERIF_CJK_LIGHT;
     public static final FontRequest NOTO_SERIF_CJK_REGULAR;
     public static final FontRequest NOTO_SERIF_CJK_MEDIUM;
+    public static final FontRequest NOTO_SERIF_CJK_BOLD;
+    public static final FontRequest NOTO_SERIF_CJK_BLACK;
 
     public static final FontFamily NOTO_SERIF;
 
     public static final String[] NOTO_CJK_LANGUAGE = {"jp", "kr", "zh-Hans", "zh-Hant"};
+
 
     static {
         NOTO_SERIF = new FontFamily(null,
@@ -50,6 +58,9 @@ public class TypefaceReplacer {
                 new Font("NotoSerif-Italic.ttf", 0, 400, true),
                 new Font("NotoSerif-BoldItalic.ttf", 0, 700, true)
         );
+
+        NOTO_SANS_CJK_THIN = new FontRequest("sans-serif-thin",
+                FontFamily.createFromTtc("NotoSansCJK-Light.ttc", NOTO_CJK_LANGUAGE, 100));
 
         NOTO_SANS_CJK_LIGHT = new FontRequest("sans-serif-light",
                 FontFamily.createFromTtc("NotoSansCJK-Light.ttc", NOTO_CJK_LANGUAGE, 300));
@@ -60,6 +71,15 @@ public class TypefaceReplacer {
         NOTO_SANS_CJK_MEDIUM = new FontRequest("sans-serif-medium",
                 FontFamily.createFromTtc("NotoSansCJK-Medium.ttc", NOTO_CJK_LANGUAGE, 500));
 
+        NOTO_SANS_CJK_BOLD = new FontRequest("sans-serif-bold",
+                FontFamily.createFromTtc("NotoSansCJK-Medium.ttc", NOTO_CJK_LANGUAGE, 700));
+
+        NOTO_SANS_CJK_BLACK = new FontRequest("sans-serif-black",
+                FontFamily.createFromTtc("NotoSansCJK-Medium.ttc", NOTO_CJK_LANGUAGE, 900));
+
+        NOTO_SERIF_CJK_THIN = new FontRequest("serif-thin", true,
+                combine(NOTO_SERIF, FontFamily.createFromTtc("NotoSerifCJK-Thin.ttc", NOTO_CJK_LANGUAGE, 100)));
+
         NOTO_SERIF_CJK_LIGHT = new FontRequest("serif-light", true,
                 combine(NOTO_SERIF, FontFamily.createFromTtc("NotoSerifCJK-Light.ttc", NOTO_CJK_LANGUAGE, 300)));
 
@@ -68,12 +88,18 @@ public class TypefaceReplacer {
 
         NOTO_SERIF_CJK_MEDIUM = new FontRequest("serif-medium", true,
                 combine(NOTO_SERIF, FontFamily.createFromTtc("NotoSerifCJK-Medium.ttc", NOTO_CJK_LANGUAGE, 500)));
+
+        NOTO_SERIF_CJK_BOLD = new FontRequest("serif-bold", true,
+                combine(NOTO_SERIF, FontFamily.createFromTtc("NotoSerifCJK-Bold.ttc", NOTO_CJK_LANGUAGE, 700)));
+
+        NOTO_SERIF_CJK_BLACK = new FontRequest("serif-black", true,
+                combine(NOTO_SERIF, FontFamily.createFromTtc("NotoSerifCJK-Black.ttc", NOTO_CJK_LANGUAGE, 900)));
     }
 
-    private static FontFamily[] combine(FontFamily a, FontFamily[] b) {
-        FontFamily[] result = new FontFamily[b.length + 1];
-        result[0] = a;
-        System.arraycopy(b, 0, result, 1, b.length);
+    private static FontFamily[] combine(FontFamily first, FontFamily[] array) {
+        FontFamily[] result = new FontFamily[array.length + 1];
+        result[0] = first;
+        System.arraycopy(array, 0, result, 1, array.length);
         return result;
     }
 
@@ -296,11 +322,11 @@ public class TypefaceReplacer {
                 if (byteBuffer == null) {
                     try {
                         ParcelFileDescriptor pfd = fontProvider.getFontFileDescriptor(font.filename);
-                        int size = fontProvider.getFontFileSize(font.filename);
                         if (pfd == null) {
                             Log.w(TAG, "ParcelFileDescriptor is null");
                             return false;
                         }
+                        int size = fontProvider.getFontFileSize(font.filename);
 
                         FileInputStream is = new FileInputStream(pfd.getFileDescriptor());
                         FileChannel fileChannel = is.getChannel();

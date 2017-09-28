@@ -1,6 +1,7 @@
 package moe.shizuku.fontprovider;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.MemoryFile;
@@ -9,11 +10,12 @@ import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.io.File;
 import java.io.FileDescriptor;
 import java.util.HashMap;
 import java.util.Map;
 
-import moe.shizuku.fontprovider.utils.AssetUtils;
+import moe.shizuku.fontprovider.utils.ContextUtils;
 import moe.shizuku.fontprovider.utils.MemoryFileUtils;
 import moe.shizuku.fontprovider.utils.ParcelFileDescriptorUtils;
 
@@ -40,7 +42,7 @@ public class FontProviderService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        mBinder = new IFontProviderBinder();
+        mBinder = new IFontProviderBinder(this);
     }
 
     private ParcelFileDescriptor getParcelFileDescriptor(String fileName) {
@@ -53,7 +55,18 @@ public class FontProviderService extends Service {
         long time = System.currentTimeMillis();
 
         Log.i(TAG, "loading file " + fileName);
-        mf = AssetUtils.toMemoryFile(this, fileName, sFileSize.get(fileName));
+
+        mf = MemoryFileUtils.fromAsset(getAssets(), fileName, sFileSize.get(fileName));
+        if (mf == null) {
+            File file = ContextUtils.getFile(this, fileName);
+            if (file.exists()) {
+                mf = MemoryFileUtils.fromFile(file);
+                if (mf != null) {
+                    sFileSize.put(fileName, mf.length());
+                }
+            }
+        }
+
         if (mf == null) {
             Log.w(TAG, "loading " + fileName + " failed");
             return null;
@@ -82,6 +95,12 @@ public class FontProviderService extends Service {
 
     public class IFontProviderBinder extends IFontProvider.Stub {
 
+        private Context mContext;
+
+        public IFontProviderBinder(Context context) {
+            mContext = context;
+        }
+
         @Override
         public ParcelFileDescriptor getFontFileDescriptor(String filename) throws RemoteException {
             return getParcelFileDescriptor(filename);
@@ -89,7 +108,15 @@ public class FontProviderService extends Service {
 
         @Override
         public int getFontFileSize(String filename) throws RemoteException {
-            return sFileSize.get(filename);
+            if (sFileSize.containsKey(filename)) {
+                return sFileSize.get(filename);
+            }
+
+            File file = ContextUtils.getFile(mContext, filename);
+            if (file.exists()) {
+                return (int) file.length();
+            }
+            return 0;
         }
     }
 }
