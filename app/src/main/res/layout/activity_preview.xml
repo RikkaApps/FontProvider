@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:ignore="HardcodedText">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -10,20 +12,45 @@
         android:paddingStart="?android:listPreferredItemPaddingStart"
         android:paddingEnd="?android:listPreferredItemPaddingEnd"
         android:paddingTop="16dp"
-        android:paddingBottom="16dp">
+        android:paddingBottom="16dp"
+        android:clipToPadding="false">
 
-        <TextView
-            android:id="@+id/text_title"
+        <Button
+            android:id="@android:id/button1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size"/>
+            android:text="@string/button_download"
+            android:layout_marginTop="-8dp"
+            android:layout_marginStart="-12dp"
+            style="@android:style/Widget.Material.Light.Button.Borderless.Colored"/>
 
         <TextView
             android:layout_marginTop="8dp"
+            android:id="@+id/text_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"/>
+
+
+        <TextView
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Noto Sans CJK 100"
+            android:fontFamily="monospace"/>
+
+        <TextView
             android:id="@+id/text_sans_serif_100"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size"/>
+
+        <TextView
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Noto Sans CJK 300"
+            android:fontFamily="monospace"/>
 
         <TextView
             android:id="@+id/text_sans_serif_300"
@@ -32,10 +59,24 @@
             android:textSize="@dimen/text_size"/>
 
         <TextView
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Noto Sans CJK 400"
+            android:fontFamily="monospace"/>
+
+        <TextView
             android:id="@+id/text_sans_serif_400"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size"/>
+
+        <TextView
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Noto Sans CJK 500"
+            android:fontFamily="monospace"/>
 
         <TextView
             android:id="@+id/text_sans_serif_500"
@@ -44,10 +85,24 @@
             android:textSize="@dimen/text_size"/>
 
         <TextView
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Noto Sans CJK 700"
+            android:fontFamily="monospace"/>
+
+        <TextView
             android:id="@+id/text_sans_serif_700"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size"/>
+
+        <TextView
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Noto Sans CJK 900"
+            android:fontFamily="monospace"/>
 
         <TextView
             android:id="@+id/text_sans_serif_900"
@@ -57,10 +112,23 @@
 
         <TextView
             android:layout_marginTop="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Noto Serif CJK 100"
+            android:fontFamily="monospace"/>
+
+        <TextView
             android:id="@+id/text_serif_100"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size"/>
+
+        <TextView
+            android:layout_marginTop="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Noto Serif CJK 300"
+            android:fontFamily="monospace"/>
 
         <TextView
             android:id="@+id/text_serif_300"
@@ -69,10 +137,24 @@
             android:textSize="@dimen/text_size"/>
 
         <TextView
+            android:layout_marginTop="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Noto Serif CJK 400"
+            android:fontFamily="monospace"/>
+
+        <TextView
             android:id="@+id/text_serif_400"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size"/>
+
+        <TextView
+            android:layout_marginTop="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Noto Serif CJK 500"
+            android:fontFamily="monospace"/>
 
         <TextView
             android:id="@+id/text_serif_500"
@@ -81,10 +163,24 @@
             android:textSize="@dimen/text_size"/>
 
         <TextView
+            android:layout_marginTop="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Noto Serif CJK 700"
+            android:fontFamily="monospace"/>
+
+        <TextView
             android:id="@+id/text_serif_700"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size"/>
+
+        <TextView
+            android:layout_marginTop="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Noto Serif CJK 900"
+            android:fontFamily="monospace"/>
 
         <TextView
             android:id="@+id/text_serif_900"

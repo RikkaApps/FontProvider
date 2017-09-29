@@ -3,4 +3,6 @@
     <string name="action_hide">Hide from launcher</string>
     <string name="action_download">Download required fonts</string>
     <string name="action_free">Free memory</string>
+    <string name="button_download">Download required fonts when WiFi available</string>
+    <string name="preview_text">This is a sample text. 骨曜将葛，地玄系、片海示。</string>
 </resources>
