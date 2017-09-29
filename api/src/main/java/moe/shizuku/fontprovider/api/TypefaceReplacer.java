@@ -78,44 +78,22 @@ public class TypefaceReplacer {
                 FontFamily.createFromTtc("NotoSansCJK-Black.ttc", NOTO_CJK_LANGUAGE, 900));
 
         NOTO_SERIF_CJK_THIN = new FontRequest("serif-thin", true,
-                combine(NOTO_SERIF, FontFamily.createFromTtc("NotoSerifCJK-ExtraLight.ttc", NOTO_CJK_LANGUAGE, 100)));
+                FontFamily.combine(NOTO_SERIF, FontFamily.createFromTtc("NotoSerifCJK-ExtraLight.ttc", NOTO_CJK_LANGUAGE, 100)));
 
         NOTO_SERIF_CJK_LIGHT = new FontRequest("serif-light", true,
-                combine(NOTO_SERIF, FontFamily.createFromTtc("NotoSerifCJK-Light.ttc", NOTO_CJK_LANGUAGE, 300)));
+                FontFamily.combine(NOTO_SERIF, FontFamily.createFromTtc("NotoSerifCJK-Light.ttc", NOTO_CJK_LANGUAGE, 300)));
 
         NOTO_SERIF_CJK_REGULAR = new FontRequest("serif", true,
-                combine(NOTO_SERIF, FontFamily.createFromTtc("NotoSerifCJK-Regular.ttc", NOTO_CJK_LANGUAGE, 400)));
+                FontFamily.combine(NOTO_SERIF, FontFamily.createFromTtc("NotoSerifCJK-Regular.ttc", NOTO_CJK_LANGUAGE, 400)));
 
         NOTO_SERIF_CJK_MEDIUM = new FontRequest("serif-medium", true,
-                combine(NOTO_SERIF, FontFamily.createFromTtc("NotoSerifCJK-Medium.ttc", NOTO_CJK_LANGUAGE, 500)));
+                FontFamily.combine(NOTO_SERIF, FontFamily.createFromTtc("NotoSerifCJK-Medium.ttc", NOTO_CJK_LANGUAGE, 500)));
 
         /*NOTO_SERIF_CJK_BOLD = new FontRequest("serif-bold", true,
-                combine(NOTO_SERIF, FontFamily.createFromTtc("NotoSerifCJK-Bold.ttc", NOTO_CJK_LANGUAGE, 700)));*/
+                FontFamily.combine(NOTO_SERIF, FontFamily.createFromTtc("NotoSerifCJK-Bold.ttc", NOTO_CJK_LANGUAGE, 700)));*/
 
         NOTO_SERIF_CJK_BLACK = new FontRequest("serif-black", true,
-                combine(NOTO_SERIF, FontFamily.createFromTtc("NotoSerifCJK-Black.ttc", NOTO_CJK_LANGUAGE, 900)));
-    }
-
-    private static FontFamily[] combine(FontFamily first, FontFamily[] array) {
-        FontFamily[] result = new FontFamily[array.length + 1];
-        result[0] = first;
-        System.arraycopy(array, 0, result, 1, array.length);
-        return result;
-    }
-
-    private static FontFamily[] combine(FontFamily[]... arrays) {
-        int length = 0;
-        for (FontFamily[] array : arrays){
-            length += array.length;
-        }
-
-        FontFamily[] result = new FontFamily[length];
-        length = 0;
-        for (FontFamily[] array : arrays) {
-            System.arraycopy(array, 0, result, length, array.length);
-            length += array.length;
-        }
-        return result;
+                FontFamily.combine(NOTO_SERIF, FontFamily.createFromTtc("NotoSerifCJK-Black.ttc", NOTO_CJK_LANGUAGE, 900)));
     }
 
     public static class FontRequest {
@@ -183,6 +161,28 @@ public class TypefaceReplacer {
         private final String language;
         private final Font[] fonts;
 
+        public static FontFamily[] combine(FontFamily first, FontFamily[] array) {
+            FontFamily[] result = new FontFamily[array.length + 1];
+            result[0] = first;
+            System.arraycopy(array, 0, result, 1, array.length);
+            return result;
+        }
+
+        public static FontFamily[] combine(FontFamily[]... arrays) {
+            int length = 0;
+            for (FontFamily[] array : arrays){
+                length += array.length;
+            }
+
+            FontFamily[] result = new FontFamily[length];
+            length = 0;
+            for (FontFamily[] array : arrays) {
+                System.arraycopy(array, 0, result, length, array.length);
+                length += array.length;
+            }
+            return result;
+        }
+
         public static FontFamily[] createFromTtc(String filename, String[] languages) {
             return createFromTtc(filename, languages, null);
         }
@@ -228,6 +228,7 @@ public class TypefaceReplacer {
     public static class Font {
 
         private final String filename;
+        private final ByteBuffer buffer;
         private final int ttcIndex;
         private final int weight;
         private final boolean italic;
@@ -240,7 +241,16 @@ public class TypefaceReplacer {
             this(filename, 0, -1, italic);
         }
 
+        public Font(ByteBuffer buffer, int ttcIndex, int weight, boolean italic) {
+            this(null, buffer, ttcIndex, weight, italic);
+        }
+
         public Font(String filename, int ttcIndex, int weight, boolean italic) {
+            this(filename, null, ttcIndex, weight, italic);
+        }
+
+        public Font(String filename, ByteBuffer buffer, int ttcIndex, int weight, boolean italic) {
+            this.buffer = buffer;
             this.filename = filename;
             this.ttcIndex = ttcIndex;
             this.weight = weight;
@@ -317,9 +327,16 @@ public class TypefaceReplacer {
             }
 
             for (Font font : fontFamily.fonts) {
-                ByteBuffer byteBuffer = sBufferCache.get(font.filename);
+                ByteBuffer byteBuffer = font.buffer;
+                if (byteBuffer == null) {
+                    byteBuffer = sBufferCache.get(font.filename);
+                }
 
                 if (byteBuffer == null) {
+                    if (font.filename == null) {
+                        return false;
+                    }
+
                     try {
                         ParcelFileDescriptor pfd = fontProvider.getFontFileDescriptor(font.filename);
                         if (pfd == null) {
