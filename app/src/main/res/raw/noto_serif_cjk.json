@@ -1,0 +1,32 @@
+{
+  "name": "Noto Serif CJK",
+  "language": [ "zh-Hans", "zh-Hant", "ja", "ko" ],
+  "index": [ 2, 3, 0, 1 ],
+  "url_prefix": "https://github.com/googlei18n/noto-cjk/raw/master/",
+  "style": [
+    {
+      "weight": 100,
+      "ttc": "NotoSerifCJK-ExtraLight.ttc"
+    },
+    {
+      "weight": 300,
+      "ttc": "NotoSerifCJK-Light.ttc"
+    },
+    {
+      "weight": 400,
+      "ttc": "NotoSerifCJK-Regular.ttc"
+    },
+    {
+      "weight": 500,
+      "ttc": "NotoSerifCJK-Medium.ttc"
+    },
+    {
+      "weight": 700,
+      "ttc": "NotoSerifCJK-Bold.ttc"
+    },
+    {
+      "weight": 900,
+      "ttc": "NotoSerifCJK-Black.ttc"
+    }
+  ]
+}

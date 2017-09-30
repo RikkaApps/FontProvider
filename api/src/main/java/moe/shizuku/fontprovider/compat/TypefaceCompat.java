@@ -1,4 +1,4 @@
-package moe.shizuku.fontprovider.api.compat;
+package moe.shizuku.fontprovider.compat;
 
 import android.annotation.SuppressLint;
 import android.graphics.Typeface;
@@ -121,7 +121,7 @@ public class TypefaceCompat {
         if (Build.VERSION.SDK_INT >= 26) {
             return TypefaceCompatApi26.createFromFamiliesWithDefault(families, weight, italic);
         } else if (Build.VERSION.SDK_INT >= 24) {
-            return TypefaceCompatApi24.createFromFamiliesWithDefault(families, weight, italic);
+            return TypefaceCompatApi24.createFromFamiliesWithDefault(families, weight);
         } else {
             throw new IllegalStateException("unsupported system version");
         }

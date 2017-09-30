@@ -1,4 +1,4 @@
-package moe.shizuku.fontprovider.api.compat;
+package moe.shizuku.fontprovider.compat;
 
 import android.annotation.SuppressLint;
 import android.graphics.Typeface;
@@ -47,7 +47,7 @@ public class TypefaceCompatApi24 extends TypefaceCompat {
         }
     }
 
-    public static Typeface createFromFamiliesWithDefault(Object families, int weight, int italic) {
+    public static Typeface createFromFamiliesWithDefault(Object families, int weight) {
         if (!available) {
             return null;
         }

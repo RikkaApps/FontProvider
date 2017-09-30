@@ -1,0 +1,26 @@
+{
+  "name": "Noto Serif",
+  "language": [ null ],
+  "index": [ 0 ],
+  "url_prefix": "https://github.com/googlei18n/noto-fonts/raw/master/hinted/",
+  "style": [
+    {
+      "weight": 400,
+      "ttf": [ "NotoSerif-Regular.ttf" ]
+    },
+    {
+      "weight": 400,
+      "italic": true,
+      "ttf": [ "NotoSerif-Italic.ttf" ]
+    },
+    {
+      "weight": 700,
+      "ttf": [ "NotoSerif-Bold.ttf" ]
+    },
+    {
+      "weight": 700,
+      "italic": true,
+      "ttf": [ "NotoSerif-BoldItalic.ttf" ]
+    }
+  ]
+}

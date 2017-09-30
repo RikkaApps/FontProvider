@@ -15,6 +15,8 @@ import java.io.FileDescriptor;
 import java.util.HashMap;
 import java.util.Map;
 
+import moe.shizuku.fontprovider.font.Font;
+import moe.shizuku.fontprovider.font.FontFamily;
 import moe.shizuku.fontprovider.utils.ContextUtils;
 import moe.shizuku.fontprovider.utils.MemoryFileUtils;
 import moe.shizuku.fontprovider.utils.ParcelFileDescriptorUtils;
@@ -51,6 +53,8 @@ public class FontProviderService extends Service {
         super.onCreate();
 
         mBinder = new IFontProviderBinder(this);
+
+        FontManager.init(this);
     }
 
     private ParcelFileDescriptor getParcelFileDescriptor(String fileName) {
@@ -98,6 +102,42 @@ public class FontProviderService extends Service {
         return fd;
     }
 
+    public static FontFamily[] getFontFamily(String name, int... weight) {
+        FontInfo font = FontManager.getFont(name);
+        if (font == null) {
+            return null;
+        }
+
+        String[] language = font.getLanguage();
+        int[] index = font.getIndex();
+
+        // each language will have FontFamily
+        FontFamily[] families = new FontFamily[language.length];
+
+        for (int i = 0; i < families.length; i++) {
+            FontInfo.Style[] styles = font.getStyle(weight);
+
+            // each style have a Font
+            Font[] fonts = new Font[styles.length];
+
+            for (int j = 0; j < styles.length; j++) {
+                FontInfo.Style style = styles[j];
+                if (style.getTtc() != null) {
+                    fonts[j] = new Font(style.getTtc(), index[i], style.getWeight(), style.isItalic());
+                } else {
+                    String[] ttf = style.getTtf();
+                    for (int k : index) {
+                        fonts[j] = new Font(ttf[k], 0, style.getWeight(), style.isItalic());
+                    }
+                }
+            }
+
+            families[i] = new FontFamily(language[i], font.getVariant(), fonts);
+        }
+
+        return families;
+    }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -128,6 +168,11 @@ public class FontProviderService extends Service {
                 return (int) file.length();
             }
             return 0;
+        }
+
+        @Override
+        public FontFamily[] getFontFamily(String name, int[] weight) throws RemoteException {
+            return FontProviderService.getFontFamily(name, weight);
         }
     }
 }

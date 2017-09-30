@@ -1,4 +1,4 @@
-package moe.shizuku.fontprovider.api.compat;
+package moe.shizuku.fontprovider.compat;
 
 import java.nio.ByteBuffer;
 

@@ -1,4 +1,4 @@
-package moe.shizuku.fontprovider.api.compat;
+package moe.shizuku.fontprovider.compat;
 
 import android.annotation.SuppressLint;
 import android.content.res.AssetManager;

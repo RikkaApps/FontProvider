@@ -13,8 +13,6 @@ import android.widget.Toast;
 
 import java.util.Locale;
 
-import moe.shizuku.fontprovider.api.TypefaceReplacer;
-
 public class PreviewActivity extends Activity {
 
     private static boolean init;
@@ -23,21 +21,24 @@ public class PreviewActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         if (!init) {
-            // init only need be called once
-            TypefaceReplacer.init(this,
-                    TypefaceReplacer.NOTO_SANS_CJK_THIN,
-                    TypefaceReplacer.NOTO_SANS_CJK_LIGHT,
-                    TypefaceReplacer.NOTO_SANS_CJK_REGULAR,
-                    TypefaceReplacer.NOTO_SANS_CJK_MEDIUM,
-                    //TypefaceReplacer.NOTO_SANS_CJK_BOLD,
-                    TypefaceReplacer.NOTO_SANS_CJK_BLACK,
-                    TypefaceReplacer.NOTO_SERIF_CJK_THIN,
-                    TypefaceReplacer.NOTO_SERIF_CJK_LIGHT,
-                    TypefaceReplacer.NOTO_SERIF_CJK_REGULAR,
-                    TypefaceReplacer.NOTO_SERIF_CJK_MEDIUM,
-                    //TypefaceReplacer.NOTO_SERIF_CJK_BOLD,
-                    TypefaceReplacer.NOTO_SERIF_CJK_BLACK
-            );
+            FontProviderClient.create(this, new FontProviderClient.ServiceCallback() {
+                @Override
+                public void onServiceConnected(FontProviderClient client) {
+                    client.replace("sans-serif-thin",   FontRequests.NOTO_SANS_CJK_THIN);
+                    client.replace("sans-serif-light",  FontRequests.NOTO_SANS_CJK_LIGHT);
+                    client.replace("sans-serif",        FontRequests.NOTO_SANS_CJK_REGULAR);
+                    client.replace("sans-serif-medium", FontRequests.NOTO_SANS_CJK_MEDIUM);
+                    client.replace("sans-serif-black",  FontRequests.NOTO_SANS_CJK_BLACK);
+
+                    client.replace("serif-thin",        FontRequests.NOTO_SERIF_CJK_THIN);
+                    client.replace("serif-light",       FontRequests.NOTO_SERIF_CJK_LIGHT);
+                    client.replace("serif",             FontRequests.NOTO_SERIF_CJK_REGULAR);
+                    client.replace("serif-medium",      FontRequests.NOTO_SERIF_CJK_MEDIUM);
+                    client.replace("serif-black",       FontRequests.NOTO_SERIF_CJK_BLACK);
+
+                    client.unbindService();
+                }
+            });
 
             init = true;
         }
