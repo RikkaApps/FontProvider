@@ -97,7 +97,6 @@ public class FontProviderClient {
         return replace(name, FontRequests.create(resolveWeight(name), defaultFont, fontName));
     }
 
-
     public Typeface replace(String name, FontRequests fontRequests) {
         Typeface typeface = request(fontRequests);
         if (typeface != null

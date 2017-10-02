@@ -3,21 +3,27 @@
   "language": [ null ],
   "index": [ 0 ],
   "url_prefix": "https://github.com/googlei18n/noto-fonts/raw/master/hinted/",
+  "size": "1.43 MB",
+  "preview_text": [ "The quick brown fox jumps over the lazy dog" ],
   "style": [
     {
+      "name": "Regular 400",
       "weight": 400,
       "ttf": [ "NotoSerif-Regular.ttf" ]
     },
     {
+      "name": "Regular Italic 400",
       "weight": 400,
       "italic": true,
       "ttf": [ "NotoSerif-Italic.ttf" ]
     },
     {
+      "name": "Bold 700",
       "weight": 700,
       "ttf": [ "NotoSerif-Bold.ttf" ]
     },
     {
+      "name": "Bold Italic 700",
       "weight": 700,
       "italic": true,
       "ttf": [ "NotoSerif-BoldItalic.ttf" ]

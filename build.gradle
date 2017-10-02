@@ -21,6 +21,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        mavenLocal()
     }
 }
 
@@ -34,5 +35,5 @@ ext {
     targetSdkVersion = 26
     buildToolsVersion = "26.0.1"
     versionCode = 1
-    versionName = '1.1.1'
+    versionName = '1.1.2'
 }

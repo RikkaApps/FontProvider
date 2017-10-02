@@ -7,12 +7,13 @@ import android.support.annotation.RawRes;
 
 import com.google.gson.Gson;
 
+import java.io.File;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import moe.shizuku.fontprovider.utils.ContextUtils;
 
@@ -30,84 +31,64 @@ public class FontManager {
             R.raw.noto_serif_cjk,
     };
 
-    private static final Map<String, FontInfo> FONTS = new HashMap<>();
+    private static final Map<String, FontInfo> FONTS_MAP = new HashMap<>();
+    private static final List<FontInfo> FONTS = new ArrayList<>();
 
     public static void init(Context context) {
-        if (FONTS.size() > 0) {
+        if (FONTS_MAP.size() > 0) {
             return;
         }
 
         for (int res : FONTS_RES) {
             FontInfo font = new Gson().fromJson(new InputStreamReader(context.getResources().openRawResource(res)), FontInfo.class);
-            FONTS.put(font.getName(), font);
+            FONTS_MAP.put(font.getName(), font);
+            FONTS.add(font);
         }
+    }
+
+    public static List<FontInfo> getFonts() {
+        return FONTS;
     }
 
     public static FontInfo getFont(String name) {
-        return FONTS.get(name);
+        return FONTS_MAP.get(name);
     }
 
-    private static final Map<String, String> sFonts2;
-
-    static {
-        sFonts2 = new HashMap<>();
-
-        sFonts2.put("NotoSansCJK-Thin.ttc",          "https://github.com/googlei18n/noto-cjk/raw/master/NotoSansCJK-Thin.ttc");
-        sFonts2.put("NotoSansCJK-Light.ttc",         "https://github.com/googlei18n/noto-cjk/raw/master/NotoSansCJK-Light.ttc");
-        sFonts2.put("NotoSansCJK-Regular.ttc",       "https://github.com/googlei18n/noto-cjk/raw/master/NotoSansCJK-Regular.ttc");
-        sFonts2.put("NotoSansCJK-Medium.ttc",        "https://github.com/googlei18n/noto-cjk/raw/master/NotoSansCJK-Medium.ttc");
-        sFonts2.put("NotoSansCJK-Bold.ttc",          "https://github.com/googlei18n/noto-cjk/raw/master/NotoSansCJK-Bold.ttc");
-        sFonts2.put("NotoSansCJK-Black.ttc",         "https://github.com/googlei18n/noto-cjk/raw/master/NotoSansCJK-Black.ttc");
-
-        sFonts2.put("NotoSerif-Regular.ttf",         "https://github.com/googlei18n/noto-fonts/raw/master/hinted/NotoSerif-Regular.ttf");
-        sFonts2.put("NotoSerif-Italic.ttf",          "https://github.com/googlei18n/noto-fonts/raw/master/hinted/NotoSerif-Italic.ttf");
-        sFonts2.put("NotoSerif-Bold.ttf",            "https://github.com/googlei18n/noto-fonts/raw/master/hinted/NotoSerif-Bold.ttf");
-        sFonts2.put("NotoSerif-BoldItalic.ttf",      "https://github.com/googlei18n/noto-fonts/raw/master/hinted/NotoSerif-BoldItalic.ttf");
-
-        sFonts2.put("NotoSerifCJK-ExtraLight.ttc",   "https://github.com/googlei18n/noto-cjk/raw/master/NotoSerifCJK-ExtraLight.ttc");
-        sFonts2.put("NotoSerifCJK-Light.ttc",        "https://github.com/googlei18n/noto-cjk/raw/master/NotoSerifCJK-Light.ttc");
-        sFonts2.put("NotoSerifCJK-Regular.ttc",      "https://github.com/googlei18n/noto-cjk/raw/master/NotoSerifCJK-Regular.ttc");
-        sFonts2.put("NotoSerifCJK-Medium.ttc",       "https://github.com/googlei18n/noto-cjk/raw/master/NotoSerifCJK-Medium.ttc");
-        sFonts2.put("NotoSerifCJK-Bold.ttc",         "https://github.com/googlei18n/noto-cjk/raw/master/NotoSerifCJK-Bold.ttc");
-        sFonts2.put("NotoSerifCJK-Black.ttc",        "https://github.com/googlei18n/noto-cjk/raw/master/NotoSerifCJK-Black.ttc");
-    }
-
-    public static String getUrl(String filename) {
-        return sFonts2.get(filename);
-    }
-
-    public static Set<String> getFilenameSet() {
-        return sFonts2.keySet();
-    }
-
-    public static List<String> getMissingFiles(Context context) {
-        List<String> filenames = new ArrayList<>();
-
-        for (String filename : getFilenameSet()) {
-            if (!ContextUtils.getFile(context, filename).exists()) {
-                filenames.add(filename);
+    public static List<String> getFiles(FontInfo font, Context context, boolean excludeExisted) {
+        List<String> files = new ArrayList<>();
+        for (FontInfo.Style style : font.getStyle()) {
+            if (style.getTtc() != null) {
+                files.add(style.getTtc());
+            } else {
+                files.addAll(Arrays.asList(style.getTtf()));
             }
         }
-        return filenames;
+
+        if (excludeExisted) {
+            for (String f : new ArrayList<>(files)) {
+                if (ContextUtils.getFile(context, f).exists()) {
+                    files.remove(f);
+                }
+            }
+        }
+        return files;
     }
 
-    public static List<Long> downloadAll(Context context) {
+    public static List<Long> download(FontInfo font, List<String> files, Context context) {
         List<Long> ids = new ArrayList<>();
-        for (String file : getFilenameSet()) {
-            if (!ContextUtils.getFile(context, file).exists()) {
-                ids.add(download(context, getUrl(file), file));
-            }
+
+        DownloadManager downloadManager = context.getSystemService(DownloadManager.class);
+
+        for (String f : files) {
+            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(font.getUrlPrefix() + f))
+                    .setDestinationInExternalFilesDir(context, null, f)
+                    .setVisibleInDownloadsUi(false)
+                    .setAllowedOverMetered(false)
+                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
+            ids.add(downloadManager.enqueue(request));
         }
+
         return ids;
     }
 
-    public static long download(Context context, String uri, String filename) {
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(uri))
-                .setDestinationInExternalFilesDir(context, null, filename)
-                .setVisibleInDownloadsUi(false)
-                .setAllowedOverMetered(false)
-                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
-        DownloadManager downloadManager = context.getSystemService(DownloadManager.class);
-        return downloadManager.enqueue(request);
-    }
 }

@@ -8,6 +8,7 @@
     <permission android:name="moe.shizuku.fontprovider.BIND" android:protectionLevel="normal"/>
 
     <application
+        android:name=".FontProviderApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher_fontprovider"
         android:roundIcon="@mipmap/ic_launcher_fontprovider_round"
@@ -16,13 +17,14 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".PreviewActivity">
+            android:name=".FontManageActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".FontPreviewActivity"/>
         <service
             android:name=".FontProviderService"
             android:enabled="true"
