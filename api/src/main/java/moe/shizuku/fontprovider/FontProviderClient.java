@@ -6,6 +6,7 @@ import android.content.ServiceConnection;
 import android.graphics.Typeface;
 import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.FileInputStream;
@@ -31,11 +32,11 @@ public class FontProviderClient {
     private static final String ACTION = "moe.shizuku.fontprovider.action.BIND";
     private static final String PACKAGE = "moe.shizuku.fontprovider";
 
-    public interface ServiceCallback {
+    public interface Callback {
         void onServiceConnected(FontProviderClient client);
     }
 
-    public static void create(Context context, ServiceCallback callback) {
+    public static void create(Context context, Callback callback) {
         context = context.getApplicationContext();
 
         Intent intent = new Intent(ACTION)
@@ -52,23 +53,50 @@ public class FontProviderClient {
 
     private static Map<String, ByteBuffer> sBufferCache = new HashMap<>();
 
-    private Context mContext;
     private IFontProvider mFontProvider;
-    private ServiceConnection mServiceConnection;
 
-    public FontProviderClient(Context context, IFontProvider fontProvider, ServiceConnection serviceConnection) {
-        mContext = context;
+    public FontProviderClient(IFontProvider fontProvider) {
         mFontProvider = fontProvider;
-        mServiceConnection = serviceConnection;
     }
 
-    public void unbindService() {
-        try {
-            mContext.unbindService(mServiceConnection);
-        } catch (Exception e) {
-            e.printStackTrace();
+    private static int resolveWeight(String name) {
+        if (TextUtils.isEmpty(name)) {
+            return 400;
+        }
+
+        if (name.endsWith("-thin")) {
+            return 100;
+        } else if (name.endsWith("-demilight")) {
+            return 200;
+        } else if (name.endsWith("-light")) {
+            return 300;
+        } else if (name.endsWith("-medium")) {
+            return 500;
+        } else if (name.endsWith("-bold")) {
+            return 700;
+        } else if (name.endsWith("-black")) {
+            return 900;
+        } else {
+            return 400;
         }
     }
+
+    private static boolean resolveSerif(String name) {
+        if (TextUtils.isEmpty(name)) {
+            return false;
+        }
+
+        return name.startsWith("serif");
+    }
+
+    public Typeface replace(String name, String fontName) {
+        return replace(name, fontName, resolveSerif(name) ? FontRequest.NOTO_SERIF : FontRequest.DEFAULT);
+    }
+
+    public Typeface replace(String name, String fontName, FontRequest defaultFont) {
+        return replace(name, FontRequests.create(resolveWeight(name), defaultFont, fontName));
+    }
+
 
     public Typeface replace(String name, FontRequests fontRequests) {
         Typeface typeface = request(fontRequests);

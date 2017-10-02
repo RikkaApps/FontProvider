@@ -32,27 +32,7 @@ public class FontRequest {
         return fontProvider.getFontFamily(name, weight);
     }
 
-    /*private static int resolveWeight(String name) {
-        if (TextUtils.isEmpty(name)) {
-            return 400;
-        }
-
-        if (name.endsWith("-thin")) {
-            return 100;
-        } else if (name.endsWith("-demilight")) {
-            return 200;
-        } else if (name.endsWith("-light")) {
-            return 300;
-        } else if (name.endsWith("-medium")) {
-            return 500;
-        } else if (name.endsWith("-bold")) {
-            return 700;
-        } else if (name.endsWith("-black")) {
-            return 900;
-        } else {
-            return 400;
-        }
-    }*/
+    /**/
 
     @Override
     public String toString() {

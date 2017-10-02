@@ -13,9 +13,9 @@ import android.os.IBinder;
 class FontProviderServiceConnection implements ServiceConnection {
 
     private Context mContext;
-    private FontProviderClient.ServiceCallback mCallback;
+    private FontProviderClient.Callback mCallback;
 
-    FontProviderServiceConnection(Context context, FontProviderClient.ServiceCallback callback) {
+    FontProviderServiceConnection(Context context, FontProviderClient.Callback callback) {
         mContext = context;
         mCallback = callback;
     }
@@ -24,7 +24,8 @@ class FontProviderServiceConnection implements ServiceConnection {
     public void onServiceConnected(ComponentName componentName, IBinder binder) {
         IFontProvider fontProvider = IFontProvider.Stub.asInterface(binder);
 
-        mCallback.onServiceConnected(new FontProviderClient(mContext, fontProvider, this));
+        mCallback.onServiceConnected(new FontProviderClient(fontProvider));
+        mContext.unbindService(this);
     }
 
     @Override

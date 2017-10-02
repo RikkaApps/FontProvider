@@ -21,22 +21,20 @@ public class PreviewActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         if (!init) {
-            FontProviderClient.create(this, new FontProviderClient.ServiceCallback() {
+            FontProviderClient.create(this, new FontProviderClient.Callback() {
                 @Override
                 public void onServiceConnected(FontProviderClient client) {
-                    client.replace("sans-serif-thin",   FontRequests.NOTO_SANS_CJK_THIN);
-                    client.replace("sans-serif-light",  FontRequests.NOTO_SANS_CJK_LIGHT);
-                    client.replace("sans-serif",        FontRequests.NOTO_SANS_CJK_REGULAR);
-                    client.replace("sans-serif-medium", FontRequests.NOTO_SANS_CJK_MEDIUM);
-                    client.replace("sans-serif-black",  FontRequests.NOTO_SANS_CJK_BLACK);
+                    client.replace("sans-serif-thin",   "Noto Sans CJK");
+                    client.replace("sans-serif-light",  "Noto Sans CJK");
+                    client.replace("sans-serif",        "Noto Sans CJK");
+                    client.replace("sans-serif-medium", "Noto Sans CJK");
+                    client.replace("sans-serif-black",  "Noto Sans CJK");
 
-                    client.replace("serif-thin",        FontRequests.NOTO_SERIF_CJK_THIN);
-                    client.replace("serif-light",       FontRequests.NOTO_SERIF_CJK_LIGHT);
-                    client.replace("serif",             FontRequests.NOTO_SERIF_CJK_REGULAR);
-                    client.replace("serif-medium",      FontRequests.NOTO_SERIF_CJK_MEDIUM);
-                    client.replace("serif-black",       FontRequests.NOTO_SERIF_CJK_BLACK);
-
-                    client.unbindService();
+                    client.replace("serif-thin",        "Noto Serif CJK");
+                    client.replace("serif-light",       "Noto Serif CJK");
+                    client.replace("serif",             "Noto Serif CJK");
+                    client.replace("serif-medium",      "Noto Serif CJK");
+                    client.replace("serif-black",       "Noto Serif CJK");
                 }
             });
 
