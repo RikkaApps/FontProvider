@@ -9,10 +9,10 @@ import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.util.LruCache;
 
 import java.io.File;
 import java.io.FileDescriptor;
-import java.util.HashMap;
 import java.util.Map;
 
 import moe.shizuku.fontprovider.font.Font;
@@ -31,21 +31,32 @@ public class FontProviderService extends Service {
 
     private IFontProviderBinder mBinder;
 
-    private static Map<String, MemoryFile> sCache;
+    private static final LruCache<String, MemoryFile> sCache;
     private static final Map<String, Integer> sFileSize;
 
+    private static final int MAX_CACHE = 1024 * 1024 * 100;
+
     static {
-        sCache = new HashMap<>();
+        sCache = new LruCache<String, MemoryFile>(MAX_CACHE) {
+
+            @Override
+            protected void entryRemoved(boolean evicted, String key, MemoryFile oldValue, MemoryFile newValue) {
+                if (evicted) {
+                    oldValue.close();
+                }
+            }
+
+            @Override
+            protected int sizeOf(String key, MemoryFile value) {
+                return value.length();
+            }
+        };
 
         sFileSize = BuildConfig.BUILT_IN_FONTS_SIZE;
     }
 
     public static void closeAll() {
-        for (Map.Entry<String, MemoryFile> entry: sCache.entrySet()) {
-            entry.getValue().close();
-        }
-
-        sCache.clear();
+        sCache.trimToSize(0);
     }
 
     @Override
