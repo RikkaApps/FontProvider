@@ -33,9 +33,21 @@ public class FontProviderClient {
     private static final String PACKAGE = "moe.shizuku.fontprovider";
 
     public interface Callback {
-        void onServiceConnected(FontProviderClient client);
+        /**
+         * Called after ServiceConnection#onServiceConnected.
+         *
+         * @param client FontProviderClient
+         * @return true for unbindService automatically, false for keep ServiceConnection.
+         */
+        boolean onServiceConnected(FontProviderClient client);
     }
 
+    /**
+     * Create service connection.
+     *
+     * @param context Context
+     * @param callback Callback
+     */
     public static void create(Context context, Callback callback) {
         context = context.getApplicationContext();
 
@@ -54,9 +66,31 @@ public class FontProviderClient {
     private static Map<String, ByteBuffer> sBufferCache = new HashMap<>();
 
     private IFontProvider mFontProvider;
+    private ServiceConnection mServiceConnection;
 
-    public FontProviderClient(IFontProvider fontProvider) {
+    public FontProviderClient(ServiceConnection serviceConnection, IFontProvider fontProvider) {
+        mServiceConnection = serviceConnection;
         mFontProvider = fontProvider;
+    }
+
+    /**
+     * Unbind service, only need call this if false is returned in onServiceConnected
+     *
+     * @param context Context
+     */
+    public void unbindService(Context context) {
+        try {
+            context.getApplicationContext().unbindService(mServiceConnection);
+        } catch (Exception e) {
+            Log.i(TAG, "can't unbindService", e);
+        }
+    }
+
+    /**=*
+     * @return IFontProvider
+     */
+    public IFontProvider getFontProvider() {
+        return mFontProvider;
     }
 
     private static int resolveWeight(String name) {
@@ -81,7 +115,7 @@ public class FontProviderClient {
         }
     }
 
-    private static boolean resolveSerif(String name) {
+    private static boolean resolveIsSerif(String name) {
         if (TextUtils.isEmpty(name)) {
             return false;
         }
@@ -89,10 +123,25 @@ public class FontProviderClient {
         return name.startsWith("serif");
     }
 
+    /**
+     * Replace font family with specified font.
+     *
+     * @param name font family name
+     * @param fontName font name, such as "Noto Sans CJK"
+     * @return Typeface using to replace.
+     */
     public Typeface replace(String name, String fontName) {
-        return replace(name, fontName, resolveSerif(name) ? FontRequest.NOTO_SERIF : FontRequest.DEFAULT);
+        return replace(name, fontName, resolveIsSerif(name) ? FontRequest.NOTO_SERIF : FontRequest.DEFAULT);
     }
 
+    /**
+     * Replace font family with specified font.
+     *
+     * @param name font family name
+     * @param fontName font name, such as "Noto Sans CJK"
+     * @param defaultFont first font
+     * @return Typeface using to replace.
+     */
     public Typeface replace(String name, String fontName, FontRequest defaultFont) {
         return replace(name, FontRequests.create(resolveWeight(name), defaultFont, fontName));
     }

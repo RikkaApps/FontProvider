@@ -46,11 +46,15 @@ public class FontPreviewActivity extends BaseActivity {
         int localeIndex = getIntent().getIntExtra(Intents.EXTRA_LOCALE_INDEX, 0);
         Context context = null;
         if (mFontInfo.getLanguage()[0] != null) {
-            String locale = mFontInfo.getLanguage()[localeIndex];
+            Locale locale = Locale.forLanguageTag(mFontInfo.getLanguage()[localeIndex]);
 
             Configuration configuration = new Configuration(getResources().getConfiguration());
-            configuration.setLocale(Locale.forLanguageTag(locale));
+            configuration.setLocale(locale);
             context = createConfigurationContext(configuration);
+
+            if (getActionBar() != null) {
+                getActionBar().setSubtitle(locale.getDisplayName());
+            }
         }
 
         RecyclerView recyclerView = findViewById(android.R.id.list_container);
@@ -83,7 +87,6 @@ public class FontPreviewActivity extends BaseActivity {
         String[] language = mFontInfo.getLanguage();
         if (language[0] != null
                 && id >= MENU_ITEM_ID_START && id < MENU_ITEM_ID_START + language.length) {
-            //
             getIntent().putExtra(Intents.EXTRA_LOCALE_INDEX, id - MENU_ITEM_ID_START);
             recreate();
             return true;

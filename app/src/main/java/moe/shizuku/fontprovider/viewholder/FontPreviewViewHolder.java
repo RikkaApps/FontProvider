@@ -60,7 +60,7 @@ public class FontPreviewViewHolder extends BaseViewHolder<FontInfo.Style> {
         if (typeface == null) {
             FontProviderClient.create(context, new FontProviderClient.Callback() {
                 @Override
-                public void onServiceConnected(FontProviderClient client) {
+                public boolean onServiceConnected(FontProviderClient client) {
                     Typeface typeface;
 
                     if (font.getLanguage()[localeIndex] == null) {
@@ -80,6 +80,7 @@ public class FontPreviewViewHolder extends BaseViewHolder<FontInfo.Style> {
                     text.setTypeface(typeface);
 
                     font.setTypeface(typeface, getAdapterPosition());
+                    return true;
                 }
             });
         } else {

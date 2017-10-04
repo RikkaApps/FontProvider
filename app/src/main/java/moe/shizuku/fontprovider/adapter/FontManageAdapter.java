@@ -15,6 +15,13 @@ public class FontManageAdapter extends BaseRecyclerViewAdapter {
     public FontManageAdapter(List<?> items) {
         super(items);
 
+        setHasStableIds(true);
+
         putRule(FontInfo.class, FontViewHolder.CREATOR);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
     }
 }

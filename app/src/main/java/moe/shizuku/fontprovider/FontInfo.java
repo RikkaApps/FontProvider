@@ -1,13 +1,14 @@
 package moe.shizuku.fontprovider;
 
-import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by rikka on 2017/9/29.
@@ -24,7 +25,7 @@ public class FontInfo implements Parcelable {
     private final String url_prefix;
     private final Style[] style;
 
-    private final Typeface[] typefaces;
+    private static final Map<String, Typeface> sCache = new HashMap<>();
 
     public String getName() {
         return name;
@@ -82,11 +83,11 @@ public class FontInfo implements Parcelable {
     }
 
     public Typeface getTypeface(int style) {
-        return typefaces[style];
+        return sCache.get(name  + style);
     }
 
     public void setTypeface(Typeface typeface, int style) {
-        typefaces[style] = typeface;
+        sCache.put(name + style, typeface);
     }
 
     public static class Style implements Parcelable {
@@ -199,7 +200,6 @@ public class FontInfo implements Parcelable {
         this.preview_text = in.createStringArray();
         this.url_prefix = in.readString();
         this.style = in.createTypedArray(Style.CREATOR);
-        this.typefaces = new Typeface[style.length];
     }
 
     public static final Parcelable.Creator<FontInfo> CREATOR = new Parcelable.Creator<FontInfo>() {

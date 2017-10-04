@@ -1,10 +1,16 @@
 package moe.shizuku.fontprovider.viewholder;
 
+import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -43,17 +49,40 @@ public class FontViewHolder extends BaseViewHolder<FontInfo> {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                v.setEnabled(false);
+
                 List<String> files = FontManager.getFiles(getData(), v.getContext(), true);
-                FontManager.download(getData(), files, v.getContext());
+                final List<Long> ids = FontManager.download(getData(), files, v.getContext());
+
+                v.getContext().registerReceiver(new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+                        if (id != -1) {
+                            ids.remove(id);
+
+                            if (ids.isEmpty()) {
+                                getAdapter().notifyItemChanged(getAdapterPosition(), new Object());
+                                context.unregisterReceiver(this);
+                            }
+                        }
+                    }
+                }, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
             }
         });
 
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                v.getContext().startActivity(FontPreviewActivity.intent(v.getContext(), getData()));
+                if (!FontManager.getFiles(getData(), v.getContext(), true).isEmpty()) {
+                    Toast.makeText(v.getContext(), R.string.font_cannot_preview, Toast.LENGTH_SHORT).show();
+                } else {
+                    v.getContext().startActivity(FontPreviewActivity.intent(v.getContext(), getData()));
+                }
             }
         });
+
+        setIsRecyclable(false);
     }
 
     @Override
@@ -75,6 +104,14 @@ public class FontViewHolder extends BaseViewHolder<FontInfo> {
             summary.setText(context.getString(R.string.font_summary, font.getStyle().length, font.getLanguage().length));
         } else {
             summary.setText(context.getString(R.string.font_summary_no_language, font.getStyle().length));
+        }
+    }
+
+    @Override
+    public void onBind(@NonNull List<Object> payloads) {
+        if (FontManager.getFiles(getData(), itemView.getContext(), true).isEmpty()) {
+            button.setVisibility(View.GONE);
+            size.setVisibility(View.GONE);
         }
     }
 }

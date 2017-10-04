@@ -3,8 +3,8 @@ import java.util.function.Consumer
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    compileSdkVersion rootProject.ext.targetSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
     defaultConfig {
         applicationId "moe.shizuku.fontprovider"
         minSdkVersion rootProject.ext.minSdkVersion

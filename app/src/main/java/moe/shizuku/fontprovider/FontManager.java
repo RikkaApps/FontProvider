@@ -83,7 +83,7 @@ public class FontManager {
             DownloadManager.Request request = new DownloadManager.Request(Uri.parse(font.getUrlPrefix() + f))
                     .setDestinationInExternalFilesDir(context, null, f)
                     .setVisibleInDownloadsUi(false)
-                    .setAllowedOverMetered(false)
+                    .setAllowedOverMetered(false || BuildConfig.DEBUG)
                     .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
             ids.add(downloadManager.enqueue(request));
         }
