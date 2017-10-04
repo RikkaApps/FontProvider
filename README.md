@@ -19,17 +19,17 @@
 2. 在合适的地方（如 `Application.onCreate`）调用 `FontProviderClient.create(context, callback)`，
 并在 callback 中请求或直接替换想要的字体。
 
-例子：
-```
-FontProviderClient.create(this, new FontProviderClient.Callback() {
-    @Override
-    public boolean onServiceConnected(FontProviderClient client) {
-        client.replace("sans-serif", "Noto Sans CJK");
-        client.replace("sans-serif-medium", "Noto Sans CJK");
-        return true;
-    }
-});
-```
+   例子：
+   ```
+   FontProviderClient.create(this, new FontProviderClient.Callback() {
+       @Override
+       public boolean onServiceConnected(FontProviderClient client) {
+          client.replace("sans-serif", "Noto Sans CJK");
+          client.replace("sans-serif-medium", "Noto Sans CJK");
+          return true;
+       }
+   });
+   ```
 
 3. 在需要的地方只需按原本的方式使用即可，比如在 layout xml 中 `android:fontFamily="sans-serif-medium"` 
 或是直接创建 `Typeface` 实例 `Typeface.create("sans-serif-medium", )`。
