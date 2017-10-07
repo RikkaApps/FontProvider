@@ -4,12 +4,10 @@ import android.annotation.SuppressLint;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 
-import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
-import java.util.List;
 
 /**
  * Created by rikka on 2017/9/27.

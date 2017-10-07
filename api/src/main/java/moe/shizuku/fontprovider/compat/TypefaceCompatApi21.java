@@ -15,7 +15,7 @@ import java.lang.reflect.Method;
  */
 
 @SuppressLint("PrivateApi")
-@RequiresApi(api = Build.VERSION_CODES.N)
+@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class TypefaceCompatApi21 extends TypefaceCompat {
 
     private static boolean available = true;
