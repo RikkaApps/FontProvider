@@ -34,6 +34,8 @@
 3. 在需要的地方只需按原本的方式使用即可，比如在 layout xml 中 `android:fontFamily="sans-serif-medium"` 
 或是直接创建 `Typeface` 实例 `Typeface.create("sans-serif-medium", )`。
 
+   **注意：由于绑定服务需要之间，在替换之前就已创建的 Typeface 将不会被替换**
+
 ### FAQ
 
 ##### 用户如果没有安装会发生什么？
