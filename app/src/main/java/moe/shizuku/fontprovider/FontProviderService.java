@@ -21,6 +21,8 @@ import moe.shizuku.fontprovider.utils.ContextUtils;
 import moe.shizuku.fontprovider.utils.MemoryFileUtils;
 import moe.shizuku.fontprovider.utils.ParcelFileDescriptorUtils;
 
+import static moe.shizuku.fontprovider.BuildConfig.BUILT_IN_FONTS_SIZE;
+
 /**
  * Created by rikka on 2017/9/27.
  */
@@ -52,7 +54,7 @@ public class FontProviderService extends Service {
             }
         };
 
-        sFileSize = BuildConfig.BUILT_IN_FONTS_SIZE;
+        sFileSize = BUILT_IN_FONTS_SIZE;
     }
 
     public static void closeAll() {
@@ -79,7 +81,7 @@ public class FontProviderService extends Service {
 
         Log.i(TAG, "loading file " + fileName);
 
-        if (sFileSize.containsKey(fileName)) {
+        if (BUILT_IN_FONTS_SIZE.containsKey(fileName)) {
             mf = MemoryFileUtils.fromAsset(getAssets(), fileName, sFileSize.get(fileName));
         }
 
@@ -184,6 +186,15 @@ public class FontProviderService extends Service {
         @Override
         public FontFamily[] getFontFamily(String name, int[] weight) throws RemoteException {
             return FontProviderService.getFontFamily(name, weight);
+        }
+
+        @Override
+        public String getFontFilePath(String filename) throws RemoteException {
+            File file = ContextUtils.getFile(mContext, filename);
+            if (file.exists()) {
+                return file.getAbsolutePath();
+            }
+            return null;
         }
     }
 }

@@ -17,7 +17,7 @@ import java.util.List;
 
 @SuppressLint("PrivateApi")
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class FontFamilyImpl24 implements FontFamilyImpl {
+public class FontFamilyImpl21 implements FontFamilyImpl {
 
     private static boolean available = true;
 
@@ -30,8 +30,7 @@ public class FontFamilyImpl24 implements FontFamilyImpl {
                     String.class, String.class);
 
             addFontWeightStyleMethod = FontFamilyCompat.getFontFamilyClass().getDeclaredMethod("addFontWeightStyle",
-                    ByteBuffer.class, Integer.TYPE, List.class, Integer.TYPE,
-                    Boolean.TYPE);
+                    String.class, Integer.TYPE, Boolean.TYPE);
         } catch (NullPointerException | NoSuchMethodException e) {
             e.printStackTrace();
 
@@ -64,18 +63,18 @@ public class FontFamilyImpl24 implements FontFamilyImpl {
 
     @Override
     public boolean addFont(Object fontFamily, ByteBuffer font, int ttcIndex, int weight, int italic) {
-        try {
-            return (Boolean) addFontWeightStyleMethod.invoke(fontFamily,
-                    font, ttcIndex, null, weight, italic == 1);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-            return false;
-        }
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean addFont(Object fontFamily, String path, int weight, int italic) {
-        throw new UnsupportedOperationException();
+        try {
+            return (Boolean) addFontWeightStyleMethod.invoke(fontFamily,
+                    path, weight, italic == 1);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override

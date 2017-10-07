@@ -42,29 +42,35 @@ public class MemoryFileUtils {
     }
 
     public static MemoryFile fromAsset(AssetManager am, String filename, int length) {
+        MemoryFile mf = null;
         try {
-            MemoryFile mf = new MemoryFile(filename, length);
+            mf = new MemoryFile(filename, length);
 
             InputStream is = am.open(filename);
             OutputStream os = mf.getOutputStream();
             IOUtils.copy(is, os);
             return mf;
         } catch (IOException e) {
-            e.printStackTrace();
+            if (mf != null) {
+                mf.close();
+            }
             return null;
         }
     }
 
     public static MemoryFile fromFile(File file) {
+        MemoryFile mf = null;
         try {
-            MemoryFile mf = new MemoryFile(file.getName(), (int) file.length());
+            mf = new MemoryFile(file.getName(), (int) file.length());
 
             InputStream is = new FileInputStream(file);
             OutputStream os = mf.getOutputStream();
             IOUtils.copy(is, os);
             return mf;
         } catch (IOException e) {
-            e.printStackTrace();
+            if (mf != null) {
+                mf.close();
+            }
             return null;
         }
     }

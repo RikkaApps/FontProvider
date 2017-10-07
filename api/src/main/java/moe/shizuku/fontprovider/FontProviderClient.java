@@ -4,11 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
+import android.system.Os;
+import android.system.OsConstants;
 import android.text.TextUtils;
 import android.util.Log;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
@@ -124,7 +128,7 @@ public class FontProviderClient {
     }
 
     /**
-     * Replace font family with specified font.
+     * Replace font family with specified font, weight will be resolved by family name.
      *
      * @param name font family name
      * @param fontName font name, such as "Noto Sans CJK"
@@ -199,38 +203,41 @@ public class FontProviderClient {
             }
 
             for (Font font : fontFamily.fonts) {
-                ByteBuffer byteBuffer = font.buffer;
-                if (byteBuffer == null) {
-                    byteBuffer = sBufferCache.get(font.filename);
-                }
+                try {
+                    if (Build.VERSION.SDK_INT >= 24) {
 
-                if (byteBuffer == null) {
-                    if (font.filename == null) {
-                        return null;
-                    }
+                        ByteBuffer byteBuffer = font.buffer != null ?
+                                font.buffer : sBufferCache.get(font.filename);
 
-                    try {
-                        ParcelFileDescriptor pfd = mFontProvider.getFontFileDescriptor(font.filename);
-                        if (pfd == null) {
-                            Log.w(TAG, "ParcelFileDescriptor is null");
+                        if (byteBuffer == null) {
+                            ParcelFileDescriptor pfd = mFontProvider.getFontFileDescriptor(font.filename);
+                            if (pfd == null) {
+                                Log.e(TAG, "ParcelFileDescriptor is null");
+                                return null;
+                            }
+                            int size = mFontProvider.getFontFileSize(font.filename);
+
+                            FileInputStream is = new FileInputStream(pfd.getFileDescriptor());
+                            FileChannel fileChannel = is.getChannel();
+                            byteBuffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, size);
+                        }
+
+                        if (!fontFamilyCompat.addFont(byteBuffer, font.ttcIndex, font.weight, font.italic ? 1 : 0)) {
                             return null;
                         }
-                        int size = mFontProvider.getFontFileSize(font.filename);
+                    } else {
+                        String path = mFontProvider.getFontFilePath(font.filename);
+                        if (path == null) {
+                            Log.e(TAG, "Font not downloaded?");
+                            return null;
+                        }
 
-                        FileInputStream is = new FileInputStream(pfd.getFileDescriptor());
-                        FileChannel fileChannel = is.getChannel();
-                        byteBuffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, size);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        return null;
+                        if (!fontFamilyCompat.addFont(path, font.weight, font.italic ? 1 : 0)) {
+                            return null;
+                        }
                     }
-                }
-
-                if (byteBuffer == null) {
-                    return null;
-                }
-
-                if (!fontFamilyCompat.addFont(byteBuffer, font.ttcIndex, font.weight, font.italic ? 1 : 0)) {
+                } catch (Exception e) {
+                    e.printStackTrace();
                     return null;
                 }
             }

@@ -77,8 +77,9 @@ public class FontManager {
     public static List<Long> download(FontInfo font, List<String> files, Context context) {
         List<Long> ids = new ArrayList<>();
 
-        DownloadManager downloadManager = context.getSystemService(DownloadManager.class);
+        DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
 
+        // TODO already downloading?
         for (String f : files) {
             DownloadManager.Request request = new DownloadManager.Request(Uri.parse(font.getUrlPrefix() + f))
                     .setDestinationInExternalFilesDir(context, null, f)

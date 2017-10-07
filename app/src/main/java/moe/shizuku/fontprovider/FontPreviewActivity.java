@@ -1,6 +1,7 @@
 package moe.shizuku.fontprovider;
 
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -51,6 +52,7 @@ public class FontPreviewActivity extends BaseActivity {
             Configuration configuration = new Configuration(getResources().getConfiguration());
             configuration.setLocale(locale);
             context = createConfigurationContext(configuration);
+            context.setTheme(mThemeId);
 
             if (getActionBar() != null) {
                 getActionBar().setSubtitle(locale.getDisplayName());
@@ -92,5 +94,13 @@ public class FontPreviewActivity extends BaseActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private int mThemeId;
+
+    @Override
+    public void setTheme(int resid) {
+        super.setTheme(resid);
+        mThemeId = resid;
     }
 }

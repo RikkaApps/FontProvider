@@ -14,62 +14,32 @@
     {
       "name": "Thin 250",
       "weight": 100,
-      "ttf": [
-        "NotoSansCJKsc-Thin.otf",
-        "NotoSansCJKtc-Thin.otf",
-        "NotoSansCJKjp-Thin.otf",
-        "NotoSansCJKkr-Thin.otf"
-      ]
+      "ttc": "NotoSansCJK-Thin.ttc"
     },
     {
       "name": "Light 300",
       "weight": 300,
-      "ttf": [
-        "NotoSansCJKsc-Light.otf",
-        "NotoSansCJKtc-Light.otf",
-        "NotoSansCJKjp-Light.otf",
-        "NotoSansCJKkr-Light.otf"
-      ]
+      "ttc": "NotoSansCJK-Light.ttc"
     },
     {
       "name": "Regular 400",
       "weight": 400,
-      "ttf": [
-        "NotoSansCJKsc-Regular.otf",
-        "NotoSansCJKtc-Regular.otf",
-        "NotoSansCJKjp-Regular.otf",
-        "NotoSansCJKkr-Regular.otf"
-      ]
+      "ttc": "NotoSansCJK-Regular.ttc"
     },
     {
       "name": "Medium 500",
       "weight": 500,
-      "ttf": [
-        "NotoSansCJKsc-Medium.otf",
-        "NotoSansCJKtc-Medium.otf",
-        "NotoSansCJKjp-Medium.otf",
-        "NotoSansCJKkr-Medium.otf"
-      ]
+      "ttc": "NotoSansCJK-Medium.ttc"
     },
     {
       "name": "Bold 700",
       "weight": 700,
-      "ttf": [
-        "NotoSansCJKsc-Bold.otf",
-        "NotoSansCJKtc-Bold.otf",
-        "NotoSansCJKjp-Bold.otf",
-        "NotoSansCJKkr-Bold.otf"
-      ]
+      "ttc": "NotoSansCJK-Bold.ttc"
     },
     {
       "name": "Black 900",
       "weight": 900,
-      "ttf": [
-        "NotoSansCJKsc-Black.otf",
-        "NotoSansCJKtc-Black.otf",
-        "NotoSansCJKjp-Black.otf",
-        "NotoSansCJKkr-Black.otf"
-      ]
+      "ttc": "NotoSansCJK-Black.ttc"
     }
   ]
 }

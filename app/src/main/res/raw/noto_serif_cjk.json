@@ -3,7 +3,7 @@
   "language": [ "zh-Hans", "zh-Hant", "ja", "ko" ],
   "index": [ 2, 3, 0, 1 ],
   "url_prefix": "https://github.com/googlei18n/noto-cjk/raw/master/",
-  "size": "141.04 MB",
+  "size": "120.17 MB",
   "preview_text": [
     "美しい書体デザインのフォントを使用してテキストの内容をより効果的に伝える。",
     "동해 물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라 만세.",
@@ -14,32 +14,62 @@
     {
       "name": "ExtraLight 200",
       "weight": 100,
-      "ttc": "NotoSerifCJK-ExtraLight.ttc"
+      "ttf": [
+        "NotoSerifCJKsc-ExtraLight.otf",
+        "NotoSerifCJKtc-ExtraLight.otf",
+        "NotoSerifCJKjp-ExtraLight.otf",
+        "NotoSerifCJKkr-ExtraLight.otf"
+      ]
     },
     {
-      "name": "ExtraLight 300",
+      "name": "Light 300",
       "weight": 300,
-      "ttc": "NotoSerifCJK-Light.ttc"
+      "ttf": [
+        "NotoSerifCJKsc-Light.otf",
+        "NotoSerifCJKtc-Light.otf",
+        "NotoSerifCJKjp-Light.otf",
+        "NotoSerifCJKkr-Light.otf"
+      ]
     },
     {
       "name": "Regular 400",
       "weight": 400,
-      "ttc": "NotoSerifCJK-Regular.ttc"
+      "ttf": [
+        "NotoSerifCJKsc-Regular.otf",
+        "NotoSerifCJKtc-Regular.otf",
+        "NotoSerifCJKjp-Regular.otf",
+        "NotoSerifCJKkr-Regular.otf"
+      ]
     },
     {
       "name": "Medium 500",
       "weight": 500,
-      "ttc": "NotoSerifCJK-Medium.ttc"
+      "ttf": [
+        "NotoSerifCJKsc-Medium.otf",
+        "NotoSerifCJKtc-Medium.otf",
+        "NotoSerifCJKjp-Medium.otf",
+        "NotoSerifCJKkr-Medium.otf"
+      ]
     },
     {
       "name": "Bold 700",
       "weight": 700,
-      "ttc": "NotoSerifCJK-Bold.ttc"
+      "ttf": [
+        "NotoSerifCJKsc-Bold.otf",
+        "NotoSerifCJKtc-Bold.otf",
+        "NotoSerifCJKjp-Bold.otf",
+        "NotoSerifCJKkr-Bold.otf"
+      ]
     },
     {
       "name": "Black 900",
       "weight": 900,
-      "ttc": "NotoSerifCJK-Black.ttc"
+      "ttf": [
+        "NotoSerifCJKsc-Black.otf",
+        "NotoSerifCJKtc-Black.otf",
+        "NotoSerifCJKjp-Black.otf",
+        "NotoSerifCJKkr-Black.otf"
+      ]
     }
   ]
 }

@@ -2,7 +2,9 @@ package moe.shizuku.fontprovider.compat;
 
 import android.annotation.SuppressLint;
 import android.os.Build;
+import android.os.ParcelFileDescriptor;
 
+import java.io.File;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 
@@ -43,7 +45,7 @@ public class FontFamilyCompat {
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             sImpl = new FontFamilyImpl24();
         } else {
-            throw new IllegalStateException("unsupported system version");
+            sImpl = new FontFamilyImpl21();
         }
         return sImpl;
     }
@@ -85,6 +87,18 @@ public class FontFamilyCompat {
      */
     public boolean addFont(ByteBuffer font, int ttcIndex, int weight, int italic) {
         return getImpl().addFont(getFontFamily(), font, ttcIndex, weight, italic);
+    }
+
+    /**
+     * Add font to this FontFamily.
+     *
+     * @param path font file path
+     * @param weight The weight of the font.
+     * @param italic Whether this font is italic.
+     * @return returns false if some error happens in native code.
+     */
+    public boolean addFont(String path, int weight, int italic) {
+        return getImpl().addFont(getFontFamily(), path, weight, italic);
     }
 
     /**

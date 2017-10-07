@@ -6,6 +6,7 @@ import android.graphics.fonts.FontVariationAxis;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 
+import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -69,6 +70,11 @@ public class FontFamilyImpl26 implements FontFamilyImpl {
             e.printStackTrace();
             return false;
         }
+    }
+
+    @Override
+    public boolean addFont(Object fontFamily, String path, int weight, int italic) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
