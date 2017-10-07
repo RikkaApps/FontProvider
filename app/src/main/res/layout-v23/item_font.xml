@@ -44,7 +44,8 @@
             android:id="@android:id/button1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/font_button_download"/>
+            android:text="@string/font_button_download"
+            style="@android:style/Widget.Material.Button.Colored"/>
 
         <TextView
             android:id="@android:id/text1"
