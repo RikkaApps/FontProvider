@@ -14,19 +14,25 @@
 
 1. 加入依赖，如果使用 3.0.0 之前的 gradle 插件需要将 `implementation` 替换为 `compile`
    
-   `implementation 'moe.shizuku.fontprovider:api:1.0.8' // 在 release 可以看到最新版本`
+   `implementation 'moe.shizuku.fontprovider:api:1.1.2' // 在 release 可以看到最新版本`
    
-2. 在合适的地方（如 `Application.onCreate`）调用 `TypefaceReplacer.init(Context context, )` 。
+2. 在合适的地方（如 `Application.onCreate`）调用 `FontProviderClient.create(context, callback)`，
+并在 callback 中请求或直接替换想要的字体。
+
+   例子：
+   ```
+   FontProviderClient.create(this, new FontProviderClient.Callback() {
+       @Override
+       public boolean onServiceConnected(FontProviderClient client) {
+          client.replace("sans-serif", "Noto Sans CJK");
+          client.replace("sans-serif-medium", "Noto Sans CJK");
+          return true;
+       }
+   });
+   ```
 
 3. 在需要的地方只需按原本的方式使用即可，比如在 layout xml 中 `android:fontFamily="sans-serif-medium"` 
 或是直接创建 `Typeface` 实例 `Typeface.create("sans-serif-medium", )`。
-
-### 技术细节
-
-调用 `TypefaceReplacer.init` 后将通过绑定服务向 Font Provider 应用的 `FontProviderService` 索要字体文件，
-之后将通过反射使用私有 API 创建对应的 `Typeface`，并替换 `Typeface` 中的对应缓存，因此对应用开发者几乎透明。
-
-由于绑定服务需要时间，因此在完成前已经创建的 `Typeface` 将不会被替换。
 
 ### FAQ
 
