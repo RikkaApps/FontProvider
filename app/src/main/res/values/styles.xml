@@ -2,4 +2,10 @@
     <style name="Theme.DayNight" parent="@android:style/Theme.Material.Light"/>
 
     <style name="AppTheme" parent="Theme.DayNight"/>
+
+    <style name="Animation.FadeInOut" parent="@android:style/Animation">
+        <item name="android:windowEnterAnimation">@anim/fade_in</item>
+        <item name="android:windowExitAnimation">@anim/fade_out</item>
+    </style>
+
 </resources>

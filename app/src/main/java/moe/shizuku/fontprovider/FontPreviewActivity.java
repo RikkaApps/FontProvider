@@ -90,6 +90,7 @@ public class FontPreviewActivity extends BaseActivity {
         if (language[0] != null
                 && id >= MENU_ITEM_ID_START && id < MENU_ITEM_ID_START + language.length) {
             getIntent().putExtra(Intents.EXTRA_LOCALE_INDEX, id - MENU_ITEM_ID_START);
+            getWindow().setWindowAnimations(R.style.Animation_FadeInOut);
             recreate();
             return true;
         }
