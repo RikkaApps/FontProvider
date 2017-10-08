@@ -52,6 +52,16 @@
       ]
     },
     {
+      "name": "SemiBold 600",
+      "weight": 600,
+      "ttf": [
+        "NotoSerifCJKsc-SemiBold.otf",
+        "NotoSerifCJKtc-SemiBold.otf",
+        "NotoSerifCJKjp-SemiBold.otf",
+        "NotoSerifCJKkr-SemiBold.otf"
+      ]
+    },
+    {
       "name": "Bold 700",
       "weight": 700,
       "ttf": [

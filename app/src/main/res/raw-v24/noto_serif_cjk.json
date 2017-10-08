@@ -13,11 +13,11 @@
   "style": [
     {
       "name": "ExtraLight 200",
-      "weight": 100,
+      "weight": 200,
       "ttc": "NotoSerifCJK-ExtraLight.ttc"
     },
     {
-      "name": "ExtraLight 300",
+      "name": "Light 300",
       "weight": 300,
       "ttc": "NotoSerifCJK-Light.ttc"
     },
@@ -30,6 +30,11 @@
       "name": "Medium 500",
       "weight": 500,
       "ttc": "NotoSerifCJK-Medium.ttc"
+    },
+    {
+      "name": "SemiBold 600",
+      "weight": 600,
+      "ttc": "NotoSerifCJK-SemiBold.ttc"
     },
     {
       "name": "Bold 700",

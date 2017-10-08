@@ -13,13 +13,18 @@
   "style": [
     {
       "name": "Thin 250",
-      "weight": 100,
+      "weight": 250,
       "ttc": "NotoSansCJK-Thin.ttc"
     },
     {
       "name": "Light 300",
       "weight": 300,
       "ttc": "NotoSansCJK-Light.ttc"
+    },
+    {
+      "name": "DemiLight 350",
+      "weight": 350,
+      "ttc": "NotoSansCJK-DemiLight.ttc"
     },
     {
       "name": "Regular 400",

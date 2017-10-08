@@ -65,13 +65,12 @@ public class FontPreviewViewHolder extends BaseViewHolder<FontInfo.Style> {
 
                     if (font.getLanguage()[localeIndex] == null) {
                         typeface = client.request(new FontRequests(
-                                style.getWeight(),
+                                new int[]{style.getWeight()},
                                 new FontRequest(font.getName(), style.getWeight())
                         ));
                     } else {
                         typeface = client.request(new FontRequests(
-
-                                style.getWeight(),
+                                new int[]{style.getWeight()},
                                 FontRequest.DEFAULT,
                                 new FontRequest(font.getName(), style.getWeight())
                         ));

@@ -13,7 +13,7 @@
   "style": [
     {
       "name": "Thin 250",
-      "weight": 100,
+      "weight": 250,
       "ttf": [
         "NotoSansCJKsc-Thin.otf",
         "NotoSansCJKtc-Thin.otf",
@@ -29,6 +29,16 @@
         "NotoSansCJKtc-Light.otf",
         "NotoSansCJKjp-Light.otf",
         "NotoSansCJKkr-Light.otf"
+      ]
+    },
+    {
+      "name": "DemiLight 350",
+      "weight": 350,
+      "ttf": [
+        "NotoSansCJKsc-DemiLight.otf",
+        "NotoSansCJKtc-DemiLight.otf",
+        "NotoSansCJKjp-DemiLight.otf",
+        "NotoSansCJKkr-DemiLight.otf"
       ]
     },
     {

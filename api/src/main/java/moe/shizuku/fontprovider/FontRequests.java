@@ -8,14 +8,14 @@ import java.util.Arrays;
 
 public class FontRequests {
 
-    public static FontRequests create(int weight, FontRequest defaultFont, String name) {
+    public static FontRequests create(FontRequest defaultFont, String name, int... weight) {
         return new FontRequests(weight, defaultFont, new FontRequest(name, weight));
     }
 
-    public final int weight;
+    public final int[] weight;
     public final FontRequest[] requests;
 
-    public FontRequests(int weight, FontRequest... requests) {
+    public FontRequests(int[] weight, FontRequest... requests) {
         this.weight = weight;
         this.requests = requests;
     }

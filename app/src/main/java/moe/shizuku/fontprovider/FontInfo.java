@@ -65,6 +65,30 @@ public class FontInfo implements Parcelable {
     }
 
     public Style[] getStyle(int... weight) {
+        for (int i = 0; i < weight.length; i++) {
+            boolean match = false;
+            for (Style s : style) {
+                if (weight[i] == s.getWeight()) {
+                    match = true;
+                    break;
+                }
+            }
+
+            if (!match) {
+                int bestWeight = weight[i];
+
+                int diff = Integer.MAX_VALUE;
+                for (Style s : style) {
+                    if (Math.abs(weight[i] - s.weight) < diff) {
+                        diff = Math.abs(weight[i] - s.weight);
+                        bestWeight = s.weight;
+                    }
+                }
+
+                weight[i] = bestWeight;
+            }
+        }
+
         List<Style> styles = new ArrayList<>();
         for (int w : weight) {
             for (Style s : style) {

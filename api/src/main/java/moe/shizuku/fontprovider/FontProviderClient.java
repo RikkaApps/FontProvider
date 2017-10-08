@@ -1,6 +1,5 @@
 package moe.shizuku.fontprovider;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -95,25 +94,25 @@ public class FontProviderClient {
         return mFontProvider;
     }
 
-    private static int resolveWeight(String name) {
+    private static int[] resolveWeight(String name) {
         if (TextUtils.isEmpty(name)) {
-            return 400;
+            return new int[]{400, 700};
         }
 
         if (name.endsWith("-thin")) {
-            return 100;
+            return new int[]{100};
         } else if (name.endsWith("-demilight")) {
-            return 200;
+            return new int[]{200};
         } else if (name.endsWith("-light")) {
-            return 300;
+            return new int[]{300};
         } else if (name.endsWith("-medium")) {
-            return 500;
+            return new int[]{500};
         } else if (name.endsWith("-bold")) {
-            return 700;
+            return new int[]{700};
         } else if (name.endsWith("-black")) {
-            return 900;
+            return new int[]{900};
         } else {
-            return 400;
+            return new int[]{400, 700};
         }
     }
 
@@ -145,7 +144,7 @@ public class FontProviderClient {
      * @return Typeface using to replace.
      */
     public Typeface replace(String name, String fontName, FontRequest defaultFont) {
-        return replace(name, FontRequests.create(resolveWeight(name), defaultFont, fontName));
+        return replace(name, FontRequests.create(defaultFont, fontName, resolveWeight(name)));
     }
 
     public Typeface replace(String name, FontRequests fontRequests) {
@@ -247,6 +246,6 @@ public class FontProviderClient {
             Array.set(families, i++, fontFamilyCompat.getFontFamily());
         }
 
-        return TypefaceCompat.createFromFamiliesWithDefault(families, fontRequests.weight, -1);
+        return TypefaceCompat.createFromFamiliesWithDefault(families, fontRequests.weight[0], -1);
     }
 }
