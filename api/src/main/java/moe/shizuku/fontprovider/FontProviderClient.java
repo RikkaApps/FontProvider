@@ -5,12 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
-import android.system.Os;
-import android.system.OsConstants;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -70,12 +67,10 @@ public class FontProviderClient {
 
     private static Map<String, ByteBuffer> sBufferCache = new HashMap<>();
 
-    private ContentResolver mContentResolver;
     private IFontProvider mFontProvider;
     private ServiceConnection mServiceConnection;
 
-    public FontProviderClient(Context context, ServiceConnection serviceConnection, IFontProvider fontProvider) {
-        mContentResolver = context.getContentResolver();
+    public FontProviderClient(ServiceConnection serviceConnection, IFontProvider fontProvider) {
         mServiceConnection = serviceConnection;
         mFontProvider = fontProvider;
     }
@@ -229,15 +224,13 @@ public class FontProviderClient {
                             return null;
                         }
                     } else {
-                        ParcelFileDescriptor fd = mContentResolver.openFileDescriptor(Uri.parse("content://moe.shizuku.fontprovider/" + font.filename), "r");
+                        String path = mFontProvider.getFontFilePath(font.filename);
+                        if (path == null) {
+                            Log.e(TAG, "Font not downloaded?");
+                            return null;
+                        }
 
-                        final String path = Os.readlink("/proc/self/fd/" + fd.getFd());
-                        if (OsConstants.S_ISREG(Os.stat(path).st_mode)) {
-                            if (!fontFamilyCompat.addFont(path, font.weight, font.italic ? 1 : 0)) {
-                                return null;
-                            }
-                        } else {
-                            Log.e(TAG, "can't get file");
+                        if (!fontFamilyCompat.addFont(path, font.weight, font.italic ? 1 : 0)) {
                             return null;
                         }
                     }

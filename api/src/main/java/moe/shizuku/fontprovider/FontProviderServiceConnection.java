@@ -24,7 +24,7 @@ class FontProviderServiceConnection implements ServiceConnection {
     public void onServiceConnected(ComponentName componentName, IBinder binder) {
         IFontProvider fontProvider = IFontProvider.Stub.asInterface(binder);
 
-        FontProviderClient client = new FontProviderClient(mContext, this, fontProvider);
+        FontProviderClient client = new FontProviderClient(this, fontProvider);
         if (mCallback.onServiceConnected(client)) {
             client.unbindService(mContext);
         }
