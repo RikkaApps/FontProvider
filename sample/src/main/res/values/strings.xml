@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Font Provider 测试</string>
+    <string name="h1">这是标题</string>
+    <string name="p">这是段落。这是段落。这是段落。这是段落。This is a paragraph. 这是段落。This is a paragraph. 这是段落。This is a paragraph. 这是段落。This is a paragraph.</string>
+    <string name="rikka">我能吞下 Rikka 而不伤身体。</string>
+    <string name="download_font_provider">下载 Font Provider</string>
+    <string name="test_dialog">测试 Dialog</string>
+    <string name="it_s_rikka">好耶，是 Rikka</string>
+    <string name="ok">好耶</string>
+    <string name="cancel">坏耶</string>
+    <string name="recreate_activity">重建 Activity</string>
+</resources>
