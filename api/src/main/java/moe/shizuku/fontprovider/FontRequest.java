@@ -22,7 +22,31 @@ public class FontRequest {
 
     public static final FontRequest DEFAULT = new FontRequest();
 
+    public static final FontRequest NOTO_COLOR_EMOJI = new FontRequest("Noto Color Emoji", 1);
+    public static final FontRequest NOTO_COLOR_EMOJI_NOUGAT = new FontRequest("Noto Color Emoji", 2);
     public static final FontRequest NOTO_SERIF = new FontRequest("Noto Serif", 400, 700);
+
+    public static FontRequest[] combine(FontRequest[]... arrays) {
+        int length = 0;
+        for (FontRequest[] array : arrays) {
+            if (array == null) {
+                continue;
+            }
+            length += array.length;
+        }
+
+        FontRequest[] result = new FontRequest[length];
+        length = 0;
+        for (FontRequest[] array : arrays) {
+            if (array == null) {
+                continue;
+            }
+
+            System.arraycopy(array, 0, result, length, array.length);
+            length += array.length;
+        }
+        return result;
+    }
 
     public final String name;
     public final int[] weight;
@@ -55,13 +79,15 @@ public class FontRequest {
             bundle.setClassLoader(FontFamily.CREATOR.getClass().getClassLoader());
 
             Parcelable[] parcelables = bundle.getParcelableArray("data");
-            FontFamily[] families = new FontFamily[parcelables.length];
-            for (int i = 0; i < parcelables.length; i++) {
-                families[i] = (FontFamily) parcelables[i];
+            if (parcelables != null) {
+                FontFamily[] families = new FontFamily[parcelables.length];
+                for (int i = 0; i < parcelables.length; i++) {
+                    families[i] = (FontFamily) parcelables[i];
+                }
+                return families;
             }
-            return families;
         }
-        return null;
+        return new FontFamily[0];
     }
 
     /**/

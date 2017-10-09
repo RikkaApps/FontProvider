@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.res.AssetFileDescriptor;
+import android.database.AbstractCursor;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -60,7 +61,7 @@ public class FontProvider extends ContentProvider {
         Bundle bundle = new Bundle();
         bundle.putParcelableArray("data", families);
 
-        Cursor cursor = new SimpleCursor();
+        AbstractCursor cursor = new SimpleCursor();
         cursor.setExtras(bundle);
         return cursor;
     }

@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
-import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.FileInputStream;
@@ -98,36 +97,6 @@ public class FontProviderClient {
         mUseContentProvider = false;
     }
 
-    private static int[] resolveWeight(String name) {
-        if (TextUtils.isEmpty(name)) {
-            return new int[]{400, 700};
-        }
-
-        if (name.endsWith("-thin")) {
-            return new int[]{100};
-        } else if (name.endsWith("-demilight")) {
-            return new int[]{200};
-        } else if (name.endsWith("-light")) {
-            return new int[]{300};
-        } else if (name.endsWith("-medium")) {
-            return new int[]{500};
-        } else if (name.endsWith("-bold")) {
-            return new int[]{700};
-        } else if (name.endsWith("-black")) {
-            return new int[]{900};
-        } else {
-            return new int[]{400, 700};
-        }
-    }
-
-    private static boolean resolveIsSerif(String name) {
-        if (TextUtils.isEmpty(name)) {
-            return false;
-        }
-
-        return name.startsWith("serif");
-    }
-
     /**
      * Replace font family with specified font, weight will be resolved by family name.
      *
@@ -136,19 +105,7 @@ public class FontProviderClient {
      * @return Typeface using to replace.
      */
     public Typeface replace(String name, String fontName) {
-        return replace(name, fontName, resolveIsSerif(name) ? FontRequest.NOTO_SERIF : FontRequest.DEFAULT);
-    }
-
-    /**
-     * Replace font family with specified font.
-     *
-     * @param name font family name
-     * @param fontName font name, such as "Noto Sans CJK"
-     * @param defaultFont first font
-     * @return Typeface using to replace.
-     */
-    public Typeface replace(String name, String fontName, FontRequest defaultFont) {
-        return replace(name, FontRequests.create(defaultFont, fontName, resolveWeight(name)));
+        return replace(name, FontRequests.create(name, fontName));
     }
 
     public Typeface replace(String name, FontRequests fontRequests) {
@@ -214,7 +171,6 @@ public class FontProviderClient {
             for (Font font : fontFamily.fonts) {
                 try {
                     if (Build.VERSION.SDK_INT >= 24) {
-
                         ByteBuffer byteBuffer = font.buffer != null ?
                                 font.buffer : sBufferCache.get(font.filename);
 
@@ -250,10 +206,15 @@ public class FontProviderClient {
                             return null;
                         }
                     } else {
-                        //String path = font.path;
-                        String path = mFontProvider.getFontFilePath(font.filename);
+                        String path;
+                        if (!mUseContentProvider) {
+                            path = mFontProvider.getFontFilePath(font.filename);
+                        } else {
+                            path = font.path;
+                        }
+
                         if (path == null) {
-                            Log.e(TAG, "Font not downloaded?");
+                            Log.e(TAG, "Font " + font.filename + " not downloaded?");
                             return null;
                         }
 
