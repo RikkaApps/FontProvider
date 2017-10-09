@@ -1,9 +1,11 @@
 package moe.shizuku.fontprovider;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
@@ -33,6 +35,8 @@ public class FontProviderClient {
     private static final String ACTION = "moe.shizuku.fontprovider.action.BIND";
     private static final String PACKAGE = "moe.shizuku.fontprovider";
 
+    private static final boolean USE_CONTENT_PROVIDER = false;
+
     public interface Callback {
         /**
          * Called after ServiceConnection#onServiceConnected.
@@ -57,19 +61,30 @@ public class FontProviderClient {
 
         sBufferCache.clear();
 
-        try {
-            context.bindService(intent, new FontProviderServiceConnection(context, callback), Context.BIND_AUTO_CREATE);
-        } catch (Exception e) {
-            Log.i(TAG, "can't bindService", e);
+        if (!USE_CONTENT_PROVIDER) {
+            try {
+                FontProviderServiceConnection connection = new FontProviderServiceConnection(context, callback);
+                context.bindService(intent, connection, Context.BIND_AUTO_CREATE);
+            } catch (Exception e) {
+                Log.i(TAG, "can't bindService", e);
+            }
+        } else {
+            callback.onServiceConnected(new FontProviderClient(context));
         }
     }
 
     private static Map<String, ByteBuffer> sBufferCache = new HashMap<>();
 
+    private ContentResolver mResolver;
     private IFontProvider mFontProvider;
     private ServiceConnection mServiceConnection;
 
-    public FontProviderClient(ServiceConnection serviceConnection, IFontProvider fontProvider) {
+    public FontProviderClient(Context context) {
+        mResolver = context.getContentResolver();
+    }
+
+    public FontProviderClient(Context context, ServiceConnection serviceConnection, IFontProvider fontProvider) {
+        mResolver = context.getContentResolver();
         mServiceConnection = serviceConnection;
         mFontProvider = fontProvider;
     }
@@ -85,13 +100,6 @@ public class FontProviderClient {
         } catch (Exception e) {
             Log.i(TAG, "can't unbindService", e);
         }
-    }
-
-    /**=*
-     * @return IFontProvider
-     */
-    public IFontProvider getFontProvider() {
-        return mFontProvider;
     }
 
     private static int[] resolveWeight(String name) {
@@ -168,7 +176,15 @@ public class FontProviderClient {
                 continue;
             }
             try {
-                fontFamilies = FontFamily.combine(fontFamilies, fontRequest.getFontFamily(mFontProvider));
+                long time = System.currentTimeMillis();
+
+                if (!USE_CONTENT_PROVIDER) {
+                    fontFamilies = FontFamily.combine(fontFamilies, fontRequest.getFontFamily(mFontProvider));
+                } else {
+                    fontFamilies = FontFamily.combine(fontFamilies, fontRequest.getFontFamily(mResolver));
+                }
+
+                Log.d(TAG, "get info for "+ fontRequest.name + " costs " + (System.currentTimeMillis() - time) + "ms");
             } catch (RemoteException e) {
                 e.printStackTrace();
                 return null;
@@ -207,22 +223,38 @@ public class FontProviderClient {
                                 font.buffer : sBufferCache.get(font.filename);
 
                         if (byteBuffer == null) {
-                            ParcelFileDescriptor pfd = mFontProvider.getFontFileDescriptor(font.filename);
+                            long time = System.currentTimeMillis();
+
+                            ParcelFileDescriptor pfd;
+                            int size;
+                            if (!USE_CONTENT_PROVIDER) {
+                                pfd = mFontProvider.getFontFileDescriptor(font.filename);
+                                size = mFontProvider.getFontFileSize(font.filename);
+                            } else {
+                                pfd = mResolver.openFileDescriptor(
+                                        Uri.parse("content://moe.shizuku.fontprovider/file/" + font.filename), "r");
+                                size = (int) font.size;
+                            }
+
+                            Log.d(TAG, "open file costs " + (System.currentTimeMillis() - time) + "ms");
+
                             if (pfd == null) {
                                 Log.e(TAG, "ParcelFileDescriptor is null");
                                 return null;
                             }
-                            int size = mFontProvider.getFontFileSize(font.filename);
 
                             FileInputStream is = new FileInputStream(pfd.getFileDescriptor());
                             FileChannel fileChannel = is.getChannel();
                             byteBuffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, size);
+
+                            sBufferCache.put(font.filename, byteBuffer);
                         }
 
                         if (!fontFamilyCompat.addFont(byteBuffer, font.ttcIndex, font.weight, font.italic ? 1 : 0)) {
                             return null;
                         }
                     } else {
+                        //String path = font.path;
                         String path = mFontProvider.getFontFilePath(font.filename);
                         if (path == null) {
                             Log.e(TAG, "Font not downloaded?");

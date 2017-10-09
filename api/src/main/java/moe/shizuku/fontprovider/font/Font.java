@@ -16,6 +16,9 @@ public class Font implements Parcelable {
     public final int weight;
     public final boolean italic;
 
+    public String path;
+    public long size;
+
     public Font(String filename) {
         this(filename, false);
     }
@@ -61,6 +64,8 @@ public class Font implements Parcelable {
         dest.writeInt(this.ttcIndex);
         dest.writeInt(this.weight);
         dest.writeByte(this.italic ? (byte) 1 : (byte) 0);
+        dest.writeString(this.path);
+        dest.writeLong(this.size);
     }
 
     protected Font(Parcel in) {
@@ -69,6 +74,8 @@ public class Font implements Parcelable {
         this.ttcIndex = in.readInt();
         this.weight = in.readInt();
         this.italic = in.readByte() != 0;
+        this.path = in.readString();
+        this.size = in.readLong();
     }
 
     public static final Parcelable.Creator<Font> CREATOR = new Parcelable.Creator<Font>() {

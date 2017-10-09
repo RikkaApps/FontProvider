@@ -38,6 +38,12 @@
             </intent-filter>
 
         </service>
+        <provider
+            android:authorities="moe.shizuku.fontprovider"
+            android:name=".FontProvider"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="moe.shizuku.fontprovider.BIND"/>
 
     </application>
 
