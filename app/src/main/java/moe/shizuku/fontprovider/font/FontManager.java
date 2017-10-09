@@ -62,7 +62,7 @@ public class FontManager {
             R.raw.noto_sans_cjk,
             R.raw.noto_serif,
             R.raw.noto_serif_cjk,
-            R.raw.noto_emoji,
+            R.raw.noto_color_emoji,
     };
 
     private static final Map<String, FontInfo> FONTS_MAP = new HashMap<>();
