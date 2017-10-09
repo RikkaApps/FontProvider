@@ -1,0 +1,15 @@
+{
+  "name": "Noto Emoji",
+  "language": [ null ],
+  "index": [ 0 ],
+  "url_prefix": "https://github.com/googlei18n/noto-emoji/raw/98fe0a9ed427251614f732cb0a80bcfea3733424/fonts/",
+  "size": "4.52 MB",
+  "preview_text": [ "\ud83d\ude36\ud83d\ude33\ud83d\ude31\ud83d\ude02\ud83c\udf1a\ud83c\udf1d\ud83c\udfc3" ],
+  "style": [
+    {
+      "name": "Regular 400",
+      "weight": 400,
+      "ttf": [ "NotoColorEmoji.ttf" ]
+    }
+  ]
+}
