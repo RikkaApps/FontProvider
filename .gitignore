@@ -11,5 +11,4 @@
 *.ttf
 *.ttc
 bintray.gradle
-signing.gradle
 signing.properties

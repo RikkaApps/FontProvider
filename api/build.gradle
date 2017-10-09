@@ -35,4 +35,9 @@ ext {
     bintrayName = project.name
 }
 
-apply from: project.rootProject.file('bintray.gradle')
+if (rootProject.file('bintray.gradle').canRead()) {
+    apply from: project.rootProject.file('bintray.gradle')
+} else {
+    println("bintray.gradle not found, skiping.")
+}
+
