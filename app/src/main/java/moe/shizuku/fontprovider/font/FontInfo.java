@@ -1,8 +1,9 @@
-package moe.shizuku.fontprovider;
+package moe.shizuku.fontprovider.font;
 
 import android.graphics.Typeface;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,6 +66,10 @@ public class FontInfo implements Parcelable {
     }
 
     public Style[] getStyle(int... weight) {
+        if (weight.length == 0) {
+            return getStyle();
+        }
+
         for (int i = 0; i < weight.length; i++) {
             boolean match = false;
             for (Style s : style) {

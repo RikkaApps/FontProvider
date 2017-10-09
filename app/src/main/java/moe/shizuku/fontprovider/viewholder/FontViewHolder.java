@@ -14,8 +14,8 @@ import android.widget.Toast;
 
 import java.util.List;
 
-import moe.shizuku.fontprovider.FontInfo;
-import moe.shizuku.fontprovider.FontManager;
+import moe.shizuku.fontprovider.font.FontInfo;
+import moe.shizuku.fontprovider.font.FontManager;
 import moe.shizuku.fontprovider.FontPreviewActivity;
 import moe.shizuku.fontprovider.R;
 import moe.shizuku.utils.recyclerview.BaseViewHolder;

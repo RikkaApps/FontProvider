@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.util.Log;
 
 
 /**
@@ -25,8 +26,12 @@ class FontProviderServiceConnection implements ServiceConnection {
         IFontProvider fontProvider = IFontProvider.Stub.asInterface(binder);
 
         FontProviderClient client = new FontProviderClient(mContext, this, fontProvider);
-        if (mCallback.onServiceConnected(client)) {
-            client.unbindService(mContext);
+        if (mCallback.onServiceConnected(client, this)) {
+            try {
+                mContext.unbindService(this);
+            } catch (Exception e) {
+                Log.w("FontProvider", "failed to unbind service", e);
+            }
         }
     }
 

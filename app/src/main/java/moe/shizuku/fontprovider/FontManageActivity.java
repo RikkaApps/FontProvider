@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import moe.shizuku.fontprovider.adapter.FontManageAdapter;
+import moe.shizuku.fontprovider.font.FontManager;
 import moe.shizuku.utils.recyclerview.helper.RecyclerViewHelper;
 
 /**
@@ -20,7 +21,7 @@ public class FontManageActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_list);
 
-        RecyclerView recyclerView = findViewById(android.R.id.list_container);
+        RecyclerView recyclerView = findViewById(android.R.id.list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 

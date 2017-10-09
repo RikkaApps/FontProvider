@@ -5,9 +5,12 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcel;
+import android.os.Parcelable;
 import android.os.RemoteException;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import moe.shizuku.fontprovider.font.Font;
 import moe.shizuku.fontprovider.font.FontFamily;
@@ -25,7 +28,7 @@ public class FontRequest {
     public final int[] weight;
 
     private FontRequest() {
-        this(null, null);
+        this(null, (int[]) null);
     }
 
     public FontRequest(String name, int... weight) {
@@ -33,11 +36,11 @@ public class FontRequest {
         this.weight = weight;
     }
 
-    public FontFamily[] getFontFamily(IFontProvider fontProvider) throws RemoteException {
+    public FontFamily[] loadFontFamily(IFontProvider fontProvider) throws RemoteException {
         return fontProvider.getFontFamily(name, weight);
     }
 
-    public FontFamily[] getFontFamily(ContentResolver resolver) throws RemoteException {
+    public FontFamily[] loadFontFamily(ContentResolver resolver) throws RemoteException {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < weight.length - 1; i++) {
             sb.append(weight[i]).append(',');
@@ -46,24 +49,19 @@ public class FontRequest {
 
         Cursor cursor = resolver.query(
                 Uri.parse("content://moe.shizuku.fontprovider/font/" + name),
-                null, "weight=?", new String[]{sb.toString()}, null);
-        if (cursor != null
-                && cursor.getCount() > 0) {
-            cursor.moveToFirst();
-            byte[] bytes = cursor.getBlob(0);
+                null, "weight=?s", new String[]{sb.toString()}, null);
+        if (cursor != null) {
+            Bundle bundle = cursor.getExtras();
+            bundle.setClassLoader(FontFamily.CREATOR.getClass().getClassLoader());
 
-            cursor.close();
-
-            Parcel parcel = Parcel.obtain();
-            parcel.unmarshall(bytes, 0, bytes.length);
-            parcel.setDataPosition(0);
-
-            FontFamily[] result = parcel.createTypedArray(FontFamily.CREATOR);
-            parcel.recycle();
-            return result;
+            Parcelable[] parcelables = bundle.getParcelableArray("data");
+            FontFamily[] families = new FontFamily[parcelables.length];
+            for (int i = 0; i < parcelables.length; i++) {
+                families[i] = (FontFamily) parcelables[i];
+            }
+            return families;
         }
         return null;
-        //return fontProvider.getFontFamily(name, weight);
     }
 
     /**/

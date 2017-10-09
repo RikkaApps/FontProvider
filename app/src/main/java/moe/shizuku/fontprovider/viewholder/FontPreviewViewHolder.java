@@ -1,13 +1,14 @@
 package moe.shizuku.fontprovider.viewholder;
 
 import android.content.Context;
+import android.content.ServiceConnection;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import moe.shizuku.fontprovider.FontInfo;
+import moe.shizuku.fontprovider.font.FontInfo;
 import moe.shizuku.fontprovider.FontProviderClient;
 import moe.shizuku.fontprovider.FontRequest;
 import moe.shizuku.fontprovider.FontRequests;
@@ -60,7 +61,7 @@ public class FontPreviewViewHolder extends BaseViewHolder<FontInfo.Style> {
         if (typeface == null) {
             FontProviderClient.create(context, new FontProviderClient.Callback() {
                 @Override
-                public boolean onServiceConnected(FontProviderClient client) {
+                public boolean onServiceConnected(FontProviderClient client, ServiceConnection connection) {
                     Typeface typeface;
 
                     if (font.getLanguage()[localeIndex] == null) {

@@ -1,4 +1,4 @@
-package moe.shizuku.fontprovider;
+package moe.shizuku.fontprovider.font;
 
 import android.app.Service;
 import android.content.Context;
@@ -10,7 +10,7 @@ import android.support.annotation.Nullable;
 
 import java.io.File;
 
-import moe.shizuku.fontprovider.font.FontFamily;
+import moe.shizuku.fontprovider.IFontProvider;
 import moe.shizuku.fontprovider.utils.ContextUtils;
 
 /**
@@ -22,8 +22,6 @@ public class FontProviderService extends Service {
     private static final String TAG = "FontProviderService";
 
     private IFontProviderBinder mBinder;
-
-
 
     @Override
     public void onCreate() {

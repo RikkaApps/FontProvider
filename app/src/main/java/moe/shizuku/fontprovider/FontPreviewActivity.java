@@ -1,7 +1,6 @@
 package moe.shizuku.fontprovider;
 
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -15,6 +14,7 @@ import android.view.MenuItem;
 import java.util.Locale;
 
 import moe.shizuku.fontprovider.adapter.FontPreviewAdapter;
+import moe.shizuku.fontprovider.font.FontInfo;
 import moe.shizuku.utils.recyclerview.helper.RecyclerViewHelper;
 
 /**

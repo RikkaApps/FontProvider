@@ -28,7 +28,7 @@
         </activity>
         <activity android:name=".FontPreviewActivity"/>
         <service
-            android:name=".FontProviderService"
+            android:name=".font.FontProviderService"
             android:enabled="true"
             android:exported="true"
             android:permission="moe.shizuku.fontprovider.BIND">
@@ -40,7 +40,7 @@
         </service>
         <provider
             android:authorities="moe.shizuku.fontprovider"
-            android:name=".FontProvider"
+            android:name=".font.FontProvider"
             android:enabled="true"
             android:exported="true"
             android:permission="moe.shizuku.fontprovider.BIND"/>

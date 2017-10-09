@@ -1,10 +1,11 @@
-package moe.shizuku.fontprovider;
+package moe.shizuku.fontprovider.font;
 
 import android.app.DownloadManager;
 import android.content.Context;
 import android.net.Uri;
 import android.os.MemoryFile;
 import android.os.ParcelFileDescriptor;
+import android.support.annotation.Nullable;
 import android.support.annotation.RawRes;
 import android.util.Log;
 import android.util.LruCache;
@@ -19,8 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import moe.shizuku.fontprovider.font.Font;
-import moe.shizuku.fontprovider.font.FontFamily;
+import moe.shizuku.fontprovider.BuildConfig;
+import moe.shizuku.fontprovider.R;
 import moe.shizuku.fontprovider.utils.ContextUtils;
 import moe.shizuku.fontprovider.utils.MemoryFileUtils;
 import moe.shizuku.fontprovider.utils.ParcelFileDescriptorUtils;
@@ -124,7 +125,7 @@ public class FontManager {
         return ids;
     }
 
-    public static FontFamily[] getFontFamily(String name, int... weight) {
+    public static FontFamily[] getFontFamily(String name, @Nullable int... weight) {
         FontInfo font = FontManager.getFont(name);
         if (font == null) {
             return null;

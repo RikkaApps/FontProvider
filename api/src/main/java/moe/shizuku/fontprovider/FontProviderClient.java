@@ -35,8 +35,6 @@ public class FontProviderClient {
     private static final String ACTION = "moe.shizuku.fontprovider.action.BIND";
     private static final String PACKAGE = "moe.shizuku.fontprovider";
 
-    private static final boolean USE_CONTENT_PROVIDER = false;
-
     public interface Callback {
         /**
          * Called after ServiceConnection#onServiceConnected.
@@ -44,11 +42,11 @@ public class FontProviderClient {
          * @param client FontProviderClient
          * @return true for unbindService automatically, false for keep ServiceConnection.
          */
-        boolean onServiceConnected(FontProviderClient client);
+        boolean onServiceConnected(FontProviderClient client, ServiceConnection serviceConnection);
     }
 
     /**
-     * Create service connection.
+     * Create FontProviderClient asynchronously (use bind service, faster).
      *
      * @param context Context
      * @param callback Callback
@@ -61,19 +59,30 @@ public class FontProviderClient {
 
         sBufferCache.clear();
 
-        if (!USE_CONTENT_PROVIDER) {
-            try {
-                FontProviderServiceConnection connection = new FontProviderServiceConnection(context, callback);
-                context.bindService(intent, connection, Context.BIND_AUTO_CREATE);
-            } catch (Exception e) {
-                Log.i(TAG, "can't bindService", e);
-            }
-        } else {
-            callback.onServiceConnected(new FontProviderClient(context));
+        try {
+            FontProviderServiceConnection connection = new FontProviderServiceConnection(context, callback);
+            context.bindService(intent, connection, Context.BIND_AUTO_CREATE);
+        } catch (Exception e) {
+            Log.i(TAG, "can't bindService", e);
         }
     }
 
+    /**
+     * Create FontProviderClient synchronously (use ContentProvider, slower).
+     *
+     * @param context Context
+     */
+    public static FontProviderClient createSync(Context context) {
+        context = context.getApplicationContext();
+
+        sBufferCache.clear();
+
+        return new FontProviderClient(context);
+    }
+
     private static Map<String, ByteBuffer> sBufferCache = new HashMap<>();
+
+    private final boolean mUseContentProvider;
 
     private ContentResolver mResolver;
     private IFontProvider mFontProvider;
@@ -81,25 +90,14 @@ public class FontProviderClient {
 
     public FontProviderClient(Context context) {
         mResolver = context.getContentResolver();
+        mUseContentProvider = true;
     }
 
     public FontProviderClient(Context context, ServiceConnection serviceConnection, IFontProvider fontProvider) {
         mResolver = context.getContentResolver();
         mServiceConnection = serviceConnection;
         mFontProvider = fontProvider;
-    }
-
-    /**
-     * Unbind service, only need call this if false is returned in onServiceConnected
-     *
-     * @param context Context
-     */
-    public void unbindService(Context context) {
-        try {
-            context.getApplicationContext().unbindService(mServiceConnection);
-        } catch (Exception e) {
-            Log.i(TAG, "can't unbindService", e);
-        }
+        mUseContentProvider = false;
     }
 
     private static int[] resolveWeight(String name) {
@@ -178,10 +176,10 @@ public class FontProviderClient {
             try {
                 long time = System.currentTimeMillis();
 
-                if (!USE_CONTENT_PROVIDER) {
-                    fontFamilies = FontFamily.combine(fontFamilies, fontRequest.getFontFamily(mFontProvider));
+                if (!mUseContentProvider) {
+                    fontFamilies = FontFamily.combine(fontFamilies, fontRequest.loadFontFamily(mFontProvider));
                 } else {
-                    fontFamilies = FontFamily.combine(fontFamilies, fontRequest.getFontFamily(mResolver));
+                    fontFamilies = FontFamily.combine(fontFamilies, fontRequest.loadFontFamily(mResolver));
                 }
 
                 Log.d(TAG, "get info for "+ fontRequest.name + " costs " + (System.currentTimeMillis() - time) + "ms");
@@ -227,16 +225,16 @@ public class FontProviderClient {
 
                             ParcelFileDescriptor pfd;
                             int size;
-                            if (!USE_CONTENT_PROVIDER) {
+                            if (!mUseContentProvider) {
                                 pfd = mFontProvider.getFontFileDescriptor(font.filename);
                                 size = mFontProvider.getFontFileSize(font.filename);
                             } else {
-                                pfd = mResolver.openFileDescriptor(
-                                        Uri.parse("content://moe.shizuku.fontprovider/file/" + font.filename), "r");
+                                pfd = mResolver.openAssetFileDescriptor(
+                                        Uri.parse("content://moe.shizuku.fontprovider/file/" + font.filename), "r").getParcelFileDescriptor();
                                 size = (int) font.size;
                             }
 
-                            Log.d(TAG, "open file costs " + (System.currentTimeMillis() - time) + "ms");
+                            Log.d(TAG, "open file " + font.filename + " costs " + (System.currentTimeMillis() - time) + "ms");
 
                             if (pfd == null) {
                                 Log.e(TAG, "ParcelFileDescriptor is null");

@@ -6,7 +6,7 @@ import android.view.View;
 
 import java.util.Arrays;
 
-import moe.shizuku.fontprovider.FontInfo;
+import moe.shizuku.fontprovider.font.FontInfo;
 import moe.shizuku.fontprovider.viewholder.FontPreviewViewHolder;
 import moe.shizuku.utils.recyclerview.BaseRecyclerViewAdapter;
 

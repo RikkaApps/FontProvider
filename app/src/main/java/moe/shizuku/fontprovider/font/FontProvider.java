@@ -1,11 +1,12 @@
-package moe.shizuku.fontprovider;
+package moe.shizuku.fontprovider.font;
 
+import android.annotation.SuppressLint;
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
-import android.database.MatrixCursor;
 import android.net.Uri;
-import android.os.Parcel;
+import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,8 +14,6 @@ import android.support.annotation.Nullable;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import moe.shizuku.fontprovider.font.Font;
-import moe.shizuku.fontprovider.font.FontFamily;
 import moe.shizuku.fontprovider.utils.ContextUtils;
 
 /**
@@ -22,11 +21,13 @@ import moe.shizuku.fontprovider.utils.ContextUtils;
  */
 
 public class FontProvider extends ContentProvider {
+
     @Override
     public boolean onCreate() {
         return false;
     }
 
+    @SuppressLint("NewApi")
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
@@ -44,23 +45,23 @@ public class FontProvider extends ContentProvider {
         }
 
         FontFamily[] families = FontManager.getFontFamily(name, weight);
-        for (FontFamily family : families) {
-            for (Font font : family.fonts) {
-                File file =  ContextUtils.getFile(getContext(), font.filename);
-                if (file.exists()) {
-                    font.path = file.getAbsolutePath();
-                    font.size = file.length();
+        if (families != null) {
+            for (FontFamily family : families) {
+                for (Font font : family.fonts) {
+                    File file =  ContextUtils.getFile(getContext(), font.filename);
+                    if (file.exists()) {
+                        font.path = file.getAbsolutePath();
+                        font.size = file.length();
+                    }
                 }
             }
         }
 
-        Parcel parcel = Parcel.obtain();
-        parcel.writeTypedArray(families, 0);
-        byte[] data = parcel.marshall();
-        parcel.recycle();
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArray("data", families);
 
-        MatrixCursor cursor = new MatrixCursor(new String[]{"data"}, 1);
-        cursor.addRow(new Object[]{data});
+        Cursor cursor = new SimpleCursor();
+        cursor.setExtras(bundle);
         return cursor;
     }
 
@@ -95,5 +96,11 @@ public class FontProvider extends ContentProvider {
         }
 
         return FontManager.getParcelFileDescriptor(getContext(), path.substring("/file/".length()));
+    }
+
+    @Nullable
+    @Override
+    public AssetFileDescriptor openAssetFile(@NonNull Uri uri, @NonNull String mode) throws FileNotFoundException {
+        return new AssetFileDescriptor(openFile(uri, mode), 0, 0);
     }
 }

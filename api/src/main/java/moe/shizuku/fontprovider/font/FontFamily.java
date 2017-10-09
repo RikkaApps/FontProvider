@@ -15,6 +15,10 @@ public class FontFamily implements Parcelable {
     public final Font[] fonts;
 
     public static FontFamily[] combine(FontFamily first, FontFamily[] array) {
+        if (array == null) {
+            return new FontFamily[]{first};
+        }
+
         FontFamily[] result = new FontFamily[array.length + 1];
         result[0] = first;
         System.arraycopy(array, 0, result, 1, array.length);
@@ -24,12 +28,19 @@ public class FontFamily implements Parcelable {
     public static FontFamily[] combine(FontFamily[]... arrays) {
         int length = 0;
         for (FontFamily[] array : arrays) {
+            if (array == null) {
+                continue;
+            }
             length += array.length;
         }
 
         FontFamily[] result = new FontFamily[length];
         length = 0;
         for (FontFamily[] array : arrays) {
+            if (array == null) {
+                continue;
+            }
+
             System.arraycopy(array, 0, result, length, array.length);
             length += array.length;
         }
