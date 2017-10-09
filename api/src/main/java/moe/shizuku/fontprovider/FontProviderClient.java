@@ -86,16 +86,14 @@ public class FontProviderClient {
 
     private ContentResolver mResolver;
     private IFontProvider mFontProvider;
-    private ServiceConnection mServiceConnection;
 
-    public FontProviderClient(Context context) {
+    private FontProviderClient(Context context) {
         mResolver = context.getContentResolver();
         mUseContentProvider = true;
     }
 
-    public FontProviderClient(Context context, ServiceConnection serviceConnection, IFontProvider fontProvider) {
+    FontProviderClient(Context context, IFontProvider fontProvider) {
         mResolver = context.getContentResolver();
-        mServiceConnection = serviceConnection;
         mFontProvider = fontProvider;
         mUseContentProvider = false;
     }
