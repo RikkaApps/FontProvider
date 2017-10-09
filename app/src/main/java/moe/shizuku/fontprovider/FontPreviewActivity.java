@@ -59,7 +59,7 @@ public class FontPreviewActivity extends BaseActivity {
             }
         }
 
-        RecyclerView recyclerView = findViewById(android.R.id.list_container);
+        RecyclerView recyclerView = findViewById(android.R.id.list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
