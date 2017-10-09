@@ -18,32 +18,32 @@
    
 2. 在合适的地方（如 `Application.onCreate`）创建 `FontProviderClient` 并请求或直接替换想要的字体。这里提供了两种方法来创建 `FontProviderClient`：
 
-  - **异步创建**（绑定服务）
+   - **异步创建**（绑定服务）
 
-   异步创建不会阻塞应用的启动，但绑定服务需要时间，完成替换之前已创建的 Typeface 将不会被替换。
+      异步创建不会阻塞应用的启动，但绑定服务需要时间，完成替换之前已创建的 Typeface 将不会被替换。
 
-   例子：
-   ```java
-   FontProviderClient.create(this, new FontProviderClient.Callback() {
-       @Override
-       public boolean onServiceConnected(FontProviderClient client, ServiceConnection serviceConnection) {
-          client.replace("sans-serif", "Noto Sans CJK");
-          client.replace("sans-serif-medium", "Noto Sans CJK");
-          return true;
-       }
-   });
-   ```
+      例子：
+      ```java
+      FontProviderClient.create(this, new FontProviderClient.Callback() {
+          @Override
+          public boolean onServiceConnected(FontProviderClient client, ServiceConnection serviceConnection) {
+             client.replace("sans-serif", "Noto Sans CJK");
+             client.replace("sans-serif-medium", "Noto Sans CJK");
+             return true;
+          }
+      });
+      ```
 
-  - **同步创建**（ContentResolver）
+   - **同步创建**（ContentResolver）
 
-   同步创建可以保证替换及时生效，但会阻塞应用的启动（并耗费一点时间）。
+      同步创建可以保证替换及时生效，但会阻塞应用的启动（并耗费一点时间）。
 
-   例子：
-   ```java
-   FontProviderClient client = FontProvider.createSync(this);
-   client.replace("sans-serif", "Noto Sans CJK");
-   client.replace("sans-serif-medium", "Noto Sans CJK");
-   ```
+      例子：
+      ```java
+      FontProviderClient client = FontProvider.createSync(this);
+      client.replace("sans-serif", "Noto Sans CJK");
+      client.replace("sans-serif-medium", "Noto Sans CJK");
+      ```
 
 3. 在需要的地方只需按原本的方式使用即可，比如在 layout xml 中 `android:fontFamily="sans-serif-medium"` 
 或是直接创建 `Typeface` 实例 `Typeface.create("sans-serif-medium", )`。
