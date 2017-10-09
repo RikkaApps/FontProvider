@@ -77,14 +77,22 @@ public class FontPreviewViewHolder extends BaseViewHolder<FontInfo.Style> {
                         ));
                     }
 
-                    text.setTypeface(typeface);
+                    if (style.isItalic()) {
+                        text.setTypeface(Typeface.create(typeface, Typeface.ITALIC));
+                    } else {
+                        text.setTypeface(typeface);
+                    }
 
                     font.setTypeface(typeface, getAdapterPosition());
                     return true;
                 }
             });
         } else {
-            text.setTypeface(typeface);
+            if (style.isItalic()) {
+                text.setTypeface(Typeface.create(typeface, Typeface.ITALIC));
+            } else {
+                text.setTypeface(typeface);
+            }
         }
     }
 }
