@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="font_button_download">下载</string>
+    <string name="font_summary">%1$d 种样式 · %2$d 种语言</string>
+    <string name="font_summary_no_language">%1$d 种样式</string>
+    <string name="font_cannot_preview">需要先下载字体才能预览</string>
+    <string name="action_language">改变语言</string>
+</resources>

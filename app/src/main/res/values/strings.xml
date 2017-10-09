@@ -1,13 +1,8 @@
 <resources>
-    <string name="app_name">Font Provider</string>
-    <string name="action_hide">Hide from launcher</string>
-    <string name="action_download">Download required fonts</string>
-    <string name="action_free">Free memory</string>
-    <string name="button_download_all">Download required fonts when WiFi available</string>
+    <string name="app_name" translatable="false">Font Provider</string>
     <string name="font_button_download">Download</string>
     <string name="font_summary">%1$d styles · %2$d languages</string>
     <string name="font_summary_no_language">%1$d styles</string>
-    <string name="font_size">%1$d styles · %2$d languages</string>
     <string name="font_cannot_preview">You can\'t preview this font before downloading it.</string>
     <string name="action_language">Change language</string>
 </resources>

@@ -15,5 +15,9 @@ public class FontProviderApplication extends Application {
         super.onCreate();
 
         FontManager.init(this);
+
+        FontProviderClient client = FontProviderClient.createSync(this);
+        client.replace("serif", "Noto Sans CJK");
+        client.replace("serif-medium", "Noto Sans CJK");
     }
 }
