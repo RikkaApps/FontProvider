@@ -2,7 +2,7 @@
   "name": "Noto Serif",
   "language": [ null ],
   "index": [ 0 ],
-  "url_prefix": "https://github.com/googlei18n/noto-fonts/raw/master/hinted/",
+  "url_prefix": "https://github.com/googlei18n/noto-fonts/raw/5a89b487c648c34c2b6d1b9ebb73bb3fab1df4b2/hinted/",
   "size": "1.43 MB",
   "preview_text": [ "The quick brown fox jumps over the lazy dog" ],
   "style": [

@@ -2,7 +2,7 @@
   "name": "Noto Sans CJK",
   "language": [ "zh-Hans", "zh-Hant", "ja", "ko" ],
   "index": [ 2, 3, 0, 1 ],
-  "url_prefix": "https://github.com/googlei18n/noto-cjk/raw/master/",
+  "url_prefix": "https://github.com/googlei18n/noto-cjk/raw/32a5844539f2e348ed36b44e990f9b06d7fb89fe/",
   "size": "120.17 MB",
   "preview_text": [
     "美しい書体デザインのフォントを使用してテキストの内容をより効果的に伝える。",
