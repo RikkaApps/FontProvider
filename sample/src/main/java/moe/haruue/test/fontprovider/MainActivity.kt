@@ -1,5 +1,6 @@
 package moe.haruue.test.fontprovider
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
@@ -9,6 +10,7 @@ import kotlinx.android.synthetic.main.activity_main_content.*
 
 class MainActivity : Activity() {
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -30,5 +32,7 @@ class MainActivity : Activity() {
             dialog.show()
         }
         recreateButton.setOnClickListener { recreate() }
+        p13.text = "盯~ \uD83D\uDE36\uD83D\uDE36\uD83D\uDE36\uD83D\uDE36";
+        p14.text = "盯~ \uD83D\uDE36\uD83D\uDE36\uD83D\uDE36\uD83D\uDE36";
     }
 }

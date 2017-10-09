@@ -190,6 +190,30 @@
         app:layout_constraintTop_toBottomOf="@+id/p11"
         android:layout_marginLeft="16dp"/>
 
+    <TextView
+        android:id="@+id/p13"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="sans-serif-medium"
+        android:textSize="25sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/p12"
+        android:layout_marginLeft="16dp"/>
+
+    <TextView
+        android:id="@+id/p14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="serif-medium"
+        android:textSize="25sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/p13"
+        android:layout_marginLeft="16dp"/>
+
     <Button
         android:id="@+id/dialogButton"
         android:layout_width="wrap_content"
@@ -198,7 +222,7 @@
         android:layout_marginTop="8dp"
         android:text="@string/test_dialog"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/p12"
+        app:layout_constraintTop_toBottomOf="@+id/p14"
         android:layout_marginLeft="16dp"/>
 
     <Button
@@ -209,7 +233,7 @@
         android:layout_marginTop="8dp"
         android:text="@string/download_font_provider"
         app:layout_constraintStart_toEndOf="@+id/dialogButton"
-        app:layout_constraintTop_toBottomOf="@+id/p12"
+        app:layout_constraintTop_toBottomOf="@+id/p14"
         android:layout_marginLeft="4dp"/>
 
     <Button
@@ -220,7 +244,7 @@
         android:layout_marginTop="8dp"
         android:text="@string/recreate_activity"
         app:layout_constraintStart_toEndOf="@+id/downloadButton"
-        app:layout_constraintTop_toBottomOf="@+id/p12"
+        app:layout_constraintTop_toBottomOf="@+id/p14"
         android:layout_marginLeft="4dp"/>
 
 </android.support.constraint.ConstraintLayout>
