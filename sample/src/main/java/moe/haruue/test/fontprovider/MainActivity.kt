@@ -7,11 +7,30 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_main_content.*
+import moe.shizuku.fontprovider.FontProviderClient
 
 class MainActivity : Activity() {
 
+    var init: Boolean = false
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
+        // replace at Activity, only need call once
+        if (!init) {
+            // To replace correctly after callback called,
+            // we must add dummy typefaces not exists in fonts.xml first
+            FontProviderClient.addPlaceholderFamilies(
+                    "serif-thin", "serif-light", "serif-medium", "serif-black")
+
+            FontProviderClient.create(this) {
+                client, _ ->
+                App.replace(client)
+                return@create true
+            }
+
+            init = true
+        }
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         downloadButton.setOnClickListener {

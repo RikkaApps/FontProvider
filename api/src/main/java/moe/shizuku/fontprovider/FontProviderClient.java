@@ -1,5 +1,6 @@
 package moe.shizuku.fontprovider;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,12 +11,17 @@ import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.io.FileInputStream;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import moe.shizuku.fontprovider.compat.FontFamilyCompat;
@@ -45,14 +51,41 @@ public class FontProviderClient {
     }
 
     /**
-     * Create FontProviderClient asynchronously (use bind service, faster).
+     * Add dummy Typefaces if not exist.
+     *
+     * @param names Family names
+     */
+    public static void addPlaceholderFamilies(String... names) {
+        Map<String, Typeface> typefaceMap = TypefaceCompat.getSystemFontMap();
+        if (typefaceMap == null) {
+            return;
+        }
+
+        for (String name : names) {
+            if (!typefaceMap.containsKey(name)) {
+                typefaceMap.put(name, TypefaceCompat.createWeightAlias(Typeface.SANS_SERIF, 400));
+            }
+        }
+    }
+
+    /**
+     * Create FontProviderClient asynchronously, when call replace, all TextView's Typeface
+     * will be replaced automatically if matched (by traversal all TextView).
+     *
+     * @param activity Activity
+     * @param callback Callback
+     */
+    public static void create(Activity activity, Callback callback) {
+        create((Context) activity, callback);
+    }
+
+    /**
+     * Create FontProviderClient asynchronously.
      *
      * @param context Context
      * @param callback Callback
      */
     public static void create(Context context, Callback callback) {
-        context = context.getApplicationContext();
-
         Intent intent = new Intent(ACTION)
                 .setPackage(PACKAGE);
 
@@ -60,11 +93,12 @@ public class FontProviderClient {
 
         try {
             FontProviderServiceConnection connection = new FontProviderServiceConnection(context, callback);
-            context.bindService(intent, connection, Context.BIND_AUTO_CREATE);
+            context.getApplicationContext().bindService(intent, connection, Context.BIND_AUTO_CREATE);
         } catch (Exception e) {
             Log.i(TAG, "can't bindService", e);
         }
     }
+
 
     /**
      * Create FontProviderClient synchronously (use ContentProvider, slower).
@@ -83,15 +117,18 @@ public class FontProviderClient {
 
     private final boolean mUseContentProvider;
 
+    private Context mContext;
     private ContentResolver mResolver;
     private IFontProvider mFontProvider;
 
     private FontProviderClient(Context context) {
+        mContext = context;
         mResolver = context.getContentResolver();
         mUseContentProvider = true;
     }
 
     FontProviderClient(Context context, IFontProvider fontProvider) {
+        mContext = context;
         mResolver = context.getContentResolver();
         mFontProvider = fontProvider;
         mUseContentProvider = false;
@@ -112,6 +149,14 @@ public class FontProviderClient {
         Typeface typeface = request(fontRequests);
         if (typeface != null
                 && TypefaceCompat.getSystemFontMap() != null) {
+            if (mContext instanceof Activity) {
+                Activity activity = (Activity) mContext;
+                View decor = activity.getWindow().getDecorView();
+                if (decor instanceof ViewGroup) {
+                    replaceTypeface((ViewGroup) decor, name, typeface);
+                }
+            }
+
             TypefaceCompat.getSystemFontMap().put(name, typeface);
             return typeface;
         } else {
@@ -236,5 +281,41 @@ public class FontProviderClient {
         }
 
         return TypefaceCompat.createFromFamiliesWithDefault(families, fontRequests.weight[0], -1);
+    }
+
+    private List<TextView> mTextViewCache = new ArrayList<>();
+
+    private void replaceTypeface(ViewGroup parent, String name, Typeface typeface) {
+        if (mTextViewCache.isEmpty()) {
+            for (int i = 0; i < parent.getChildCount(); i++) {
+                View view = parent.getChildAt(i);
+                if (view instanceof ViewGroup) {
+                    replaceTypeface((ViewGroup) view, name, typeface);
+                } else if (view instanceof TextView) {
+                    mTextViewCache.add((TextView) view);
+
+                    replaceTypeface((TextView) view, name, typeface);
+                }
+            }
+        } else {
+            for (TextView view : mTextViewCache) {
+                replaceTypeface(view, name, typeface);
+            }
+        }
+    }
+
+    private void replaceTypeface(TextView view, String name, final Typeface typeface) {
+        Typeface[] typefaces = new Typeface[4];
+        typefaces[0] = Typeface.create(name, Typeface.NORMAL);
+        typefaces[1] = Typeface.create(name, Typeface.BOLD);
+        typefaces[2] = Typeface.create(name, Typeface.ITALIC);
+        typefaces[3] = Typeface.create(name, Typeface.BOLD_ITALIC);
+
+        for (final Typeface t : typefaces) {
+            if (view.getTypeface().equals(t)) {
+                view.setTypeface(Typeface.create(typeface, t.getStyle()));
+                break;
+            }
+        }
     }
 }

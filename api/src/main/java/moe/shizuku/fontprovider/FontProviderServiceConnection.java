@@ -28,7 +28,7 @@ class FontProviderServiceConnection implements ServiceConnection {
         FontProviderClient client = new FontProviderClient(mContext, fontProvider);
         if (mCallback.onServiceConnected(client, this)) {
             try {
-                mContext.unbindService(this);
+                mContext.getApplicationContext().unbindService(this);
             } catch (Exception e) {
                 Log.w("FontProvider", "failed to unbind service", e);
             }

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.graphics.Typeface;
 import android.os.Build;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -18,10 +19,13 @@ public class TypefaceCompat {
 
     private static boolean available = true;
 
-    private static Field sFallbackFontsField;
-    private static Field sSystemFontMapField;
-    private static Method createFromFamiliesMethod;
-    private static Method setDefaultMethod;
+    protected static Field sFallbackFontsField;
+    protected static Field sSystemFontMapField;
+    protected static Method createFromFamiliesMethod;
+    protected static Method setDefaultMethod;
+    protected static Method nativeCreateWeightAliasMethod;
+    protected static Constructor constructor;
+    protected static Field nativeInstanceField;
 
     static {
         try {
@@ -38,6 +42,16 @@ public class TypefaceCompat {
             setDefaultMethod = Typeface.class.getDeclaredMethod("setDefault",
                     Typeface.class);
             setDefaultMethod.setAccessible(true);
+
+            nativeCreateWeightAliasMethod = Typeface.class.getDeclaredMethod("nativeCreateWeightAlias",
+                    Long.TYPE, Integer.TYPE);
+            nativeCreateWeightAliasMethod.setAccessible(true);
+
+            constructor = Typeface.class.getDeclaredConstructor(Long.TYPE);
+            constructor.setAccessible(true);
+
+            nativeInstanceField = Typeface.class.getDeclaredField("native_instance");
+            nativeInstanceField.setAccessible(true);
         } catch (NoSuchFieldException | NoSuchMethodException e) {
             e.printStackTrace();
 
@@ -61,6 +75,8 @@ public class TypefaceCompat {
         }
     }
 
+    private static Map<String, Typeface> sSystemFontMap;
+
     /**
      * Return Typeface.sSystemFontMap.
      */
@@ -70,12 +86,16 @@ public class TypefaceCompat {
             return null;
         }
 
-        try {
-            return (Map<String, Typeface>) sSystemFontMapField.get(null);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            return null;
+        if (sSystemFontMap == null) {
+            try {
+                sSystemFontMap = (Map<String, Typeface>) sSystemFontMapField.get(null);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+                return null;
+            }
         }
+
+        return sSystemFontMap;
     }
 
     public static void setDefault(Typeface typeface) {
@@ -87,6 +107,45 @@ public class TypefaceCompat {
             setDefaultMethod.invoke(null, typeface);
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static long nativeCreateWeightAlias(long native_instance, int weight) {
+        if (!available) {
+            return -1;
+        }
+
+        try {
+            return (long) nativeCreateWeightAliasMethod.invoke(null, native_instance, weight);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    public static Typeface create(long ni) {
+        if (!available) {
+            return null;
+        }
+
+        try {
+            return (Typeface) constructor.newInstance(ni);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static Typeface createWeightAlias(Typeface family, int weight) {
+        if (!available) {
+            return null;
+        }
+
+        try {
+            return (Typeface) constructor.newInstance(nativeCreateWeightAlias(getNativeInstance(family), weight));
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -125,5 +184,9 @@ public class TypefaceCompat {
         } else {
             throw new IllegalStateException("unsupported system version");
         }
+    }
+
+    public static long getNativeInstance(Typeface typeface) throws IllegalAccessException {
+        return (long) nativeInstanceField.get(typeface);
     }
 }
