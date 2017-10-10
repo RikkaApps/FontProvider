@@ -40,7 +40,7 @@
 
        例子：
        ```java
-       FontProviderClient client = FontProvider.createSync(this);
+       FontProviderClient client = FontProviderClient.createSync(this);
        client.replace("sans-serif", "Noto Sans CJK");
        client.replace("sans-serif-medium", "Noto Sans CJK");
        ```
