@@ -28,8 +28,6 @@ public class FontProviderService extends Service {
         super.onCreate();
 
         mBinder = new IFontProviderBinder(this);
-
-        FontManager.init(this);
     }
 
     @Nullable
@@ -51,6 +49,7 @@ public class FontProviderService extends Service {
             return FontManager.getParcelFileDescriptor(mContext, filename);
         }
 
+        @Deprecated
         @Override
         public int getFontFileSize(String filename) throws RemoteException {
             return FontManager.getFileSize(mContext, filename);
@@ -58,9 +57,10 @@ public class FontProviderService extends Service {
 
         @Override
         public FontFamily[] getFontFamily(String name, int[] weight) throws RemoteException {
-            return FontManager.getFontFamily(name, weight);
+            return FontManager.getFontFamily(mContext, name, weight);
         }
 
+        @Deprecated
         @Override
         public String getFontFilePath(String filename) throws RemoteException {
             File file = ContextUtils.getFile(mContext, filename);

@@ -45,18 +45,7 @@ public class FontProvider extends ContentProvider {
             weight[i] = Integer.parseInt(w[i]);
         }
 
-        FontFamily[] families = FontManager.getFontFamily(name, weight);
-        if (families != null) {
-            for (FontFamily family : families) {
-                for (Font font : family.fonts) {
-                    File file =  ContextUtils.getFile(getContext(), font.filename);
-                    if (file.exists()) {
-                        font.path = file.getAbsolutePath();
-                        font.size = file.length();
-                    }
-                }
-            }
-        }
+        FontFamily[] families = FontManager.getFontFamily(getContext(), name, weight);
 
         Bundle bundle = new Bundle();
         bundle.putParcelableArray("data", families);
@@ -102,6 +91,10 @@ public class FontProvider extends ContentProvider {
     @Nullable
     @Override
     public AssetFileDescriptor openAssetFile(@NonNull Uri uri, @NonNull String mode) throws FileNotFoundException {
-        return new AssetFileDescriptor(openFile(uri, mode), 0, 0);
+        ParcelFileDescriptor pfd = openFile(uri, mode);
+        if (pfd == null) {
+            return null;
+        }
+        return new AssetFileDescriptor(pfd, 0, 0);
     }
 }

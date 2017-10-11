@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.AssetFileDescriptor;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
@@ -115,23 +116,20 @@ public class FontProviderClient {
 
     private static Map<String, ByteBuffer> sBufferCache = new HashMap<>();
 
-    private final boolean mUseContentProvider;
-
-    private Context mContext;
-    private ContentResolver mResolver;
-    private IFontProvider mFontProvider;
+    private final Context mContext;
+    private final ContentResolver mResolver;
+    private final IFontProvider mFontProvider;
 
     private FontProviderClient(Context context) {
         mContext = context;
         mResolver = context.getContentResolver();
-        mUseContentProvider = true;
+        mFontProvider = null;
     }
 
     FontProviderClient(Context context, IFontProvider fontProvider) {
         mContext = context;
-        mResolver = context.getContentResolver();
+        mResolver = null;
         mFontProvider = fontProvider;
-        mUseContentProvider = false;
     }
 
     /**
@@ -176,7 +174,7 @@ public class FontProviderClient {
             try {
                 long time = System.currentTimeMillis();
 
-                if (!mUseContentProvider) {
+                if (mFontProvider != null) {
                     fontFamilies = FontFamily.combine(fontFamilies, fontRequest.loadFontFamily(mFontProvider));
                 } else {
                     fontFamilies = FontFamily.combine(fontFamilies, fontRequest.loadFontFamily(mResolver));
@@ -222,15 +220,17 @@ public class FontProviderClient {
                         if (byteBuffer == null) {
                             long time = System.currentTimeMillis();
 
-                            ParcelFileDescriptor pfd;
-                            int size;
-                            if (!mUseContentProvider) {
+                            ParcelFileDescriptor pfd = null;
+                            int size = (int) font.size;
+
+                            if (mFontProvider != null) {
                                 pfd = mFontProvider.getFontFileDescriptor(font.filename);
-                                size = mFontProvider.getFontFileSize(font.filename);
                             } else {
-                                pfd = mResolver.openAssetFileDescriptor(
-                                        Uri.parse("content://moe.shizuku.fontprovider/file/" + font.filename), "r").getParcelFileDescriptor();
-                                size = (int) font.size;
+                                AssetFileDescriptor afd = mResolver.openAssetFileDescriptor(
+                                        Uri.parse("content://moe.shizuku.fontprovider/file/" + font.filename), "r");
+                                if (afd != null) {
+                                    pfd = afd.getParcelFileDescriptor();
+                                }
                             }
 
                             Log.d(TAG, "open file " + font.filename + " costs " + (System.currentTimeMillis() - time) + "ms");
@@ -251,12 +251,7 @@ public class FontProviderClient {
                             return null;
                         }
                     } else {
-                        String path;
-                        if (!mUseContentProvider) {
-                            path = mFontProvider.getFontFilePath(font.filename);
-                        } else {
-                            path = font.path;
-                        }
+                        String path = font.path;
 
                         if (path == null) {
                             Log.e(TAG, "Font " + font.filename + " not downloaded?");

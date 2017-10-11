@@ -127,7 +127,7 @@ public class FontManager {
         return ids;
     }
 
-    public static FontFamily[] getFontFamily(String name, @Nullable int... weight) {
+    public static FontFamily[] getFontFamily(Context context, String name, @Nullable int... weight) {
         FontInfo font = FontManager.getFont(name);
         if (font == null) {
             return null;
@@ -160,10 +160,30 @@ public class FontManager {
             families[i] = new FontFamily(language[i], font.getVariant(), fonts);
         }
 
+        // fill file info
+        for (FontFamily family : families) {
+            for (Font f : family.fonts) {
+                File file =  ContextUtils.getFile(context, f.filename);
+                if (file.exists()) {
+                    f.path = file.getAbsolutePath();
+                    f.size = file.length();
+                }
+            }
+        }
+
         return families;
     }
 
     public static ParcelFileDescriptor getParcelFileDescriptor(Context context, String filename) {
+        FileDescriptor fd = getFileDescriptor(context, filename);
+        if (fd != null) {
+            return ParcelFileDescriptorUtils.dupSilently(fd);
+        } else {
+            return null;
+        }
+    }
+
+    public static FileDescriptor getFileDescriptor(Context context, String filename) {
         MemoryFile mf = FILE_CACHE.get(filename);
 
         if (mf != null) {
@@ -171,7 +191,7 @@ public class FontManager {
 
             FileDescriptor fd = MemoryFileUtils.getFileDescriptor(mf);
             if (fd != null && fd.valid()) {
-                return ParcelFileDescriptorUtils.dupSilently(MemoryFileUtils.getFileDescriptor(mf));
+                return fd;
             } else {
                 Log.i(TAG, "MemoryFile " + filename + " is not valid?");
             }
@@ -206,7 +226,7 @@ public class FontManager {
         Log.i(TAG, "loading finished in " + (System.currentTimeMillis() - time) + "ms");
         FILE_CACHE.put(filename, mf);
 
-        return ParcelFileDescriptorUtils.dupSilently(MemoryFileUtils.getFileDescriptor(mf));
+        return MemoryFileUtils.getFileDescriptor(mf);
     }
 
     public static int getFileSize(Context context, String filename) {

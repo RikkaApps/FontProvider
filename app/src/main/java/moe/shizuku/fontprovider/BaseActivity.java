@@ -1,6 +1,10 @@
 package moe.shizuku.fontprovider;
 
 import android.app.Activity;
+import android.content.ServiceConnection;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.MenuItem;
 
 /**
@@ -8,6 +12,30 @@ import android.view.MenuItem;
  */
 
 public abstract class BaseActivity extends Activity {
+
+    private static boolean sFontInitialized = false;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        if (!sFontInitialized) {
+            final long time = System.currentTimeMillis();
+
+            FontProviderClient.create(this, new FontProviderClient.Callback() {
+                @Override
+                public boolean onServiceConnected(FontProviderClient client, ServiceConnection serviceConnection) {
+                    client.replace("serif", "Noto Sans CJK");
+                    client.replace("serif-medium", "Noto Sans CJK");
+
+                    Log.d("Font", "replace costs " + (System.currentTimeMillis() - time) + "ms");
+                    return true;
+                }
+            });
+
+            sFontInitialized = true;
+        }
+
+        super.onCreate(savedInstanceState);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
