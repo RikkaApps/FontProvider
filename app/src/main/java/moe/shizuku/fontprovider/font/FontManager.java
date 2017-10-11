@@ -13,6 +13,7 @@ import android.util.LruCache;
 import com.google.gson.Gson;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -164,9 +165,16 @@ public class FontManager {
 
     public static ParcelFileDescriptor getParcelFileDescriptor(Context context, String filename) {
         MemoryFile mf = FILE_CACHE.get(filename);
+
         if (mf != null) {
             Log.i(TAG, "MemoryFile " + filename + " is in the cache");
-            return ParcelFileDescriptorUtils.dupSilently(MemoryFileUtils.getFileDescriptor(mf));
+
+            FileDescriptor fd = MemoryFileUtils.getFileDescriptor(mf);
+            if (fd != null && fd.valid()) {
+                return ParcelFileDescriptorUtils.dupSilently(MemoryFileUtils.getFileDescriptor(mf));
+            } else {
+                Log.i(TAG, "MemoryFile " + filename + " is not valid?");
+            }
         }
 
         long time = System.currentTimeMillis();
