@@ -179,10 +179,8 @@ public class TypefaceCompat {
     public static Typeface createFromFamiliesWithDefault(Object families, int weight, int italic) {
         if (Build.VERSION.SDK_INT >= 26) {
             return TypefaceCompatApi26.createFromFamiliesWithDefault(families, weight, italic);
-        } else if (Build.VERSION.SDK_INT >= 21) {
-            return TypefaceCompatApi21.createFromFamiliesWithDefault(families, weight);
         } else {
-            throw new IllegalStateException("unsupported system version");
+            return TypefaceCompatApi21.createFromFamiliesWithDefault(families, weight);
         }
     }
 

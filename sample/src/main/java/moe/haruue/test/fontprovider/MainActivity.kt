@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.ServiceConnection
 import android.net.Uri
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_main_content.*
@@ -19,14 +20,10 @@ class MainActivity : Activity() {
         if (!init) {
             // To replace correctly after callback called,
             // we must add dummy typefaces not exists in fonts.xml first
-            FontProviderClient.addPlaceholderFamilies(
-                    "serif-thin", "serif-light", "serif-medium", "serif-black")
-
-            FontProviderClient.create(this) {
-                client, _ ->
+            FontProviderClient.create(this, FontProviderClient.Callback { client, _ ->
                 App.replace(client)
-                return@create true
-            }
+                true
+            }, "serif-thin", "serif-light", "serif-medium", "serif-black")
 
             init = true
         }

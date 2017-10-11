@@ -52,32 +52,25 @@ public class FontProviderClient {
     }
 
     /**
-     * Add dummy Typefaces if not exist.
-     *
-     * @param names Family names
-     */
-    public static void addPlaceholderFamilies(String... names) {
-        Map<String, Typeface> typefaceMap = TypefaceCompat.getSystemFontMap();
-        if (typefaceMap == null) {
-            return;
-        }
-
-        for (String name : names) {
-            if (!typefaceMap.containsKey(name)) {
-                typefaceMap.put(name, TypefaceCompat.createWeightAlias(Typeface.SANS_SERIF, 400));
-            }
-        }
-    }
-
-    /**
      * Create FontProviderClient asynchronously, when call replace, all TextView's Typeface
      * will be replaced automatically if matched (by traversal all TextView).
      *
      * @param activity Activity
      * @param callback Callback
+     * @param names Family names not exist in fonts.xml
      */
-    public static void create(Activity activity, Callback callback) {
-        create((Context) activity, callback);
+    public static void create(Activity activity, Callback callback, String... names) {
+        // add dummy Typefaces, or it will not be replaced correctly
+        Map<String, Typeface> typefaceMap = TypefaceCompat.getSystemFontMap();
+        if (typefaceMap != null) {
+            for (String name : names) {
+                if (!typefaceMap.containsKey(name)) {
+                    typefaceMap.put(name, TypefaceCompat.createWeightAlias(Typeface.SANS_SERIF, 400));
+                }
+            }
+        }
+
+        create(activity, callback);
     }
 
     /**
@@ -99,7 +92,6 @@ public class FontProviderClient {
             Log.i(TAG, "can't bindService", e);
         }
     }
-
 
     /**
      * Create FontProviderClient synchronously (use ContentProvider, slower).
