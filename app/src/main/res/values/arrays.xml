@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array name="max_memory_cache_entries">
+    <string-array name="max_memory_cache_entries" translatable="false">
         <item>50 MB</item>
         <item>100 MB</item>
         <item>250 MB</item>
