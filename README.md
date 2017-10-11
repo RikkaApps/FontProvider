@@ -3,52 +3,91 @@
 在绝大部分的 Android 系统中 CJK 字体只提供了一个字重，而默认的英语字体 (Roboto) 却提供了多达 7 个字重，
 这就是为什么我们会发现在英语环境下，如对话框的按钮、AppBar 标题等要相对粗一些，而 CJK 语言下都是细细的。
 
-因此我们提供了这个应用，为其他应用提供常用字重的 Noto CJK 字体。
+因此我们提供了这个应用，为其他应用提供常用字重的 Noto CJK 字体，未来我们还会提供更多使用无限制的字体。
 
 ## 对普通用户
-在安装我们提供的应用后，若使用的应用适配了 Font Provider，就能看到界面“原本的样子”。
+
+在安装我们提供的应用后并下载需要的字体，若使用的应用适配了 Font Provider，就能看到界面“原本的样子”。
 
 ## 对应用开发者
 
 ### 如何适配 Font Provider
 
-1. 加入依赖，如果使用 3.0.0 之前的 gradle 插件需要将 `implementation` 替换为 `compile`
+适配 Font Provider 非常简单，最少只需要几行代码即可使用。
+
+#### 加入依赖
+
+```
+implementation 'moe.shizuku.fontprovider:api:<latest-release>' // 在 release 可以看到最新版本，如果使用 3.0.0 之前的 gradle 插件需要将 implementation 替换为 compile
+```
    
-   `implementation 'moe.shizuku.fontprovider:api:1.3.0' // 在 release 可以看到最新版本`
+#### 申请权限
+
+由于 API 限制，在 Android 7.0 之前的系统使用 Font Provider **需要申请存储权限**。
+    
+> 由于在 API 24 之前，只能通过 path 创建，而中文字体体积较大，不适合使用像 Google 的 downloadable font 那样通过保存字体至应用的私有空间的方法。因此不得不出此下策，申请存储权限。
+    
    
-2. 在合适的地方（如 `Application.onCreate`）创建 `FontProviderClient` 并请求或直接替换想要的字体。这里提供了两种方法来创建 `FontProviderClient`：
+#### 使用
 
-   - **异步创建**（绑定服务）
+##### （可选）检查可用性
 
-       异步创建不会阻塞应用的启动，但绑定服务需要时间，**完成替换之前已创建的 Typeface 将不会被替换**。
+```java
+int code = FontProviderClient.checkAvailability(context);
+if (code != FontProviderAvailability.OK) {
+	// 根据具体的 code 提示用户
+}
+```
+    	
 
-       例子：
-       ```java
-       FontProviderClient.create(this, new FontProviderClient.Callback() {
-           @Override
-           public boolean onServiceConnected(FontProviderClient client, ServiceConnection serviceConnection) {
-              client.replace("sans-serif", "Noto Sans CJK");
-              client.replace("sans-serif-medium", "Noto Sans CJK");
-              return true;
-           }
-       });
-       ```
+##### 获取 FontProviderClient
 
-   - **同步创建**（ContentResolver）
+我们提供了三种取得 `FontProviderClient` 的方式。
 
-       同步创建可以保证替换及时生效，但会阻塞应用的启动，且相较绑定服务需要花费更多时间。
+* `void FontProviderClient.create(context, callback)`
+	
+    通过绑定服务创建可用的 `FontProviderClient`，由于绑定服务是异步的，第一个 Activity 替换的 Typeface 不会生效（因为替换之前就已经创建好了）。
+    
+* `void FontProviderClient.create(activity, callback, names...)`
+	
+    通过绑定服务创建可用的 `FontProviderClient`，不同于第一种，在 Callback 执行 `client.replace` 时会遍历该 Activity 种的 TextView 并自动替换其 Typeface。`names` 参数为不存在于 `fonts.xml` 的字体（如 `serif-medium`）。
+    
+* `FontProviderClient FontProviderClient.createSync(context)`
+	
+    通过 `Content Provider` 创建可用的 `FontProviderClient`，会由于`Content Provider` 本身的原因消耗更多时间。
+    
+##### 基本使用方式
 
-       例子：
-       ```java
-       FontProviderClient client = FontProviderClient.createSync(this);
-       client.replace("sans-serif", "Noto Sans CJK");
-       client.replace("sans-serif-medium", "Noto Sans CJK");
-       ```
+一个完整的使用第二种方法的例子：
 
-3. 在需要的地方只需按原本的方式使用即可，比如在 layout xml 中 `android:fontFamily="sans-serif-medium"` 
-或是直接创建 `Typeface` 实例 `Typeface.create("sans-serif-medium", )`。
+```java
+public class BaseActivity extends FragmentActivity {
 
-4. 若要替换 Emoji 字体请参考 sample 项目
+    private static boolean sFontProviderInitialized = false;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (!sFontProviderInitialized) {
+            // （可选）替换默认 emoji 字体
+            FontRequests.setDefaultSansSerifFonts(FontRequest.DEFAULT, FontRequest.NOTO_COLOR_EMOJI);
+            
+            // 创建 FontProviderClient
+            FontProviderClient.create(this, new FontProviderClient.Callback() {
+                @Override
+                public boolean onServiceConnected(FontProviderClient client, ServiceConnection serviceConnection) {
+                    client.replace("sans-serif", "Noto Sans CJK");
+                    client.replace("sans-serif-medium", "Noto Sans CJK");
+                    return true;
+                }
+            });
+
+            sFontProviderInitialized = true;
+        }
+    }
+}
+```
 
 ### FAQ
 
