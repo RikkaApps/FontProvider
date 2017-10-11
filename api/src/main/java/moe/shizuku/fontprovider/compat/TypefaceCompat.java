@@ -171,8 +171,8 @@ public class TypefaceCompat {
     /**
      * Create a new typeface from an array of font families, including
      * also the font families in the fallback list.
-     * @param weight the weight for this family, required on API 26+.
-     * @param italic the italic information for this family, required on API 26+.
+     * @param weight the weight for this family
+     * @param italic the italic information for this family, only required on API 26+.
      * @param families array of font families.
      * @return Typeface object
      */

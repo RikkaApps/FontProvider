@@ -79,6 +79,7 @@ public class FontRequest {
             bundle.setClassLoader(FontFamily.CREATOR.getClass().getClassLoader());
 
             Parcelable[] parcelables = bundle.getParcelableArray("data");
+            cursor.close();
             if (parcelables != null) {
                 FontFamily[] families = new FontFamily[parcelables.length];
                 for (int i = 0; i < parcelables.length; i++) {
