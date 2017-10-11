@@ -18,6 +18,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="14724a50f9b4697ae7e68998e3a3004758c84b56" />
+
         <activity
             android:name=".FontManageActivity">
             <intent-filter>
