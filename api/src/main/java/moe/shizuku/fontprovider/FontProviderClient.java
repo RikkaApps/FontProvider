@@ -5,18 +5,24 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
+import android.support.annotation.IntDef;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.io.FileInputStream;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -30,6 +36,11 @@ import moe.shizuku.fontprovider.compat.TypefaceCompat;
 import moe.shizuku.fontprovider.font.Font;
 import moe.shizuku.fontprovider.font.FontFamily;
 
+import static moe.shizuku.fontprovider.FontProviderClient.FontProviderAvailability.DISABLED;
+import static moe.shizuku.fontprovider.FontProviderClient.FontProviderAvailability.NOT_INSTALLED;
+import static moe.shizuku.fontprovider.FontProviderClient.FontProviderAvailability.OK;
+import static moe.shizuku.fontprovider.FontProviderClient.FontProviderAvailability.VERSION_TOO_LOW;
+
 /**
  * Created by rikka on 2017/9/27.
  */
@@ -40,6 +51,38 @@ public class FontProviderClient {
 
     private static final String ACTION = "moe.shizuku.fontprovider.action.BIND";
     private static final String PACKAGE = "moe.shizuku.fontprovider";
+    private static final int MIN_VERSION = 5;
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({OK, NOT_INSTALLED, DISABLED, VERSION_TOO_LOW})
+    public @interface FontProviderAvailability {
+        int OK = 0;
+        int NOT_INSTALLED = 1;
+        int DISABLED = 2;
+        int VERSION_TOO_LOW = 3;
+    }
+
+    public static @FontProviderAvailability int checkAvailability(Context context) {
+        PackageInfo pi = null;
+        try {
+            pi = context.getPackageManager().getPackageInfo(PACKAGE, 0);
+        } catch (PackageManager.NameNotFoundException ignored) {
+        }
+
+        if (pi == null) {
+            return NOT_INSTALLED;
+        }
+
+        if (!pi.applicationInfo.enabled) {
+            return DISABLED;
+        }
+
+        if (pi.versionCode < MIN_VERSION) {
+            return VERSION_TOO_LOW;
+        }
+
+        return OK;
+    }
 
     public interface Callback {
         /**
@@ -60,6 +103,10 @@ public class FontProviderClient {
      * @param names Family names not exist in fonts.xml
      */
     public static void create(Activity activity, Callback callback, String... names) {
+        if (checkAvailability(activity) != OK) {
+            return;
+        }
+
         // add dummy Typefaces, or it will not be replaced correctly
         Map<String, Typeface> typefaceMap = TypefaceCompat.getSystemFontMap();
         if (typefaceMap != null) {
@@ -70,7 +117,9 @@ public class FontProviderClient {
             }
         }
 
-        create(activity, callback);
+        sBufferCache.clear();
+
+        bind(activity, callback);
     }
 
     /**
@@ -80,10 +129,18 @@ public class FontProviderClient {
      * @param callback Callback
      */
     public static void create(Context context, Callback callback) {
-        Intent intent = new Intent(ACTION)
-                .setPackage(PACKAGE);
+        if (checkAvailability(context) != OK) {
+            return;
+        }
 
         sBufferCache.clear();
+
+        bind(context, callback);
+    }
+
+    private static void bind(Context context, Callback callback) {
+        Intent intent = new Intent(ACTION)
+                .setPackage(PACKAGE);
 
         try {
             FontProviderServiceConnection connection = new FontProviderServiceConnection(context, callback);
@@ -98,7 +155,12 @@ public class FontProviderClient {
      *
      * @param context Context
      */
+    @Nullable
     public static FontProviderClient createSync(Context context) {
+        if (checkAvailability(context) != OK) {
+            return null;
+        }
+
         context = context.getApplicationContext();
 
         sBufferCache.clear();

@@ -4,11 +4,11 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
-import android.content.ServiceConnection
 import android.net.Uri
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_main_content.*
 import moe.shizuku.fontprovider.FontProviderClient
+import moe.shizuku.fontprovider.FontProviderClient.FontProviderAvailability
 
 class MainActivity : Activity() {
 
@@ -18,14 +18,16 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         // replace at Activity, only need call once
         if (!init) {
-            // To replace correctly after callback called,
-            // we must add dummy typefaces not exists in fonts.xml first
-            FontProviderClient.create(this, FontProviderClient.Callback { client, _ ->
-                App.replace(client)
-                true
-            }, "serif-thin", "serif-light", "serif-medium", "serif-black")
+            if (FontProviderClient.checkAvailability(this) == FontProviderAvailability.OK) {
+                // To replace correctly after callback called,
+                // we must add dummy typefaces not exists in fonts.xml first
+                FontProviderClient.create(this, FontProviderClient.Callback { client, _ ->
+                    App.replace(client)
+                    true
+                }, "serif-thin", "serif-light", "serif-medium", "serif-black")
 
-            init = true
+                init = true
+            }
         }
 
         super.onCreate(savedInstanceState)
