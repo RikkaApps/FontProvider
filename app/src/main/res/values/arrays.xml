@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="max_memory_cache_entries">
+        <item>50 MB</item>
+        <item>100 MB</item>
+        <item>250 MB</item>
+        <item>500 MB</item>
+    </string-array>
+
+    <integer-array name="max_memory_cache_values">
+        <item>52428800</item>
+        <item>104857600</item>
+        <item>262144000</item>
+        <item>524288000</item>
+    </integer-array>
+
+</resources>

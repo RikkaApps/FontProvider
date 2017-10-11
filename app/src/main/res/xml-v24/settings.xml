@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/settings_cache">
+
+        <IntegerSimpleMenuPreference
+            android:key="max_memory_cache"
+            android:title="@string/settings_max_memory"
+            android:summary="%s"
+            android:entries="@array/max_memory_cache_entries"
+            android:entryValues="@array/max_memory_cache_values"
+            android:defaultValue="104857600"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

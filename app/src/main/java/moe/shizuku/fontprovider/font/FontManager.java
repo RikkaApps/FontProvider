@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import moe.shizuku.fontprovider.BuildConfig;
+import moe.shizuku.fontprovider.FontProviderSettings;
 import moe.shizuku.fontprovider.R;
 import moe.shizuku.fontprovider.utils.ContextUtils;
 import moe.shizuku.fontprovider.utils.MemoryFileUtils;
@@ -37,14 +38,24 @@ public class FontManager {
 
     private static final String TAG = "FontManager";
 
-    private static final LruCache<String, MemoryFile> FILE_CACHE;
-    private static final Map<String, Integer> FILE_SIZE = BUILT_IN_FONTS_SIZE;
+    private static final @RawRes int[] FONTS_RES = {
+            R.raw.noto_sans_cjk,
+            R.raw.noto_serif,
+            R.raw.noto_serif_cjk,
+            R.raw.noto_color_emoji,
+    };
 
-    private static final int MAX_CACHE = 1024 * 1024 * 100;
+    private static final Map<String, Integer> FILE_SIZE = new HashMap<>(BUILT_IN_FONTS_SIZE);
 
-    static {
-        FILE_CACHE = new LruCache<String, MemoryFile>(MAX_CACHE) {
+    private static LruCache<String, MemoryFile> sCache;
+    private static List<FontInfo> sFonts;
 
+    public static void init(Context context) {
+        if (sFonts != null) {
+            return;
+        }
+
+        sCache = new LruCache<String, MemoryFile>(FontProviderSettings.getMaxCache()) {
             @Override
             protected void entryRemoved(boolean evicted, String key, MemoryFile oldValue, MemoryFile newValue) {
                 if (evicted) {
@@ -57,36 +68,26 @@ public class FontManager {
                 return value.length();
             }
         };
-    }
 
-    private static final @RawRes int[] FONTS_RES = {
-            R.raw.noto_sans_cjk,
-            R.raw.noto_serif,
-            R.raw.noto_serif_cjk,
-            R.raw.noto_color_emoji,
-    };
-
-    private static final Map<String, FontInfo> FONTS_MAP = new HashMap<>();
-    private static final List<FontInfo> FONTS = new ArrayList<>();
-
-    public static void init(Context context) {
-        if (FONTS_MAP.size() > 0) {
-            return;
-        }
+        sFonts = new ArrayList<>();
 
         for (int res : FONTS_RES) {
             FontInfo font = new Gson().fromJson(new InputStreamReader(context.getResources().openRawResource(res)), FontInfo.class);
-            FONTS_MAP.put(font.getName(), font);
-            FONTS.add(font);
+            sFonts.add(font);
         }
     }
 
     public static List<FontInfo> getFonts() {
-        return FONTS;
+        return sFonts;
     }
 
     public static FontInfo getFont(String name) {
-        return FONTS_MAP.get(name);
+        for (FontInfo font : sFonts) {
+            if (font.getName().equals(name)) {
+                return font;
+            }
+        }
+        return null;
     }
 
     public static List<String> getFiles(FontInfo font, Context context, boolean excludeExisted) {
@@ -127,6 +128,7 @@ public class FontManager {
         return ids;
     }
 
+    @Nullable
     public static FontFamily[] getFontFamily(Context context, String name, @Nullable int... weight) {
         FontInfo font = FontManager.getFont(name);
         if (font == null) {
@@ -184,7 +186,7 @@ public class FontManager {
     }
 
     public static FileDescriptor getFileDescriptor(Context context, String filename) {
-        MemoryFile mf = FILE_CACHE.get(filename);
+        MemoryFile mf = sCache.get(filename);
 
         if (mf != null) {
             Log.i(TAG, "MemoryFile " + filename + " is in the cache");
@@ -224,7 +226,7 @@ public class FontManager {
         }
 
         Log.i(TAG, "loading finished in " + (System.currentTimeMillis() - time) + "ms");
-        FILE_CACHE.put(filename, mf);
+        sCache.put(filename, mf);
 
         return MemoryFileUtils.getFileDescriptor(mf);
     }
@@ -242,6 +244,10 @@ public class FontManager {
     }
 
     public static void closeAll() {
-        FILE_CACHE.trimToSize(0);
+        sCache.trimToSize(0);
+    }
+
+    public static void setMaxCache(int maxSize) {
+        sCache.resize(maxSize);
     }
 }

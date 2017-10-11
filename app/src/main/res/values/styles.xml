@@ -1,7 +1,9 @@
 <resources>
     <style name="Theme.DayNight" parent="@android:style/Theme.Material.Light"/>
 
-    <style name="AppTheme" parent="Theme.DayNight"/>
+    <style name="AppTheme" parent="Theme.DayNight">
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+    </style>
 
     <style name="Animation.FadeInOut" parent="@android:style/Animation">
         <item name="android:windowEnterAnimation">@anim/fade_in</item>

@@ -5,4 +5,7 @@
     <string name="font_summary_no_language">%1$d 种样式</string>
     <string name="font_cannot_preview">需要先下载字体才能预览</string>
     <string name="action_language">改变语言</string>
+    <string name="settings">设置</string>
+    <string name="settings_cache">缓存</string>
+    <string name="settings_max_memory">最大内存缓存</string>
 </resources>

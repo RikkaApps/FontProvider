@@ -27,6 +27,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".FontPreviewActivity"/>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/settings"/>
         <service
             android:name=".font.FontProviderService"
             android:enabled="true"

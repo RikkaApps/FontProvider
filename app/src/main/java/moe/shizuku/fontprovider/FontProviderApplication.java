@@ -14,6 +14,7 @@ public class FontProviderApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
+        FontProviderSettings.init(this);
         FontManager.init(this);
     }
 }

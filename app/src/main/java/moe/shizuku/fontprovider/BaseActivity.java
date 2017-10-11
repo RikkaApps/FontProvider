@@ -1,9 +1,9 @@
 package moe.shizuku.fontprovider;
 
-import android.app.Activity;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.MenuItem;
 
@@ -11,7 +11,7 @@ import android.view.MenuItem;
  * Created by rikka on 2017/10/2.
  */
 
-public abstract class BaseActivity extends Activity {
+public abstract class BaseActivity extends FragmentActivity {
 
     private static boolean sFontInitialized = false;
 
