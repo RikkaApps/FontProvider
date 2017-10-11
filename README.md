@@ -56,7 +56,7 @@ if (code != FontProviderAvailability.OK) {
 	
     通过 `Content Provider` 创建可用的 `FontProviderClient`，会由于`Content Provider` 本身的原因消耗更多时间。
     
-##### 基本使用方式：替换
+##### 基本使用方式
 
 一个完整的使用第二种方法的例子：
 
@@ -69,8 +69,8 @@ public class BaseActivity extends FragmentActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (sFontProviderInitialized) {
-            // 替换默认 emoji 字体
+        if (!sFontProviderInitialized) {
+            // （可选）替换默认 emoji 字体
             FontRequests.setDefaultSansSerifFonts(FontRequest.DEFAULT, FontRequest.NOTO_COLOR_EMOJI);
             
             // 创建 FontProviderClient
