@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 import moe.shizuku.fontprovider.font.FontInfo;
 import moe.shizuku.fontprovider.viewholder.FontPreviewViewHolder;
-import moe.shizuku.utils.recyclerview.BaseRecyclerViewAdapter;
+import moe.shizuku.support.recyclerview.BaseRecyclerViewAdapter;
 
 /**
  * Created by rikka on 2017/10/3.
@@ -23,7 +23,7 @@ public class FontPreviewAdapter extends BaseRecyclerViewAdapter {
     public FontPreviewAdapter(FontInfo fontInfo, int localeIndex, Context context) {
         super(Arrays.asList(fontInfo.getStyle()));
 
-        putRule(FontInfo.Style.class, FontPreviewViewHolder.CREATOR);
+        getCreatorPool().putRule(FontInfo.Style.class, FontPreviewViewHolder.CREATOR);
 
         mFontInfo = fontInfo;
         mLocaleIndex = localeIndex;

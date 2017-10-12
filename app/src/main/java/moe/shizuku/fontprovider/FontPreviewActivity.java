@@ -15,7 +15,7 @@ import java.util.Locale;
 
 import moe.shizuku.fontprovider.adapter.FontPreviewAdapter;
 import moe.shizuku.fontprovider.font.FontInfo;
-import moe.shizuku.utils.recyclerview.helper.RecyclerViewHelper;
+import moe.shizuku.support.recyclerview.RecyclerViewHelper;
 
 /**
  * Created by rikka on 2017/10/3.

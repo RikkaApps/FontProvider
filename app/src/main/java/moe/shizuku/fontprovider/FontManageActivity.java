@@ -11,7 +11,7 @@ import android.view.MenuItem;
 
 import moe.shizuku.fontprovider.adapter.FontManageAdapter;
 import moe.shizuku.fontprovider.font.FontManager;
-import moe.shizuku.utils.recyclerview.helper.RecyclerViewHelper;
+import moe.shizuku.support.recyclerview.RecyclerViewHelper;
 
 /**
  * Created by rikka on 2017/10/2.

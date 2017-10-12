@@ -13,6 +13,8 @@ import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import moe.shizuku.support.utils.IOUtils;
+
 /**
  * Created by rikka on 2017/9/27.
  */

@@ -12,10 +12,7 @@ import android.os.ParcelFileDescriptor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-
-import moe.shizuku.fontprovider.utils.ContextUtils;
 
 /**
  * Created by rikka on 2017/10/9.

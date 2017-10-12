@@ -14,7 +14,7 @@ import moe.shizuku.fontprovider.FontRequest;
 import moe.shizuku.fontprovider.FontRequests;
 import moe.shizuku.fontprovider.R;
 import moe.shizuku.fontprovider.adapter.FontPreviewAdapter;
-import moe.shizuku.utils.recyclerview.BaseViewHolder;
+import moe.shizuku.support.recyclerview.BaseViewHolder;
 
 /**
  * Created by rikka on 2017/10/3.

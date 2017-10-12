@@ -11,7 +11,7 @@ import android.support.annotation.Nullable;
 import java.io.File;
 
 import moe.shizuku.fontprovider.IFontProvider;
-import moe.shizuku.fontprovider.utils.ContextUtils;
+import moe.shizuku.support.utils.ContextUtils;
 
 /**
  * Created by rikka on 2017/9/27.
@@ -63,7 +63,7 @@ public class FontProviderService extends Service {
         @Deprecated
         @Override
         public String getFontFilePath(String filename) throws RemoteException {
-            File file = ContextUtils.getFile(mContext, filename);
+            File file = ContextUtils.getExternalCacheFile(mContext, filename);
             if (file.exists()) {
                 return file.getAbsolutePath();
             }

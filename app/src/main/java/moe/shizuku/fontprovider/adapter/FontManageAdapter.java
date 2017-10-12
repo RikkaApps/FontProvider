@@ -4,7 +4,7 @@ import java.util.List;
 
 import moe.shizuku.fontprovider.font.FontInfo;
 import moe.shizuku.fontprovider.viewholder.FontViewHolder;
-import moe.shizuku.utils.recyclerview.BaseRecyclerViewAdapter;
+import moe.shizuku.support.recyclerview.BaseRecyclerViewAdapter;
 
 /**
  * Created by rikka on 2017/10/2.
@@ -17,7 +17,7 @@ public class FontManageAdapter extends BaseRecyclerViewAdapter {
 
         setHasStableIds(true);
 
-        putRule(FontInfo.class, FontViewHolder.CREATOR);
+        getCreatorPool().putRule(FontInfo.class, FontViewHolder.CREATOR);
     }
 
     @Override

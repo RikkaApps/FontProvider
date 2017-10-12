@@ -24,9 +24,9 @@ import java.util.Map;
 import moe.shizuku.fontprovider.BuildConfig;
 import moe.shizuku.fontprovider.FontProviderSettings;
 import moe.shizuku.fontprovider.R;
-import moe.shizuku.fontprovider.utils.ContextUtils;
 import moe.shizuku.fontprovider.utils.MemoryFileUtils;
 import moe.shizuku.fontprovider.utils.ParcelFileDescriptorUtils;
+import moe.shizuku.support.utils.ContextUtils;
 
 import static moe.shizuku.fontprovider.BuildConfig.BUILT_IN_FONTS_SIZE;
 
@@ -102,7 +102,7 @@ public class FontManager {
 
         if (excludeExisted) {
             for (String f : new ArrayList<>(files)) {
-                if (ContextUtils.getFile(context, f).exists()) {
+                if (ContextUtils.getExternalCacheFile(context, f).exists()) {
                     files.remove(f);
                 }
             }
@@ -165,7 +165,7 @@ public class FontManager {
         // fill file info
         for (FontFamily family : families) {
             for (Font f : family.fonts) {
-                File file =  ContextUtils.getFile(context, f.filename);
+                File file =  ContextUtils.getExternalCacheFile(context, f.filename);
                 if (file.exists()) {
                     f.path = file.getAbsolutePath();
                     f.size = file.length();
@@ -210,7 +210,7 @@ public class FontManager {
 
         // downloadable font? read from file
         if (mf == null) {
-            File file = ContextUtils.getFile(context, filename);
+            File file = ContextUtils.getExternalCacheFile(context, filename);
             if (file.exists()) {
                 mf = MemoryFileUtils.fromFile(file);
                 if (mf != null) {
@@ -236,7 +236,7 @@ public class FontManager {
             return FILE_SIZE.get(filename);
         }
 
-        File file = ContextUtils.getFile(context, filename);
+        File file = ContextUtils.getExternalCacheFile(context, filename);
         if (file.exists()) {
             return (int) file.length();
         }
