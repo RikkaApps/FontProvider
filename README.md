@@ -17,8 +17,10 @@
 
 #### 加入依赖
 
+[![Download](https://api.bintray.com/packages/rikkaw/FontProvider/api/images/download.svg)](https://bintray.com/rikkaw/FontProvider/api/_latestVersion)
+
 ```
-implementation 'moe.shizuku.fontprovider:api:<latest-release>' // 在 release 可以看到最新版本，如果使用 3.0.0 之前的 gradle 插件需要将 implementation 替换为 compile
+implementation 'moe.shizuku.fontprovider:api:<替换为上面的版本号>' // 如果使用 3.0.0 之前的 gradle 插件需要将 implementation 替换为 compile
 ```
    
 #### 申请权限

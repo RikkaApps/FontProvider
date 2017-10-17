@@ -9,7 +9,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode rootProject.ext.versionCode
-        versionName rootProject.ext.versionName
+        versionName rootProject.ext.libraryVersion
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -30,7 +30,7 @@ dependencies {
 ext {
     libraryName = 'FontProviderClient'
     libraryDescription = 'Helper library used to get font from Font Provider app and replace cached Typeface.'
-    libraryVersion = versionName
+    libraryVersion = rootProject.ext.libraryVersion
     artifact = project.name
     bintrayName = project.name
 }
