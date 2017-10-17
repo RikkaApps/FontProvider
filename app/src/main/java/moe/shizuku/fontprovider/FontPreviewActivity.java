@@ -2,7 +2,6 @@ package moe.shizuku.fontprovider;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
@@ -26,6 +25,8 @@ public class FontPreviewActivity extends BaseActivity {
     private static final int MENU_ITEM_ID_START = 0x10000;
 
     private FontInfo mFontInfo;
+    private int mLocaleIndex;
+    private FontPreviewAdapter mAdapter;
 
     public static Intent intent(Context context, FontInfo font) {
         return new Intent(context, FontPreviewActivity.class)
@@ -44,29 +45,20 @@ public class FontPreviewActivity extends BaseActivity {
             getActionBar().setTitle(mFontInfo.getName());
         }
 
-        int localeIndex = getIntent().getIntExtra(Intents.EXTRA_LOCALE_INDEX, 0);
-        Context context = null;
-        if (mFontInfo.getLanguage()[0] != null) {
-            Locale locale = Locale.forLanguageTag(mFontInfo.getLanguage()[localeIndex]);
-
-            Configuration configuration = new Configuration(getResources().getConfiguration());
-            configuration.setLocale(locale);
-            context = createConfigurationContext(configuration);
-            context.setTheme(mThemeId);
-
-            if (getActionBar() != null) {
-                getActionBar().setSubtitle(locale.getDisplayName());
-            }
-        }
-
         RecyclerView recyclerView = findViewById(android.R.id.list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
-        FontPreviewAdapter adapter = new FontPreviewAdapter(mFontInfo, mFontInfo.getIndex()[localeIndex], context);
-        recyclerView.setAdapter(adapter);
+        mAdapter = new FontPreviewAdapter(mFontInfo);
+        recyclerView.setAdapter(mAdapter);
 
         RecyclerViewHelper.fixOverScroll(recyclerView);
+
+        if (savedInstanceState != null) {
+            onLocaleChanged(savedInstanceState.getInt(Intents.EXTRA_LOCALE_INDEX, 0));
+        } else {
+            onLocaleChanged(0);
+        }
     }
 
     @Override
@@ -89,19 +81,31 @@ public class FontPreviewActivity extends BaseActivity {
         String[] language = mFontInfo.getLanguage();
         if (language[0] != null
                 && id >= MENU_ITEM_ID_START && id < MENU_ITEM_ID_START + language.length) {
-            getIntent().putExtra(Intents.EXTRA_LOCALE_INDEX, id - MENU_ITEM_ID_START);
-            getWindow().setWindowAnimations(R.style.Animation_FadeInOut);
-            recreate();
+            onLocaleChanged(id - MENU_ITEM_ID_START);
+
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private int mThemeId;
-
     @Override
-    public void setTheme(int resid) {
-        super.setTheme(resid);
-        mThemeId = resid;
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(Intents.EXTRA_LOCALE_INDEX, mLocaleIndex);
+    }
+
+    private void onLocaleChanged(int localeIndex) {
+        mLocaleIndex = localeIndex;
+
+        if (mFontInfo.getLanguage()[0] != null) {
+            Locale locale = Locale.forLanguageTag(mFontInfo.getLanguage()[mLocaleIndex]);
+
+            if (getActionBar() != null) {
+                getActionBar().setSubtitle(locale.getDisplayName());
+            }
+        }
+
+        mAdapter.setLocaleIndex(mLocaleIndex);
+        mAdapter.notifyItemRangeChanged(0, mAdapter.getItemCount(), new Object());
     }
 }

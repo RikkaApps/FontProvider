@@ -3,10 +3,15 @@ package moe.shizuku.fontprovider.viewholder;
 import android.content.Context;
 import android.content.ServiceConnection;
 import android.graphics.Typeface;
+import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import java.util.List;
+import java.util.Locale;
 
 import moe.shizuku.fontprovider.font.FontInfo;
 import moe.shizuku.fontprovider.FontProviderClient;
@@ -57,6 +62,10 @@ public class FontPreviewViewHolder extends BaseViewHolder<FontInfo.Style> {
         title.setText(style.getName());
         text.setText(font.getPreviewText()[localeIndex]);
 
+        if (!TextUtils.isEmpty(font.getLanguage()[localeIndex])) {
+            text.setTextLocale(Locale.forLanguageTag(font.getLanguage()[localeIndex]));
+        }
+
         Typeface typeface = font.getTypeface(getAdapterPosition());
         if (typeface == null) {
             FontProviderClient.create(context, new FontProviderClient.Callback() {
@@ -93,6 +102,18 @@ public class FontPreviewViewHolder extends BaseViewHolder<FontInfo.Style> {
             } else {
                 text.setTypeface(typeface);
             }
+        }
+    }
+
+    @Override
+    public void onBind(@NonNull List<Object> payloads) {
+        final FontInfo font = getAdapter().getFontInfo();
+        final int localeIndex = getAdapter().getLocaleIndex();
+
+        text.setText(font.getPreviewText()[localeIndex]);
+
+        if (!TextUtils.isEmpty(font.getLanguage()[localeIndex])) {
+            text.setTextLocale(Locale.forLanguageTag(font.getLanguage()[localeIndex]));
         }
     }
 }

@@ -136,7 +136,7 @@ public class FontManager {
         }
 
         String[] language = font.getLanguage();
-        int[] index = font.getIndex();
+        int[] index = font.getTtcIndex();
 
         // each language will have FontFamily
         FontFamily[] families = new FontFamily[language.length];
@@ -152,10 +152,7 @@ public class FontManager {
                 if (style.getTtc() != null) {
                     fonts[j] = new Font(style.getTtc(), index[i], style.getWeight(), style.isItalic());
                 } else {
-                    String[] ttf = style.getTtf();
-                    for (int k : index) {
-                        fonts[j] = new Font(ttf[k], 0, style.getWeight(), style.isItalic());
-                    }
+                    fonts[j] = new Font(style.getTtf()[i], 0, style.getWeight(), style.isItalic());
                 }
             }
 

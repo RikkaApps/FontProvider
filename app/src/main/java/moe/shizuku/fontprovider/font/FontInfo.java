@@ -21,7 +21,7 @@ public class FontInfo implements Parcelable {
     private final String name;
     private final String variant;
     private final String[] language;
-    private final int[] index;
+    private final int[] ttc_index;
     private final String size;
     private final String[] preview_text;
     private final String url_prefix;
@@ -46,8 +46,8 @@ public class FontInfo implements Parcelable {
         return language;
     }
 
-    public int[] getIndex() {
-        return index;
+    public int[] getTtcIndex() {
+        return ttc_index;
     }
 
     public String getSize() {
@@ -199,7 +199,7 @@ public class FontInfo implements Parcelable {
                 "name='" + name + '\'' +
                 ", variant='" + variant + '\'' +
                 ", language=" + Arrays.toString(language) +
-                ", index=" + Arrays.toString(index) +
+                ", ttc_index=" + Arrays.toString(ttc_index) +
                 ", style=" + Arrays.toString(style) +
                 '}';
     }
@@ -214,7 +214,7 @@ public class FontInfo implements Parcelable {
         dest.writeString(this.name);
         dest.writeString(this.variant);
         dest.writeStringArray(this.language);
-        dest.writeIntArray(this.index);
+        dest.writeIntArray(this.ttc_index);
         dest.writeString(this.size);
         dest.writeStringArray(this.preview_text);
         dest.writeString(this.url_prefix);
@@ -225,7 +225,7 @@ public class FontInfo implements Parcelable {
         this.name = in.readString();
         this.variant = in.readString();
         this.language = in.createStringArray();
-        this.index = in.createIntArray();
+        this.ttc_index = in.createIntArray();
         this.size = in.readString();
         this.preview_text = in.createStringArray();
         this.url_prefix = in.readString();
