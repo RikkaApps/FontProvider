@@ -1,6 +1,7 @@
 package moe.shizuku.fontprovider;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
@@ -14,17 +15,29 @@ import moe.shizuku.fontprovider.font.FontManager;
 
 public class FontProviderApplication extends Application {
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
+    private static boolean sInitialized;
+
+    public static void init(Context context) {
+        if (sInitialized) {
+            return;
+        }
+
+        sInitialized = true;
 
         Crashlytics crashlyticsKit = new Crashlytics.Builder()
                 .core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
                 .build();
 
-        Fabric.with(this, crashlyticsKit);
+        Fabric.with(context, crashlyticsKit);
 
-        FontProviderSettings.init(this);
-        FontManager.init(this);
+        FontProviderSettings.init(context);
+        FontManager.init(context);
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        init(this);
     }
 }

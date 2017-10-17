@@ -14,6 +14,8 @@ import android.support.annotation.Nullable;
 
 import java.io.FileNotFoundException;
 
+import moe.shizuku.fontprovider.FontProviderApplication;
+
 /**
  * Created by rikka on 2017/10/9.
  */
@@ -22,7 +24,8 @@ public class FontProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        return false;
+        FontProviderApplication.init(getContext());
+        return true;
     }
 
     @SuppressLint("NewApi")
