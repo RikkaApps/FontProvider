@@ -102,7 +102,7 @@ public class FontManager {
 
         if (excludeExisted) {
             for (String f : new ArrayList<>(files)) {
-                if (ContextUtils.getExternalCacheFile(context, f).exists()) {
+                if (ContextUtils.getExternalFile(context, f).exists()) {
                     files.remove(f);
                 }
             }
@@ -165,7 +165,7 @@ public class FontManager {
         // fill file info
         for (FontFamily family : families) {
             for (Font f : family.fonts) {
-                File file =  ContextUtils.getExternalCacheFile(context, f.filename);
+                File file =  ContextUtils.getExternalFile(context, f.filename);
                 if (file.exists()) {
                     f.path = file.getAbsolutePath();
                     f.size = file.length();
@@ -210,7 +210,7 @@ public class FontManager {
 
         // downloadable font? read from file
         if (mf == null) {
-            File file = ContextUtils.getExternalCacheFile(context, filename);
+            File file = ContextUtils.getExternalFile(context, filename);
             if (file.exists()) {
                 mf = MemoryFileUtils.fromFile(file);
                 if (mf != null) {
@@ -236,7 +236,7 @@ public class FontManager {
             return FILE_SIZE.get(filename);
         }
 
-        File file = ContextUtils.getExternalCacheFile(context, filename);
+        File file = ContextUtils.getExternalFile(context, filename);
         if (file.exists()) {
             return (int) file.length();
         }

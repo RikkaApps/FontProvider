@@ -3,7 +3,7 @@ package moe.shizuku.fontprovider.font;
 import android.graphics.Typeface;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.Nullable;
+import android.support.annotation.Keep;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,6 +15,7 @@ import java.util.Map;
  * Created by rikka on 2017/9/29.
  */
 
+@Keep
 public class FontInfo implements Parcelable {
 
     private final String name;

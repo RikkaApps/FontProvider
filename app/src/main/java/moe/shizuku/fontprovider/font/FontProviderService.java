@@ -63,7 +63,7 @@ public class FontProviderService extends Service {
         @Deprecated
         @Override
         public String getFontFilePath(String filename) throws RemoteException {
-            File file = ContextUtils.getExternalCacheFile(mContext, filename);
+            File file = ContextUtils.getExternalFile(mContext, filename);
             if (file.exists()) {
                 return file.getAbsolutePath();
             }
