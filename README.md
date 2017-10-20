@@ -72,16 +72,22 @@ public class BaseActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
 
         if (!sFontProviderInitialized) {
-            // （可选）替换默认 emoji 字体
-            FontRequests.setDefaultSansSerifFonts(FontRequest.DEFAULT, FontRequest.NOTO_COLOR_EMOJI);
+            // 替换默认的 sans-serif 字体的方法，添加了 Noto Color Emoji
+            FontRequests.DEFAULT_SERIF_FONTS = new FontRequest[]{FontRequest.DEFAULT, FontRequest.NOTO_COLOR_EMOJI};
             
             // 创建 FontProviderClient
             FontProviderClient.create(this, new FontProviderClient.Callback() {
                 @Override
-                public boolean onServiceConnected(FontProviderClient client, ServiceConnection serviceConnection) {
+                public boolean onServiceConnected(FontProviderClient client, ServiceConnection serviceConnection) {
+                    // 替换的简单例子
+                    
+                    // 将 "sans-serif" 替换为 "Noto Sans CJK"，具体字重及默认英语字体将会根据 "sans-serif" 获得
                     client.replace("sans-serif", "Noto Sans CJK");
                     client.replace("sans-serif-medium", "Noto Sans CJK");
-                    return true;
+                    
+                    // 将 "serif" 替换为 "Noto Serif CJK"，并指定替换的字重为 500
+                    client.replace("serif", "Noto Serif CJK", 500);
+                    return true;
                 }
             });
 
