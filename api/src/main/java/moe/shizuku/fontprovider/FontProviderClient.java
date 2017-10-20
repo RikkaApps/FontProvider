@@ -100,6 +100,17 @@ public class FontProviderClient {
      *
      * @param activity Activity
      * @param callback Callback
+     */
+    public static void create(Activity activity, Callback callback) {
+        create(activity, callback, (String) null);
+    }
+
+    /**
+     * Create FontProviderClient asynchronously, when call replace, all TextView's Typeface
+     * will be replaced automatically if matched (by traversal all TextView).
+     *
+     * @param activity Activity
+     * @param callback Callback
      * @param names Family names not exist in fonts.xml
      */
     public static void create(Activity activity, Callback callback, String... names) {
@@ -214,10 +225,14 @@ public class FontProviderClient {
         if (typeface != null
                 && TypefaceCompat.getSystemFontMap() != null) {
             if (mContext instanceof Activity) {
-                Activity activity = (Activity) mContext;
-                View decor = activity.getWindow().getDecorView();
-                if (decor instanceof ViewGroup) {
-                    replaceTypeface((ViewGroup) decor, name, typeface);
+                if (mTextViewCache.isEmpty()) {
+                    Activity activity = (Activity) mContext;
+                    View decor = activity.getWindow().getDecorView();
+                    if (decor instanceof ViewGroup) {
+                        replaceTypeface((ViewGroup) decor, name, typeface);
+                    }
+                } else {
+                    replaceTypeface(name, typeface);
                 }
             }
 
@@ -346,21 +361,21 @@ public class FontProviderClient {
 
     private List<TextView> mTextViewCache = new ArrayList<>();
 
-    private void replaceTypeface(ViewGroup parent, String name, Typeface typeface) {
-        if (mTextViewCache.isEmpty()) {
-            for (int i = 0; i < parent.getChildCount(); i++) {
-                View view = parent.getChildAt(i);
-                if (view instanceof ViewGroup) {
-                    replaceTypeface((ViewGroup) view, name, typeface);
-                } else if (view instanceof TextView) {
-                    mTextViewCache.add((TextView) view);
+    private void replaceTypeface(String name, Typeface typeface) {
+        for (TextView view : mTextViewCache) {
+            replaceTypeface(view, name, typeface);
+        }
+    }
 
-                    replaceTypeface((TextView) view, name, typeface);
-                }
-            }
-        } else {
-            for (TextView view : mTextViewCache) {
-                replaceTypeface(view, name, typeface);
+    private void replaceTypeface(ViewGroup parent, String name, Typeface typeface) {
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            View view = parent.getChildAt(i);
+            if (view instanceof ViewGroup) {
+                replaceTypeface((ViewGroup) view, name, typeface);
+            } else if (view instanceof TextView) {
+                mTextViewCache.add((TextView) view);
+
+                replaceTypeface((TextView) view, name, typeface);
             }
         }
     }
