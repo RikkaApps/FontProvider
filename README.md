@@ -78,10 +78,16 @@ public class BaseActivity extends FragmentActivity {
             // 创建 FontProviderClient
             FontProviderClient.create(this, new FontProviderClient.Callback() {
                 @Override
-                public boolean onServiceConnected(FontProviderClient client, ServiceConnection serviceConnection) {
+                public boolean onServiceConnected(FontProviderClient client, ServiceConnection serviceConnection) {
+                    // 替换的简单例子
+                    
+                    // 将 "sans-serif" 替换为 "Noto Sans CJK"，具体字重及默认英语字体将会根据 "sans-serif" 获得
                     client.replace("sans-serif", "Noto Sans CJK");
                     client.replace("sans-serif-medium", "Noto Sans CJK");
-                    return true;
+                    
+                    // 将 "serif" 替换为 "Noto Serif CJK"，并指定替换的字重为 500
+                    client.replace("serif", "Noto Serif CJK", 500);
+                    return true;
                 }
             });
 
