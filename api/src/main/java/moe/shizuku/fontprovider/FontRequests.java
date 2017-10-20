@@ -40,9 +40,9 @@ public class FontRequests {
         return name.startsWith("serif");
     }
 
-    private static FontRequest[] DEFAULT_SANS_SERIF_FONTS = new FontRequest[]{FontRequest.DEFAULT};
+    public static FontRequest[] DEFAULT_SANS_SERIF_FONTS = new FontRequest[]{FontRequest.DEFAULT};
 
-    private static FontRequest[] DEFAULT_SERIF_FONTS = new FontRequest[]{FontRequest.NOTO_SERIF};
+    public static FontRequest[] DEFAULT_SERIF_FONTS = new FontRequest[]{FontRequest.NOTO_SERIF};
 
     public static void setDefaultSansSerifFonts(FontRequest... fonts) {
         DEFAULT_SANS_SERIF_FONTS = fonts;
@@ -57,7 +57,11 @@ public class FontRequests {
     }
 
     public static FontRequests create(String name, String fontName) {
-        return FontRequests.create(getDefaultFont(name), fontName, resolveWeight(name));
+        return FontRequests.create(name, fontName, resolveWeight(name));
+    }
+
+    public static FontRequests create(String name, String fontName, int... weight) {
+        return FontRequests.create(getDefaultFont(name), fontName, weight);
     }
 
     public static FontRequests create(FontRequest[] defaultFonts, String name, int... weight) {

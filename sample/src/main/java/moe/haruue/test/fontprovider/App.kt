@@ -28,8 +28,8 @@ class App : Application() {
 
     companion object {
         fun replace(client: FontProviderClient) {
-            FontRequests.setDefaultSansSerifFonts(FontRequest.DEFAULT, FontRequest.NOTO_COLOR_EMOJI)
-            FontRequests.setDefaultSerifFonts(FontRequest.NOTO_SERIF, FontRequest.NOTO_COLOR_EMOJI_NOUGAT)
+            FontRequests.DEFAULT_SANS_SERIF_FONTS = arrayOf(FontRequest.DEFAULT, FontRequest.NOTO_COLOR_EMOJI)
+            FontRequests.DEFAULT_SERIF_FONTS = arrayOf(FontRequest.NOTO_SERIF, FontRequest.NOTO_COLOR_EMOJI_NOUGAT)
 
             val time = System.currentTimeMillis()
             client.replace("sans-serif", "Noto Sans CJK")

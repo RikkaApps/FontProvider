@@ -197,6 +197,18 @@ public class FontProviderClient {
         return replace(name, FontRequests.create(name, fontName));
     }
 
+    /**
+     * Replace font family with specified font.
+     *
+     * @param name font family name
+     * @param fontName font name, such as "Noto Sans CJK"
+     * @param weight font weights
+     * @return Typeface using to replace.
+     */
+    public Typeface replace(String name, String fontName, int... weight) {
+        return replace(name, FontRequests.create(name, fontName, weight));
+    }
+
     public Typeface replace(String name, FontRequests fontRequests) {
         Typeface typeface = request(fontRequests);
         if (typeface != null
