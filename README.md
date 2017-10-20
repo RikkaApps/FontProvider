@@ -72,8 +72,8 @@ public class BaseActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
 
         if (!sFontProviderInitialized) {
-            // （可选）替换默认 emoji 字体
-            FontRequests.setDefaultSansSerifFonts(FontRequest.DEFAULT, FontRequest.NOTO_COLOR_EMOJI);
+            // 替换默认的 sans-serif 字体的方法，添加了 Noto Color Emoji
+            FontRequests.DEFAULT_SERIF_FONTS = new FontRequest[]{FontRequest.DEFAULT, FontRequest.NOTO_COLOR_EMOJI};
             
             // 创建 FontProviderClient
             FontProviderClient.create(this, new FontProviderClient.Callback() {
