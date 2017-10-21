@@ -8,4 +8,11 @@
     <string name="settings">Settings</string>
     <string name="settings_cache">Cache</string>
     <string name="settings_max_memory">Max memory cache</string>
+    <string name="dialog_cannot_download">Could not start downloading</string>
+    <string name="dialog_no_network">Please make sure you are connected to network and try again.</string>
+    <string name="dialog_using_metered_title">Download will not start immediately</string>
+    <string name="dialog_using_metered_message">You are using metered network. To avoid data charges, download will proceed automatically once connect to WiFi.</string>
+    <string name="dialog_button_download_now">Download now</string>
+    <string name="dialog_button_proceed">Proceed</string>
+    <string name="toast_download_failed">Failed to download %s.</string>
 </resources>

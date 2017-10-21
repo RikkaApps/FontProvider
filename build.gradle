@@ -36,6 +36,6 @@ ext {
     targetSdkVersion = 26
     buildToolsVersion = "26.0.2"
     versionCode = Integer.parseInt('git rev-list --count HEAD'.execute([], project.rootDir).text.trim())
-    versionName = '1.4.1'
+    versionName = '1.4.2'
     libraryVersion = '7'
 }

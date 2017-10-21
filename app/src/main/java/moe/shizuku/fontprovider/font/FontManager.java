@@ -2,6 +2,7 @@ package moe.shizuku.fontprovider.font;
 
 import android.app.DownloadManager;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.MemoryFile;
 import android.os.ParcelFileDescriptor;
@@ -21,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import moe.shizuku.fontprovider.BuildConfig;
 import moe.shizuku.fontprovider.FontProviderSettings;
 import moe.shizuku.fontprovider.R;
 import moe.shizuku.fontprovider.utils.MemoryFileUtils;
@@ -110,17 +110,39 @@ public class FontManager {
         return files;
     }
 
-    public static List<Long> download(FontInfo font, List<String> files, Context context) {
-        List<Long> ids = new ArrayList<>();
-
+    public static List<Long> download(FontInfo font, List<String> files, Context context, boolean allowDownloadOverMetered) {
         DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+        if (downloadManager == null) {
+            return null;
+        }
 
-        // TODO already downloading?
+        Cursor cursor = downloadManager.query(new DownloadManager.Query()
+                .setFilterByStatus(DownloadManager.STATUS_PAUSED
+                        | DownloadManager.STATUS_PENDING
+                        | DownloadManager.STATUS_RUNNING));
+
+        if (cursor != null) {
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+
+                do {
+                    int titleIndex = cursor.getColumnIndex(DownloadManager.COLUMN_TITLE);
+                    String file = cursor.getString(titleIndex);
+                    Log.d(TAG, file + " is already downloading");
+                    files.remove(file);
+                } while (cursor.moveToNext());
+            }
+
+            cursor.close();
+        }
+
+        List<Long> ids = new ArrayList<>();
         for (String f : files) {
             DownloadManager.Request request = new DownloadManager.Request(Uri.parse(font.getUrlPrefix() + f))
+                    .setTitle(f)
                     .setDestinationInExternalFilesDir(context, null, f)
                     .setVisibleInDownloadsUi(false)
-                    .setAllowedOverMetered(false || BuildConfig.DEBUG)
+                    .setAllowedOverMetered(allowDownloadOverMetered)
                     .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
             ids.add(downloadManager.enqueue(request));
         }

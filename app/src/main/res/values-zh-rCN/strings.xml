@@ -8,4 +8,10 @@
     <string name="settings">设置</string>
     <string name="settings_cache">缓存</string>
     <string name="settings_max_memory">最大内存缓存</string>
+    <string name="dialog_cannot_download">无法开始下载</string>
+    <string name="dialog_no_network">请确认您已连接网络并再试一次。</string>
+    <string name="dialog_using_metered_title">下载将不会立即开始</string>
+    <string name="dialog_using_metered_message">您正在使用计费网络。为避免产生数据费用，下载将在连接至 WiFi 后自动开始。</string>
+    <string name="dialog_button_download_now">立即下载</string>
+    <string name="dialog_button_proceed">继续</string>
 </resources>
