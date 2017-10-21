@@ -14,4 +14,5 @@
     <string name="dialog_using_metered_message">您正在使用计费网络。为避免产生数据费用，下载将在连接至 WiFi 后自动开始。</string>
     <string name="dialog_button_download_now">立即下载</string>
     <string name="dialog_button_proceed">继续</string>
+    <string name="toast_download_failed">下载 %s 失败。</string>
 </resources>
