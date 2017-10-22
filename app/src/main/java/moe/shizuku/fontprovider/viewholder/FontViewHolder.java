@@ -141,7 +141,11 @@ public class FontViewHolder extends BaseViewHolder<FontInfo> {
                     })
                     .setNegativeButton(android.R.string.cancel, null)
                     .show();
+
+            return;
         }
+
+        startDownload(v, false);
     }
 
     private void startDownload(View v, boolean allowDownloadOverMetered) {
