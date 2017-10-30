@@ -191,8 +191,12 @@ public class FontProviderClient {
             return null;
         }
 
-        Typeface[] typefaces = new Typeface[name.length];
         Typeface base = request(defaultFonts, fontName, weight);
+        if (base == null) {
+            return null;
+        }
+
+        Typeface[] typefaces = new Typeface[name.length];
         for (int i = 0; i < name.length; i++) {
             typefaces[i] = weight[i] != 400 ?
                     TypefaceCompat.createWeightAlias(base, weight[i]) : base;
