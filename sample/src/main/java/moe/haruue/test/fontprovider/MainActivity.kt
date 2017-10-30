@@ -1,10 +1,13 @@
 package moe.haruue.test.fontprovider
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_main_content.*
 import moe.shizuku.fontprovider.FontProviderClient
@@ -23,6 +26,12 @@ class MainActivity : Activity() {
 
                 init = true
             }
+        }
+
+        // only need request permission on 23
+        if (Build.VERSION.SDK_INT == 23
+                && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
         }
 
         super.onCreate(savedInstanceState)
