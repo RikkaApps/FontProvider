@@ -75,6 +75,19 @@ public class TypefaceCompat {
         }
     }
 
+    public static void setFallbackFontsArray(Object array) {
+        if (!available) {
+            return;
+        }
+
+        try {
+            sFallbackFontsField.set(null, array);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     private static Map<String, Typeface> sSystemFontMap;
 
     /**
@@ -138,14 +151,14 @@ public class TypefaceCompat {
 
     public static Typeface createWeightAlias(Typeface family, int weight) {
         if (!available) {
-            return null;
+            return family;
         }
 
         try {
             return (Typeface) constructor.newInstance(nativeCreateWeightAlias(getNativeInstance(family), weight));
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
-            return null;
+            return family;
         }
     }
 

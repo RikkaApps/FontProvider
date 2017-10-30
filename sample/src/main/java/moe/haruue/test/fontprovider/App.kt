@@ -20,6 +20,8 @@ class App : Application() {
             val defaultFonts = arrayOf(FontRequest.DEFAULT, FontRequest.NOTO_COLOR_EMOJI)
             val defaultSerifFonts = arrayOf(FontRequest.NOTO_SERIF, FontRequest.NOTO_COLOR_EMOJI_NOUGAT)
 
+            client.setNextRequestReplaceFallbackFonts(true)
+
             client.replace(defaultFonts, "Noto Sans CJK",
                     "sans-serif", "sans-serif-thin", "sans-serif-light", "sans-serif-medium", "sans-serif-black")
 

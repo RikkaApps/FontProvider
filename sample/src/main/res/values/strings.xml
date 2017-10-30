@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Font Provider 测试</string>
     <string name="h1">这是标题</string>
+    <string name="h2">OpenSans-Light 测试 (custom font from asset)</string>
     <string name="p">这是段落。这是段落。这是段落。这是段落。This is a paragraph. 这是段落。This is a paragraph. 这是段落。This is a paragraph. 这是段落。This is a paragraph.</string>
     <string name="rikka">我能吞下 Rikka 而不伤身体。</string>
     <string name="download_font_provider">下载 Font Provider</string>

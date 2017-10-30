@@ -110,16 +110,6 @@ public class FontProviderClient {
         return new FontProviderClient(context);
     }
 
-    private static Map<String, ByteBuffer> sBufferCache = new HashMap<>();
-
-    private final ContentResolver mResolver;
-    private final IFontProvider mFontProvider;
-
-    private FontProviderClient(Context context) {
-        mResolver = context.getContentResolver();
-        mFontProvider = null;
-    }
-
     private static int resolveWeight(String name) {
         if (TextUtils.isEmpty(name)) {
             return 400;
@@ -142,6 +132,30 @@ public class FontProviderClient {
         }
     }
 
+    private static Map<String, ByteBuffer> sBufferCache = new HashMap<>();
+
+    private final ContentResolver mResolver;
+
+    private boolean mNextRequestReplaceFallbackFonts;
+
+    private FontProviderClient(Context context) {
+        mResolver = context.getContentResolver();
+    }
+
+    /**
+     * Sets whether to add the next requested font to the top of system default list.
+     * This will affect any font that was created later through Typeface public API.
+     * <p>
+     * This is design to achieve using both your custom font from assets (especially weight
+     * is not 400) and CJK fonts with correct weight from Font Provider at the same time,
+     * you should call this before call request or replace, then all fonts you create will
+     * use this new fallback list.
+     *
+     * @param nextRequestReplaceFallbackFonts whether replace system fallback fonts
+     */
+    public void setNextRequestReplaceFallbackFonts(boolean nextRequestReplaceFallbackFonts) {
+        mNextRequestReplaceFallbackFonts = nextRequestReplaceFallbackFonts;
+    }
     /**
      * Replace font families with specified font, weight will be resolved by family names.
      *
@@ -235,8 +249,7 @@ public class FontProviderClient {
 
         BundledFontFamily bundledFontFamily;
         try {
-            bundledFontFamily = (mFontProvider != null) ?
-                    fontRequests.request(mFontProvider) : fontRequests.request(mResolver);
+            bundledFontFamily = fontRequests.request(mResolver);
         } catch (Exception e) {
             return null;
         }
@@ -321,6 +334,23 @@ public class FontProviderClient {
             }
 
             Array.set(families, i++, fontFamilyCompat.getFontFamily());
+        }
+
+        if (mNextRequestReplaceFallbackFonts) {
+            int systemLength = Array.getLength(fallbackFonts);
+            int myLength = Array.getLength(families);
+
+            Object newFallbackFonts = Array.newInstance(FontFamilyCompat.getFontFamilyClass(), systemLength + myLength);
+            for (int j = 0; j < myLength; j++) {
+                Array.set(newFallbackFonts, j, Array.get(families, j));
+            }
+            for (int j = 0; j < systemLength; j++) {
+                Array.set(newFallbackFonts, j + myLength, Array.get(fallbackFonts, j));
+            }
+
+            TypefaceCompat.setFallbackFontsArray(newFallbackFonts);
+
+            mNextRequestReplaceFallbackFonts = false;
         }
 
         return TypefaceCompat.createFromFamiliesWithDefault(families, -1, -1);

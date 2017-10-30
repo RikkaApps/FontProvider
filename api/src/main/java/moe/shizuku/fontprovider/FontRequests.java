@@ -40,10 +40,6 @@ public class FontRequests implements Parcelable {
         return true;
     }
 
-    public BundledFontFamily request(IFontProvider fontProvider) throws RemoteException {
-        return fontProvider.getBundledFontFamily(this);
-    }
-
     public BundledFontFamily request(ContentResolver resolver) {
         Bundle data = new Bundle();
         data.setClassLoader(this.getClass().getClassLoader());
@@ -58,64 +54,12 @@ public class FontRequests implements Parcelable {
         return null;
     }
 
-    private static int[] resolveWeight(String name) {
-        if (TextUtils.isEmpty(name)) {
-            return new int[]{400, 700};
-        }
-
-        if (name.endsWith("-thin")) {
-            return new int[]{100};
-        } else if (name.endsWith("-demilight")) {
-            return new int[]{200};
-        } else if (name.endsWith("-light")) {
-            return new int[]{300};
-        } else if (name.endsWith("-medium")) {
-            return new int[]{500};
-        } else if (name.endsWith("-bold")) {
-            return new int[]{700};
-        } else if (name.endsWith("-black")) {
-            return new int[]{900};
-        } else {
-            return new int[]{400, 700};
-        }
-    }
-
-    private static boolean resolveIsSerif(String name) {
-        if (TextUtils.isEmpty(name)) {
-            return false;
-        }
-
-        return name.startsWith("serif");
-    }
-
     public static FontRequest[] DEFAULT_SANS_SERIF_FONTS = new FontRequest[]{FontRequest.DEFAULT};
 
     public static FontRequest[] DEFAULT_SERIF_FONTS = new FontRequest[]{FontRequest.NOTO_SERIF};
 
-    public static void setDefaultSansSerifFonts(FontRequest... fonts) {
-        DEFAULT_SANS_SERIF_FONTS = fonts;
-    }
-
-    public static void setDefaultSerifFonts(FontRequest... fonts) {
-        DEFAULT_SERIF_FONTS = fonts;
-    }
-
-    private static FontRequest[] getDefaultFont(String name) {
-        return getDefaultFont(resolveIsSerif(name));
-    }
-
     private static FontRequest[] getDefaultFont(boolean serif) {
         return serif ? DEFAULT_SERIF_FONTS : DEFAULT_SANS_SERIF_FONTS;
-    }
-
-    @Deprecated
-    public static FontRequests create(String name, String fontName) {
-        return FontRequests.create(name, fontName, resolveWeight(name));
-    }
-
-    @Deprecated
-    public static FontRequests create(String name, String fontName, int... weight) {
-        return FontRequests.create(getDefaultFont(name), fontName, weight);
     }
 
     public static FontRequests create(FontRequest[] defaultFonts, String fontName, int... weight) {
