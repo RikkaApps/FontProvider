@@ -20,10 +20,12 @@ public abstract class BaseActivity extends FragmentActivity {
             final long time = System.currentTimeMillis();
 
             FontProviderClient client = FontProviderClient.create(this);
-            client.replace(FontRequests.DEFAULT_SANS_SERIF_FONTS, "Noto Sans CJK",
-                    "sans-serif", "sans-serif-medium");
+            if (client != null) {
+                client.replace(FontRequests.DEFAULT_SANS_SERIF_FONTS, "Noto Sans CJK",
+                        "sans-serif", "sans-serif-medium");
+            }
 
-                    Log.d("Font", "replace costs " + (System.currentTimeMillis() - time) + "ms");
+            Log.d("Font", "replace costs " + (System.currentTimeMillis() - time) + "ms");
 
             sFontInitialized = true;
         }

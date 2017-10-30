@@ -29,13 +29,18 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
+def gitCommitId = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
+def gitCommitCount = Integer.parseInt('git rev-list --count HEAD'.execute([], project.rootDir).text.trim())
+def shortVersionName = '1.5.0'
+
 ext {
+
     supportLibraryVersion = '26.1.0'
     preferenceLibraryVersion = '2.0.8'
     minSdkVersion = 21
     targetSdkVersion = 26
     buildToolsVersion = "26.0.2"
-    versionCode = Integer.parseInt('git rev-list --count HEAD'.execute([], project.rootDir).text.trim())
-    versionName = '1.5.0'
+    versionCode = gitCommitCount
+    versionName = "${shortVersionName}.r${gitCommitCount}.${gitCommitId}"
     libraryVersion = '8'
 }
