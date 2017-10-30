@@ -32,10 +32,6 @@ import static moe.shizuku.fontprovider.FontProviderClient.FontProviderAvailabili
 import static moe.shizuku.fontprovider.FontProviderClient.FontProviderAvailability.OK;
 import static moe.shizuku.fontprovider.FontProviderClient.FontProviderAvailability.VERSION_TOO_LOW;
 
-/**
- * Created by rikka on 2017/9/27.
- */
-
 public class FontProviderClient {
 
     private static final String TAG = "FontProviderClient";
@@ -147,9 +143,11 @@ public class FontProviderClient {
      * This will affect any font that was created later through Typeface public API.
      * <p>
      * This is design to achieve using both your custom font from assets (especially weight
-     * is not 400) and CJK fonts with correct weight from Font Provider at the same time,
-     * you should call this before call request or replace, then all fonts you create will
-     * use this new fallback list.
+     * is not 400) and CJK fonts with correct weight from Font Provider at the same time.
+     * Call this before call request or replace to get system get a new fallback fonts list.
+     * <br>
+     * And don't forget use {@link TypefaceCompat#createWeightAlias(Typeface, int)} after
+     * creating font with {@link Typeface} public API.
      *
      * @param nextRequestReplaceFallbackFonts whether replace system fallback fonts
      */

@@ -10,10 +10,16 @@ import java.util.Arrays;
  */
 public class FontRequest implements Parcelable {
 
+    /** empty FontRequest that tell FontProviderClient to use first font of system fallback list **/
     public static final FontRequest DEFAULT = new FontRequest();
 
+    /** Noto Color Emoji on Oreo **/
     public static final FontRequest NOTO_COLOR_EMOJI = new FontRequest("Noto Color Emoji", 1);
+
+    /** Noto Color Emoji on Nougat **/
     public static final FontRequest NOTO_COLOR_EMOJI_NOUGAT = new FontRequest("Noto Color Emoji", 2);
+
+    /** Noto Serif **/
     public static final FontRequest NOTO_SERIF = new FontRequest("Noto Serif", 400, 700);
 
     public static FontRequest[] combine(FontRequest[]... arrays) {

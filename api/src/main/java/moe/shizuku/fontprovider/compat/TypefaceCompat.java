@@ -19,13 +19,13 @@ public class TypefaceCompat {
 
     private static boolean available = true;
 
-    protected static Field sFallbackFontsField;
-    protected static Field sSystemFontMapField;
-    protected static Method createFromFamiliesMethod;
-    protected static Method setDefaultMethod;
-    protected static Method nativeCreateWeightAliasMethod;
-    protected static Constructor constructor;
-    protected static Field nativeInstanceField;
+    private static Field sFallbackFontsField;
+    private static Field sSystemFontMapField;
+    private static Method createFromFamiliesMethod;
+    private static Method setDefaultMethod;
+    private static Method nativeCreateWeightAliasMethod;
+    private static Constructor constructor;
+    private static Field nativeInstanceField;
 
     static {
         try {
@@ -149,6 +149,15 @@ public class TypefaceCompat {
         }
     }
 
+    /**
+     * Create new Typeface instance with weigh alias from given Typeface.
+     * <br>
+     * Use this on pre-Oreo to not breaking font fallback of other languages.
+     *
+     * @param family base Typeface
+     * @param weight font weight
+     * @return new Typeface
+     */
     public static Typeface createWeightAlias(Typeface family, int weight) {
         if (!available) {
             return family;
@@ -184,6 +193,7 @@ public class TypefaceCompat {
     /**
      * Create a new typeface from an array of font families, including
      * also the font families in the fallback list.
+     *
      * @param weight the weight for this family, only required on API 26+.
      * @param italic the italic information for this family, only required on API 26+.
      * @param families array of font families.

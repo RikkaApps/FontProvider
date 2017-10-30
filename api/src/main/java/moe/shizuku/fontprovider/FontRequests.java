@@ -5,8 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.os.RemoteException;
-import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;

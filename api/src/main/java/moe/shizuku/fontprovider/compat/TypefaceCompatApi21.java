@@ -5,8 +5,6 @@ import android.graphics.Typeface;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -16,7 +14,7 @@ import java.lang.reflect.Method;
 
 @SuppressLint("PrivateApi")
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-public class TypefaceCompatApi21 extends TypefaceCompat {
+public class TypefaceCompatApi21 {
 
     private static boolean available = true;
 
@@ -34,7 +32,7 @@ public class TypefaceCompatApi21 extends TypefaceCompat {
         }
     }
 
-    public static Typeface createFromFamiliesWithDefault(Object families/*, int weight*/) {
+    public static Typeface createFromFamiliesWithDefault(Object families) {
         if (!available) {
             return null;
         }

@@ -2,9 +2,7 @@ package moe.shizuku.fontprovider.compat;
 
 import android.annotation.SuppressLint;
 import android.os.Build;
-import android.os.ParcelFileDescriptor;
 
-import java.io.File;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 
