@@ -34,15 +34,13 @@ public class TypefaceCompatApi21 extends TypefaceCompat {
         }
     }
 
-    public static Typeface createFromFamiliesWithDefault(Object families, int weight) {
+    public static Typeface createFromFamiliesWithDefault(Object families/*, int weight*/) {
         if (!available) {
             return null;
         }
 
         try {
-            Typeface base = (Typeface) createFromFamiliesWithDefaultMethod.invoke(null, families);
-            long native_instance = (long) nativeCreateWeightAliasMethod.invoke(null, getNativeInstance(base), weight);
-            return create(native_instance);
+            return (Typeface) createFromFamiliesWithDefaultMethod.invoke(null, families);
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
             return null;

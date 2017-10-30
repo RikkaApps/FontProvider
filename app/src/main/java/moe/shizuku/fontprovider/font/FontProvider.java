@@ -15,6 +15,7 @@ import android.support.annotation.Nullable;
 import java.io.FileNotFoundException;
 
 import moe.shizuku.fontprovider.FontProviderApplication;
+import moe.shizuku.fontprovider.FontRequests;
 
 /**
  * Created by rikka on 2017/10/9.
@@ -96,5 +97,35 @@ public class FontProvider extends ContentProvider {
             return null;
         }
         return new AssetFileDescriptor(pfd, 0, 0);
+    }
+
+    @Nullable
+    @Override
+    public Bundle call(@NonNull String method, @Nullable String arg, @Nullable Bundle extras) {
+        if (extras == null) {
+            return null;
+        }
+
+        if ("bundled".equals(arg)) {
+            extras.setClassLoader(FontRequests.class.getClassLoader());
+
+            FontRequests fontRequests = extras.getParcelable("data");
+            BundledFontFamily data = FontManager.getBundledFontFamily(getContext(), fontRequests);
+
+            Bundle result = new Bundle();
+            result.putParcelable("data", data);
+            return result;
+        } else if ("single".equals(arg)) {
+            String name = extras.getString("name");
+            int[] weight = extras.getIntArray("weight");
+
+            FontFamily[] families = FontManager.getFontFamily(getContext(), name, weight);
+
+            Bundle result = new Bundle();
+            result.putParcelableArray("data", families);
+            return result;
+        }
+
+        return null;
     }
 }

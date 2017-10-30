@@ -1,24 +1,14 @@
 package moe.shizuku.fontprovider;
 
-import android.content.ContentResolver;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.os.RemoteException;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import moe.shizuku.fontprovider.font.Font;
-import moe.shizuku.fontprovider.font.FontFamily;
 
 /**
  * Created by rikka on 2017/9/30.
  */
-public class FontRequest {
+public class FontRequest implements Parcelable {
 
     public static final FontRequest DEFAULT = new FontRequest();
 
@@ -60,39 +50,6 @@ public class FontRequest {
         this.weight = weight;
     }
 
-    public FontFamily[] loadFontFamily(IFontProvider fontProvider) throws RemoteException {
-        return fontProvider.getFontFamily(name, weight);
-    }
-
-    public FontFamily[] loadFontFamily(ContentResolver resolver) throws RemoteException {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < weight.length - 1; i++) {
-            sb.append(weight[i]).append(',');
-        }
-        sb.append(weight[weight.length - 1]);
-
-        Cursor cursor = resolver.query(
-                Uri.parse("content://moe.shizuku.fontprovider/font/" + name),
-                null, "weight=?s", new String[]{sb.toString()}, null);
-        if (cursor != null) {
-            Bundle bundle = cursor.getExtras();
-            bundle.setClassLoader(FontFamily.CREATOR.getClass().getClassLoader());
-
-            Parcelable[] parcelables = bundle.getParcelableArray("data");
-            cursor.close();
-            if (parcelables != null) {
-                FontFamily[] families = new FontFamily[parcelables.length];
-                for (int i = 0; i < parcelables.length; i++) {
-                    families[i] = (FontFamily) parcelables[i];
-                }
-                return families;
-            }
-        }
-        return new FontFamily[0];
-    }
-
-    /**/
-
     @Override
     public String toString() {
         return "FontRequest{" +
@@ -100,4 +57,32 @@ public class FontRequest {
                 ", weight=" + Arrays.toString(weight) +
                 '}';
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.name);
+        dest.writeIntArray(this.weight);
+    }
+
+    protected FontRequest(Parcel in) {
+        this.name = in.readString();
+        this.weight = in.createIntArray();
+    }
+
+    public static final Parcelable.Creator<FontRequest> CREATOR = new Parcelable.Creator<FontRequest>() {
+        @Override
+        public FontRequest createFromParcel(Parcel source) {
+            return new FontRequest(source);
+        }
+
+        @Override
+        public FontRequest[] newArray(int size) {
+            return new FontRequest[size];
+        }
+    };
 }

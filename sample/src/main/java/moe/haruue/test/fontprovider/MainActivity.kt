@@ -17,14 +17,9 @@ class MainActivity : Activity() {
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         // replace at Activity, only need call once
-        if (!init) {
+        if (!init && !App.createInApplication) {
             if (FontProviderClient.checkAvailability(this) == FontProviderAvailability.OK) {
-                // To replace correctly after callback called,
-                // we must add dummy typefaces not exists in fonts.xml first
-                FontProviderClient.create(this, FontProviderClient.Callback { client, _ ->
-                    App.replace(client)
-                    true
-                }, "serif-thin", "serif-light", "serif-medium", "serif-black")
+                App.replace(FontProviderClient.create(this)!!)
 
                 init = true
             }

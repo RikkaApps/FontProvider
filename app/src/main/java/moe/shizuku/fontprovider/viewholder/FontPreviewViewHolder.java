@@ -1,8 +1,8 @@
 package moe.shizuku.fontprovider.viewholder;
 
 import android.content.Context;
-import android.content.ServiceConnection;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -13,6 +13,8 @@ import android.widget.TextView;
 import java.util.List;
 import java.util.Locale;
 
+import moe.shizuku.fontprovider.compat.TypefaceCompat;
+import moe.shizuku.fontprovider.font.Font;
 import moe.shizuku.fontprovider.font.FontInfo;
 import moe.shizuku.fontprovider.FontProviderClient;
 import moe.shizuku.fontprovider.FontRequest;
@@ -34,8 +36,62 @@ public class FontPreviewViewHolder extends BaseViewHolder<FontInfo.Style> {
         }
     };
 
+    private class RequestTask extends AsyncTask<Context, Void, Typeface> {
+
+        private FontInfo mFont;
+        private FontInfo.Style mStyle;
+        private int mLocaleIndex;
+
+        public RequestTask(FontInfo font, FontInfo.Style style, int localeIndex) {
+            mFont = font;
+            mStyle = style;
+            mLocaleIndex = localeIndex;
+        }
+
+        @Override
+        protected Typeface doInBackground(Context... contexts) {
+            if (sFontProviderClient == null) {
+                sFontProviderClient = FontProviderClient.create(contexts[0]);
+            }
+
+            Typeface typeface;
+            if (mFont.getLanguage()[mLocaleIndex] == null) {
+                typeface = sFontProviderClient.request(new FontRequests(
+                        new int[]{mStyle.getWeight()},
+                        new FontRequest(mFont.getName(), mStyle.getWeight())
+                ));
+            } else {
+                typeface = sFontProviderClient.request(new FontRequests(
+                        new int[]{mStyle.getWeight()},
+                        FontRequest.DEFAULT,
+                        new FontRequest(mFont.getName(), mStyle.getWeight())
+                ));
+            }
+
+            if (mStyle.getWeight() != 400) {
+                typeface = TypefaceCompat.createWeightAlias(typeface, mStyle.getWeight());
+            }
+
+            mFont.setTypeface(typeface, getAdapterPosition());
+            return typeface;
+        }
+
+        @Override
+        protected void onPostExecute(Typeface typeface) {
+            if (mStyle.isItalic()) {
+                text.setTypeface(Typeface.create(typeface, Typeface.ITALIC));
+            } else {
+                text.setTypeface(typeface);
+            }
+        }
+    }
+
+    private static FontProviderClient sFontProviderClient;
+
     private TextView title;
     private TextView text;
+
+    private RequestTask mTask;
 
     public FontPreviewViewHolder(View itemView) {
         super(itemView);
@@ -68,34 +124,10 @@ public class FontPreviewViewHolder extends BaseViewHolder<FontInfo.Style> {
 
         Typeface typeface = font.getTypeface(getAdapterPosition());
         if (typeface == null) {
-            FontProviderClient.create(context, new FontProviderClient.Callback() {
-                @Override
-                public boolean onServiceConnected(FontProviderClient client, ServiceConnection connection) {
-                    Typeface typeface;
-
-                    if (font.getLanguage()[localeIndex] == null) {
-                        typeface = client.request(new FontRequests(
-                                new int[]{style.getWeight()},
-                                new FontRequest(font.getName(), style.getWeight())
-                        ));
-                    } else {
-                        typeface = client.request(new FontRequests(
-                                new int[]{style.getWeight()},
-                                FontRequest.DEFAULT,
-                                new FontRequest(font.getName(), style.getWeight())
-                        ));
-                    }
-
-                    if (style.isItalic()) {
-                        text.setTypeface(Typeface.create(typeface, Typeface.ITALIC));
-                    } else {
-                        text.setTypeface(typeface);
-                    }
-
-                    font.setTypeface(typeface, getAdapterPosition());
-                    return true;
-                }
-            });
+            if (mTask == null) {
+                mTask = new RequestTask(font, style, localeIndex);
+                mTask.execute(context);
+            }
         } else {
             if (style.isItalic()) {
                 text.setTypeface(Typeface.create(typeface, Typeface.ITALIC));
@@ -114,6 +146,14 @@ public class FontPreviewViewHolder extends BaseViewHolder<FontInfo.Style> {
 
         if (!TextUtils.isEmpty(font.getLanguage()[localeIndex])) {
             text.setTextLocale(Locale.forLanguageTag(font.getLanguage()[localeIndex]));
+        }
+    }
+
+    @Override
+    public void onRecycle() {
+        if (mTask != null && !mTask.isCancelled()) {
+            mTask.cancel(true);
+            mTask = null;
         }
     }
 }

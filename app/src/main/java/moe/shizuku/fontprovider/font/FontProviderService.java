@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 
 import java.io.File;
 
+import moe.shizuku.fontprovider.FontRequests;
 import moe.shizuku.fontprovider.IFontProvider;
 import moe.shizuku.support.utils.ContextUtils;
 
@@ -68,6 +69,11 @@ public class FontProviderService extends Service {
                 return file.getAbsolutePath();
             }
             return null;
+        }
+
+        @Override
+        public BundledFontFamily getBundledFontFamily(FontRequests requests) throws RemoteException {
+            return FontManager.getBundledFontFamily(mContext, requests);
         }
     }
 }

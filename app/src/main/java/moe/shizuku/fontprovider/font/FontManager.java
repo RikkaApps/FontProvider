@@ -4,6 +4,7 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.MemoryFile;
 import android.os.ParcelFileDescriptor;
 import android.support.annotation.Nullable;
@@ -23,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 import moe.shizuku.fontprovider.FontProviderSettings;
+import moe.shizuku.fontprovider.FontRequest;
+import moe.shizuku.fontprovider.FontRequests;
 import moe.shizuku.fontprovider.R;
 import moe.shizuku.fontprovider.utils.MemoryFileUtils;
 import moe.shizuku.fontprovider.utils.ParcelFileDescriptorUtils;
@@ -193,6 +196,30 @@ public class FontManager {
         }
 
         return families;
+    }
+
+    public static BundledFontFamily getBundledFontFamily(Context context, FontRequests requests) {
+        FontFamily[] families = new FontFamily[0];
+        Map<String, ParcelFileDescriptor> fd = new HashMap<>();
+
+        for (FontRequest request : requests.requests) {
+            families = FontFamily.combine(families, getFontFamily(context, request.name, request.weight));
+        }
+
+        if (Build.VERSION.SDK_INT >= 24) {
+            for (FontFamily f : families) {
+                for (Font font : f.fonts) {
+                    ParcelFileDescriptor pfd = fd.get(font.filename);
+                    if (pfd == null) {
+                        pfd = getParcelFileDescriptor(context, font.filename);
+                        if (pfd != null) {
+                            fd.put(font.filename, pfd);
+                        }
+                    }
+                }
+            }
+        }
+        return new BundledFontFamily(families, fd);
     }
 
     public static ParcelFileDescriptor getParcelFileDescriptor(Context context, String filename) {

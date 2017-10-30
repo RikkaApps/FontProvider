@@ -37,5 +37,5 @@ ext {
     buildToolsVersion = "26.0.2"
     versionCode = Integer.parseInt('git rev-list --count HEAD'.execute([], project.rootDir).text.trim())
     versionName = '1.4.4'
-    libraryVersion = '7'
+    libraryVersion = '8'
 }
