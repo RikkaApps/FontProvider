@@ -173,7 +173,6 @@ public class FontProviderClient {
      * @param fontName font name, such as "Noto Sans CJK"
      * @param name font families to replace, such as "sans-serif", "sans-serif-medium"
      * @return Typefaces created from request
-     * @return
      */
     public Typeface[] replace(FontRequest[] defaultFonts, String fontName, String... name) {
         int[] weight = new int[name.length];

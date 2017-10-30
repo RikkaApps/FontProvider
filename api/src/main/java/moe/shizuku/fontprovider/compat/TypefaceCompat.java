@@ -61,6 +61,8 @@ public class TypefaceCompat {
 
     /**
      * Return Typeface.sFallbackFonts.
+     *
+     * @return Typeface.sFallbackFonts
      */
     public static Object getFallbackFontsArray() {
         if (!available) {
@@ -75,6 +77,11 @@ public class TypefaceCompat {
         }
     }
 
+    /**
+     * Set Typeface.sFallbackFonts
+     *
+     * @param array FontFamily[]
+     */
     public static void setFallbackFontsArray(Object array) {
         if (!available) {
             return;
@@ -87,11 +94,12 @@ public class TypefaceCompat {
         }
     }
 
-
     private static Map<String, Typeface> sSystemFontMap;
 
     /**
      * Return Typeface.sSystemFontMap.
+     *
+     * @return Typeface.sSystemFontMap
      */
     @SuppressWarnings("unchecked")
     public static Map<String, Typeface> getSystemFontMap() {
@@ -123,7 +131,7 @@ public class TypefaceCompat {
         }
     }
 
-    public static long nativeCreateWeightAlias(long native_instance, int weight) {
+    private static long nativeCreateWeightAlias(long native_instance, int weight) {
         if (!available) {
             return -1;
         }
@@ -207,6 +215,13 @@ public class TypefaceCompat {
         }
     }
 
+    /**
+     * Get native_instance of a Typeface.
+     *
+     * @param typeface Typeface instance
+     * @return Typeface.native_instance
+     * @throws IllegalAccessException native_instance not accessible
+     */
     public static long getNativeInstance(Typeface typeface) throws IllegalAccessException {
         return (long) nativeInstanceField.get(typeface);
     }
