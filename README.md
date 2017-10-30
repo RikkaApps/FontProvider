@@ -25,9 +25,9 @@ implementation 'moe.shizuku.fontprovider:api:<替换为上面的版本号>' // �
    
 #### 申请权限
 
-由于 API 限制，在 Android 7.0 之前的系统使用 Font Provider **需要申请存储权限**。
+由于 API 限制，在 Android 7.0 之前的系统使用 Font Provider **需要申请存储权限**。（也可以选择只为 7.0 以上用户开启）
     
-> 由于在 API 24 之前，只能通过 path 创建，而中文字体体积较大，不适合使用像 Google 的 downloadable font 那样通过保存字体至应用的私有空间的方法。因此不得不出此下策，申请存储权限。
+> 由于在 API 24 之前，只能通过 path 创建，而中文字体体积较大（如全字重的 Noto Sans CJK 有 100 MB 以上），不适合使用例如 Google 的 Downloadable Fonts 的保存字体文件至应用的私有空间的方法。
     
    
 #### 使用
@@ -41,68 +41,59 @@ if (code != FontProviderAvailability.OK) {
 }
 ```
     	
-
-##### 获取 FontProviderClient
-
-我们提供了三种取得 `FontProviderClient` 的方式。
-
-* `void FontProviderClient.create(context, callback)`
-	
-    通过绑定服务创建可用的 `FontProviderClient`，由于绑定服务是异步的，第一个 Activity 替换的 Typeface 不会生效（因为替换之前就已经创建好了）。
-    
-* `void FontProviderClient.create(activity, callback, names...)`
-	
-    通过绑定服务创建可用的 `FontProviderClient`，不同于第一种，在 Callback 执行 `client.replace` 时会遍历该 Activity 种的 TextView 并自动替换其 Typeface。`names` 参数为不存在于 `fonts.xml` 的字体（如 `serif-medium`）。
-    
-* `FontProviderClient FontProviderClient.createSync(context)`
-	
-    通过 `Content Provider` 创建可用的 `FontProviderClient`，会由于`Content Provider` 本身的原因消耗更多时间。
-    
 ##### 基本使用方式
 
-一个完整的使用第二种方法的例子：
-
 ```java
-public class BaseActivity extends FragmentActivity {
+public abstract class BaseActivity extends Activity {
 
-    private static boolean sFontProviderInitialized = false;
+    /**
+    * 同一进程只需要替换一次，所以是 static
+    */
+    private static boolean sFontInitialized = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (!sFontProviderInitialized) {
-            // 替换默认的 sans-serif 字体的方法，添加了 Noto Color Emoji
-            FontRequests.DEFAULT_SERIF_FONTS = new FontRequest[]{FontRequest.DEFAULT, FontRequest.NOTO_COLOR_EMOJI};
+        /**
+        * 在 Activity 进行替换，可以保证在需要显示界面时才替换字体。
+        * 若在 Application 进行，可能会出现仅有 Service / BroadcastReceiver / 
+        * ContentProvider 时也进行替换，而浪费宝贵时间。
+        */
+        if (!sFontInitialized) {
+            FontProviderClient client = FontProviderClient.create(this);
+            /**
+            * 不可用时会返回 null
+            */
+            if (client != null) {
+                /**
+                * 设置下次请求会替换默认的回退列表
+                * 这样在使用自己提供字体时也能同时使用 Font Provider 的字体
+                */
+                client.setNextRequestReplaceFallbackFonts(true);
+                
+                /**
+                * 将 "sans-serif" 和 "sans-serif-medium" 替换为 "Noto Sans CJK" 的对应字体
+                * 字重将根据名称自动解析。
+                * 在 sample 项目中还可以看到如何设定默认字体（如替换 emoji 字体）。
+                * 
+                * 会返回对应个数的 Typeface，本别是包含全部字体的 Typeface 及由此 Typeface 
+                * 创建的有对应字重别名的 Typeface。
+                */
+                client.replace("Noto Sans CJK",
+                        "sans-serif", "sans-serif-medium");
+            }
             
-            // 创建 FontProviderClient
-            FontProviderClient.create(this, new FontProviderClient.Callback() {
-                @Override
-                public boolean onServiceConnected(FontProviderClient client, ServiceConnection serviceConnection) {
-                    // 替换的简单例子
-                    
-                    // 将 "sans-serif" 替换为 "Noto Sans CJK"，具体字重及默认英语字体将会根据 "sans-serif" 获得
-                    client.replace("sans-serif", "Noto Sans CJK");
-                    client.replace("sans-serif-medium", "Noto Sans CJK");
-                    
-                    // 将 "serif" 替换为 "Noto Serif CJK"，并指定替换的字重为 500
-                    client.replace("serif", "Noto Serif CJK", 500);
-                    return true;
-                }
-            });
-
-            sFontProviderInitialized = true;
+            sFontInitialized = true;
         }
+
+        super.onCreate(savedInstanceState);
+        
+        /**
+        * 创建一个来自 asset 的字体 OpenSans-Light.ttf，且通过隐藏 API 指定字重是 100，
+        * 这样在需要显示其他语言的字体时也会保证有正确的字重，否则其他语言（在 Android Oreo 之前）
+        * 将一律是 400 字重。
+        */
+        Typeface myTypeface = TypefaceCompat.createWeightAlias(
+            Typeface.createFromAsset(assets, "OpenSans-Light.ttf"), 100)；
     }
 }
 ```
-
-### FAQ
-
-##### 用户如果没有安装会发生什么？
-
-什么也不会发生。
-
-##### 和直接使用公开的 API 有什么区别呢？
-
-可以决定回退顺序，包含语言字重等信息。
