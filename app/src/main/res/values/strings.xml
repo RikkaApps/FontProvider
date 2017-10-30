@@ -15,4 +15,6 @@
     <string name="dialog_button_download_now">Download now</string>
     <string name="dialog_button_proceed">Proceed</string>
     <string name="toast_download_failed">Failed to download %s.</string>
+    <string name="permission_label">access Font Provider</string>
+    <string name="permission_description">Allow the app to request and use fonts provided by Font provider app.</string>
 </resources>

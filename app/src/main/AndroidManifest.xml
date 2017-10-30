@@ -8,7 +8,12 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="23"/>
 
-    <permission android:name="moe.shizuku.fontprovider.BIND" android:protectionLevel="normal"/>
+    <permission
+        android:name="moe.shizuku.fontprovider.BIND"
+        android:label="@string/permission_label"
+        android:description="@string/permission_description"
+        android:icon="@drawable/ic_permission_24dp"
+        android:protectionLevel="normal"/>
 
     <application
         android:name=".FontProviderApplication"

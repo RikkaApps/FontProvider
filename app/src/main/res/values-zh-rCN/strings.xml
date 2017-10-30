@@ -15,4 +15,6 @@
     <string name="dialog_button_download_now">立即下载</string>
     <string name="dialog_button_proceed">继续</string>
     <string name="toast_download_failed">下载 %s 失败。</string>
+    <string name="permission_label">使用 Font Provider</string>
+    <string name="permission_description">允许应用请求并使用由 Font provider 应用提供的字体。</string>
 </resources>
