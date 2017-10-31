@@ -68,11 +68,13 @@ public class FontPreviewViewHolder extends BaseViewHolder<FontInfo.Style> {
                 ));
             }
 
-            if (mStyle.getWeight() != 400) {
-                typeface = TypefaceCompat.createWeightAlias(typeface, mStyle.getWeight());
-            }
+            if (typeface != null) {
+                if (mStyle.getWeight() != 400) {
+                    typeface = TypefaceCompat.createWeightAlias(typeface, mStyle.getWeight());
+                }
 
-            mFont.setTypeface(typeface, getAdapterPosition());
+                mFont.setTypeface(typeface, getAdapterPosition());
+            }
             return typeface;
         }
 
