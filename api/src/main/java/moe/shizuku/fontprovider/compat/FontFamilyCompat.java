@@ -2,6 +2,7 @@ package moe.shizuku.fontprovider.compat;
 
 import android.annotation.SuppressLint;
 import android.os.Build;
+import android.support.annotation.Nullable;
 
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
@@ -70,6 +71,7 @@ public class FontFamilyCompat {
      *
      * @return FontFamily object
      */
+    @Nullable
     public Object getFontFamily() {
         return mFontFamily;
     }

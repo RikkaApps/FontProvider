@@ -3,6 +3,7 @@ package moe.shizuku.fontprovider.compat;
 import android.annotation.SuppressLint;
 import android.graphics.Typeface;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 
 import java.lang.reflect.InvocationTargetException;
@@ -32,6 +33,7 @@ public class TypefaceCompatApi21 {
         }
     }
 
+    @Nullable
     public static Typeface createFromFamiliesWithDefault(Object families) {
         if (!available) {
             return null;

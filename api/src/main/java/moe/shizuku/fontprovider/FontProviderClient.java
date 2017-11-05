@@ -8,6 +8,7 @@ import android.graphics.Typeface;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
@@ -161,7 +162,8 @@ public class FontProviderClient {
      * @param name font families to replace, such as "sans-serif", "sans-serif-medium"
      * @return Typefaces created from request
      */
-    public Typeface[] replace(String fontName, String... name) {
+    @Nullable
+    public Typeface[] replace(@NonNull String fontName, String... name) {
         return replace(FontRequests.DEFAULT_SANS_SERIF_FONTS, fontName, name);
     }
 
@@ -174,7 +176,9 @@ public class FontProviderClient {
      * @param name font families to replace, such as "sans-serif", "sans-serif-medium"
      * @return Typefaces created from request
      */
-    public Typeface[] replace(FontRequest[] defaultFonts, String fontName, String... name) {
+    @Nullable
+    public Typeface[] replace(@NonNull FontRequest[] defaultFonts,
+                              @NonNull String fontName, String... name) {
         int[] weight = new int[name.length];
         for (int i = 0; i < name.length; i++) {
             weight[i] = resolveWeight(name[i]);
@@ -192,7 +196,9 @@ public class FontProviderClient {
      * @param weight font weights
      * @return Typefaces created from request
      */
-    public Typeface[] replace(FontRequest[] defaultFonts, String fontName, String[] name, int[] weight) {
+    @Nullable
+    public Typeface[] replace(@NonNull FontRequest[] defaultFonts, @NonNull String fontName,
+                              @NonNull String[] name, @NonNull int[] weight) {
         if (name.length != weight.length) {
             throw new IllegalArgumentException("length of name and weight should be same");
         }
@@ -228,7 +234,9 @@ public class FontProviderClient {
      * @param weight font weight, such as "400, 500"
      * @return Typefaces created from request
      */
-    public Typeface request(FontRequest[] defaultFonts, String fontName, int... weight) {
+    @Nullable
+    public Typeface request(@NonNull FontRequest[] defaultFonts,
+                            @NonNull String fontName, int... weight) {
         return request(FontRequests.create(defaultFonts, fontName, weight));
     }
 
@@ -241,7 +249,8 @@ public class FontProviderClient {
      * @param fontRequests FontRequests
      * @return Typefaces created from request
      */
-    public Typeface request(FontRequests fontRequests) {
+    @Nullable
+    public Typeface request(@NonNull FontRequests fontRequests) {
         long time = System.currentTimeMillis();
 
         BundledFontFamily bundledFontFamily;

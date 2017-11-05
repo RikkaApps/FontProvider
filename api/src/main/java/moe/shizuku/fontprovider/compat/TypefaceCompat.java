@@ -3,6 +3,7 @@ package moe.shizuku.fontprovider.compat;
 import android.annotation.SuppressLint;
 import android.graphics.Typeface;
 import android.os.Build;
+import android.support.annotation.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -64,6 +65,7 @@ public class TypefaceCompat {
      *
      * @return Typeface.sFallbackFonts
      */
+    @Nullable
     public static Object getFallbackFontsArray() {
         if (!available) {
             return null;
@@ -102,6 +104,7 @@ public class TypefaceCompat {
      * @return Typeface.sSystemFontMap
      */
     @SuppressWarnings("unchecked")
+    @Nullable
     public static Map<String, Typeface> getSystemFontMap() {
         if (!available) {
             return null;
@@ -144,6 +147,7 @@ public class TypefaceCompat {
         }
     }
 
+    @Nullable
     public static Typeface create(long ni) {
         if (!available) {
             return null;
@@ -185,6 +189,7 @@ public class TypefaceCompat {
      * @param families FontFamily array Object
      * @return Typeface object
      */
+    @Nullable
     public static Typeface createFromFamilies(Object families) {
         if (!available) {
             return null;
@@ -207,6 +212,7 @@ public class TypefaceCompat {
      * @param families array of font families.
      * @return Typeface object
      */
+    @Nullable
     public static Typeface createFromFamiliesWithDefault(Object families, int weight, int italic) {
         if (Build.VERSION.SDK_INT >= 26) {
             return TypefaceCompatApi26.createFromFamiliesWithDefault(families, weight, italic);

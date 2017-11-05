@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,7 +20,7 @@ import moe.shizuku.fontprovider.font.BundledFontFamily;
 
 public class FontRequests implements Parcelable {
 
-    private static FontRequest[] filterDefault(FontRequest[] requests) {
+    private static FontRequest[] filterDefault(@NonNull FontRequest[] requests) {
         List<FontRequest> list = new ArrayList<>();
         for (FontRequest request : requests) {
             if (request.equals(FontRequest.DEFAULT)) {
@@ -38,7 +40,8 @@ public class FontRequests implements Parcelable {
         return true;
     }
 
-    public BundledFontFamily request(ContentResolver resolver) {
+    @Nullable
+    public BundledFontFamily request(@NonNull ContentResolver resolver) {
         Bundle data = new Bundle();
         data.setClassLoader(this.getClass().getClassLoader());
         data.putParcelable("data", this);
