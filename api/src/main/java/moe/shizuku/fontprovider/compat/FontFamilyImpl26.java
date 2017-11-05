@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.res.AssetManager;
 import android.graphics.fonts.FontVariationAxis;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 
 import java.lang.reflect.Constructor;
@@ -48,6 +49,7 @@ public class FontFamilyImpl26 implements FontFamilyImpl {
     }
 
     @Override
+    @Nullable
     public Object create(String lang, int variant) {
         if (!available) {
             return null;
@@ -61,6 +63,7 @@ public class FontFamilyImpl26 implements FontFamilyImpl {
     }
 
     @Override
+    @Nullable
     public boolean addFont(Object fontFamily, ByteBuffer font, int ttcIndex, int weight, int italic) {
         try {
             return (Boolean) addFontFromBufferMethod.invoke(fontFamily,
