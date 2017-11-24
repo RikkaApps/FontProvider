@@ -13,6 +13,7 @@
 |图片|名称和下载|介绍|
 |--|--|--|
 |<img src="https://lh3.googleusercontent.com/lL4apRXXEY0c-zuiulfv7HwNqifLSGoqwTSsgkeLmse-SJG2ocI_glRfBCz3cvt9noiH=w300-rw" alt="AppOps" title="AppOps" width="50" height="50" />|[AppOps](https://play.google.com/store/apps/details?id=rikka.appops)|长得最好看的 appops 的 UI，还支持免 root 使用|
+|<img src="https://lh3.googleusercontent.com/ovUpC9kFZsdHVfbGVn64RR6y_IYCT2Z3vbkMjOxBDcp375Tecp8s6hi5aWTIvVs8Dg=w300-rw" alt="教务宝" title="教务宝" width="50" height="50" />|[教务宝](https://play.google.com/store/apps/details?id=com.sc_edu.jwb)|培训机构专属的教务管理系统，让教务管理更简单！|
 
 如果你的应用已支持 Font Provider，可以通过 pull request 来加入上面的列表。
 
