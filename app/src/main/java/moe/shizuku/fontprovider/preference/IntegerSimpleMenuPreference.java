@@ -25,8 +25,9 @@ import moe.shizuku.preference.widget.SimpleMenuPopupWindow;
 
 public class IntegerSimpleMenuPreference extends Preference {
 
-    private final SimpleMenuPopupWindow mPopupWindow;
+    private View mAnchor;
     private View mItemView;
+    private SimpleMenuPopupWindow mPopupWindow;
 
     private CharSequence[] mEntries;
     private int[] mEntryValues;
@@ -113,7 +114,11 @@ public class IntegerSimpleMenuPreference extends Preference {
 
         mPopupWindow.setEntries(getEntries());
         mPopupWindow.setSelectedIndex(findIndexOfValue(getValue()));
-        mPopupWindow.show(mItemView);
+
+        View container = (View) mItemView   // itemView
+                .getParent();               // -> list (RecyclerView)
+
+        mPopupWindow.show(mItemView, container, (int) mAnchor.getX());
     }
 
     /**
@@ -357,5 +362,11 @@ public class IntegerSimpleMenuPreference extends Preference {
         super.onBindViewHolder(holder);
 
         mItemView = holder.itemView;
+        mAnchor = holder.itemView.findViewById(android.R.id.empty);
+
+        if (mAnchor == null) {
+            throw new IllegalStateException("SimpleMenuPreference item layout must contain" +
+                    "a view id is android.R.id.empty to support iconSpaceReserved");
+        }
     }
 }
