@@ -2,6 +2,7 @@ package moe.shizuku.fontprovider.compat;
 
 import android.annotation.SuppressLint;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 
 import java.lang.reflect.Constructor;
@@ -36,6 +37,7 @@ public class FontFamilyImpl21 implements FontFamilyImpl {
         }
     }
 
+    @Nullable
     public Object create(String lang, String variant) {
         if (!available) {
             return null;
@@ -49,6 +51,7 @@ public class FontFamilyImpl21 implements FontFamilyImpl {
     }
 
     @Override
+    @Nullable
     public Object create(String lang, int variant) {
         String varEnum = null;
         if (variant == 1) {
