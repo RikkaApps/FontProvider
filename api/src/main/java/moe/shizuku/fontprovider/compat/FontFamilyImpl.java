@@ -2,9 +2,6 @@ package moe.shizuku.fontprovider.compat;
 
 import java.nio.ByteBuffer;
 
-/**
- * Created by rikka on 2017/9/27.
- */
 
 public interface FontFamilyImpl {
     Object create(String lang, int variant);

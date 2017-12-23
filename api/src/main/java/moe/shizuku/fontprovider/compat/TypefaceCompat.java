@@ -11,9 +11,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-/**
- * Created by rikka on 2017/9/27.
- */
 
 @SuppressLint("PrivateApi")
 public class TypefaceCompat {

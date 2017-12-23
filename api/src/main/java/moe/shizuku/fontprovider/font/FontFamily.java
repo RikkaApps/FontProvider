@@ -5,9 +5,7 @@ import android.os.Parcelable;
 
 import java.util.Arrays;
 
-/**
- * Created by rikka on 2017/9/30.
- */
+
 public class FontFamily implements Parcelable {
 
     public final int variant;

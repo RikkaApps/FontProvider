@@ -42,5 +42,5 @@ ext {
     buildToolsVersion = "27.0.2"
     versionCode = gitCommitCount
     versionName = "${baseVersionName}.r${gitCommitCount}.${gitCommitId}"
-    libraryVersion = '8'
+    libraryVersion = '10'
 }

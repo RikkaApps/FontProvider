@@ -7,9 +7,6 @@ import android.os.Parcelable;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by rikka on 2017/10/30.
- */
 
 public class BundledFontFamily implements Parcelable {
 

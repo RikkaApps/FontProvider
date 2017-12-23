@@ -5,9 +5,7 @@ import android.os.Parcelable;
 
 import java.nio.ByteBuffer;
 
-/**
- * Created by rikka on 2017/9/30.
- */
+
 public class Font implements Parcelable {
 
     public final String filename;

@@ -14,9 +14,6 @@ import java.util.List;
 
 import moe.shizuku.fontprovider.font.BundledFontFamily;
 
-/**
- * Created by rikka on 2017/10/1.
- */
 
 public class FontRequests implements Parcelable {
 

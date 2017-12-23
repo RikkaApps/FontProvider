@@ -12,9 +12,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 
-/**
- * Created by rikka on 2017/9/27.
- */
 
 @SuppressLint("PrivateApi")
 @RequiresApi(api = Build.VERSION_CODES.O)

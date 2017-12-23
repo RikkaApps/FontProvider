@@ -9,9 +9,6 @@ import android.support.annotation.RequiresApi;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-/**
- * Created by rikka on 2017/9/27.
- */
 
 @SuppressLint("PrivateApi")
 @RequiresApi(api = Build.VERSION_CODES.O)

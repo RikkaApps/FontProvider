@@ -19,3 +19,9 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keepnames class moe.shizuku.fontprovider.font.BundledFontFamily
+-keepnames class moe.shizuku.fontprovider.FontRequests
+-keepclassmembers class moe.shizuku.fontprovider.FontRequests {
+    public static final android.os.Parcelable.Creator CREATOR;
+}

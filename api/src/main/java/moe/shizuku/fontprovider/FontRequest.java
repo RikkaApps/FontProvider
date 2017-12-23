@@ -5,9 +5,7 @@ import android.os.Parcelable;
 
 import java.util.Arrays;
 
-/**
- * Created by rikka on 2017/9/30.
- */
+
 public class FontRequest implements Parcelable {
 
     /** empty FontRequest that tell FontProviderClient to use first font of system fallback list **/

@@ -7,9 +7,6 @@ import android.support.annotation.Nullable;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 
-/**
- * Created by rikka on 2017/9/27.
- */
 
 @SuppressLint("PrivateApi")
 public class FontFamilyCompat {

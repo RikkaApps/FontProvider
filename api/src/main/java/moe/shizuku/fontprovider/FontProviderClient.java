@@ -33,6 +33,7 @@ import static moe.shizuku.fontprovider.FontProviderClient.FontProviderAvailabili
 import static moe.shizuku.fontprovider.FontProviderClient.FontProviderAvailability.OK;
 import static moe.shizuku.fontprovider.FontProviderClient.FontProviderAvailability.VERSION_TOO_LOW;
 
+
 public class FontProviderClient {
 
     private static final String TAG = "FontProviderClient";
@@ -141,7 +142,7 @@ public class FontProviderClient {
 
     /**
      * Sets whether to add the next requested font to the top of system default list.
-     * This will affect any font that was created later through Typeface public API.
+     * This will affect any font that was created later through {@link Typeface} public API.
      * <p>
      * This is design to achieve using both your custom font from assets (especially weight
      * is not 400) and CJK fonts with correct weight from Font Provider at the same time.
@@ -155,12 +156,14 @@ public class FontProviderClient {
     public void setNextRequestReplaceFallbackFonts(boolean nextRequestReplaceFallbackFonts) {
         mNextRequestReplaceFallbackFonts = nextRequestReplaceFallbackFonts;
     }
+
     /**
      * Replace font families with specified font, weight will be resolved by family names.
      *
      * @param fontName font name, such as "Noto Sans CJK"
      * @param name font families to replace, such as "sans-serif", "sans-serif-medium"
      * @return Typefaces created from request
+     * @see FontProviderClient#replace(FontRequest[], String, String...)
      */
     @Nullable
     public Typeface[] replace(@NonNull String fontName, String... name) {
@@ -170,11 +173,12 @@ public class FontProviderClient {
     /**
      * Replace font families with specified font, weight will be resolved by family names.
 
-     * @param defaultFonts default fonts, such as "FontRequests.DEFAULT_SANS_SERIF_FONTS",
+     * @param defaultFonts default fonts, such as {@link FontRequests#DEFAULT_SANS_SERIF_FONTS},
      *                     or other FontRequest array
      * @param fontName font name, such as "Noto Sans CJK"
      * @param name font families to replace, such as "sans-serif", "sans-serif-medium"
      * @return Typefaces created from request
+     * @see FontProviderClient#replace(FontRequest[], String, String[], int[])
      */
     @Nullable
     public Typeface[] replace(@NonNull FontRequest[] defaultFonts,
@@ -303,7 +307,7 @@ public class FontProviderClient {
                             int size = (int) font.size;
 
                             if (pfd == null) {
-                                Log.e(TAG, "ParcelFileDescriptor is null");
+                                Log.w(TAG, "ParcelFileDescriptor is null");
                                 return null;
                             }
 
@@ -321,7 +325,7 @@ public class FontProviderClient {
                         String path = font.path;
 
                         if (path == null) {
-                            Log.e(TAG, "Font " + font.filename + " not downloaded?");
+                            Log.w(TAG, "Font " + font.filename + " not downloaded?");
                             return null;
                         }
 
