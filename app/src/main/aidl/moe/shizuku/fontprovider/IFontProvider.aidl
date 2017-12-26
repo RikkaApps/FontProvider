@@ -6,6 +6,7 @@ import moe.shizuku.fontprovider.font.FontFamily;
 
 interface IFontProvider {
     ParcelFileDescriptor getFontFileDescriptor(String filename);
+    SharedMemory getFontSharedMemory(String filename);
     int getFontFileSize(String filename);
     FontFamily[] getFontFamily(String name, in int[] weight);
     String getFontFilePath(String filename);

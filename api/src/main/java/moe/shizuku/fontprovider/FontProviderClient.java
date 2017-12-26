@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
+import android.os.SharedMemory;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -158,6 +159,15 @@ public class FontProviderClient {
     }
 
     /**
+     * Get whether to add the next requested font to the top of system default list.
+     *
+     * @return whether replace system fallback fonts
+     */
+    public boolean isNextRequestReplaceFallbackFonts() {
+        return mNextRequestReplaceFallbackFonts;
+    }
+
+    /**
      * Replace font families with specified font, weight will be resolved by family names.
      *
      * @param fontName font name, such as "Noto Sans CJK"
@@ -299,7 +309,25 @@ public class FontProviderClient {
 
             for (Font font : fontFamily.fonts) {
                 try {
-                    if (Build.VERSION.SDK_INT >= 24) {
+                    if (Build.VERSION.SDK_INT >= 27) {
+                        ByteBuffer byteBuffer = sBufferCache.get(font.filename);
+
+                        if (byteBuffer == null) {
+                            SharedMemory sm = bundledFontFamily.sm.get(font.filename);
+
+                            if (sm == null) {
+                                Log.w(TAG, "SharedMemory is null");
+                                return null;
+                            }
+
+                            byteBuffer = sm.mapReadOnly();
+                            sBufferCache.put(font.filename, byteBuffer);
+                        }
+
+                        if (!fontFamilyCompat.addFont(byteBuffer, font.ttcIndex, font.weight, font.italic ? 1 : 0)) {
+                            return null;
+                        }
+                    } else if (Build.VERSION.SDK_INT >= 24) {
                         ByteBuffer byteBuffer = sBufferCache.get(font.filename);
 
                         if (byteBuffer == null) {
