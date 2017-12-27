@@ -7,8 +7,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.MemoryFile;
 import android.os.ParcelFileDescriptor;
+import android.os.SharedMemory;
 import android.support.annotation.Nullable;
 import android.support.annotation.RawRes;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.util.LruCache;
 
@@ -29,6 +31,7 @@ import moe.shizuku.fontprovider.FontRequests;
 import moe.shizuku.fontprovider.R;
 import moe.shizuku.fontprovider.utils.MemoryFileUtils;
 import moe.shizuku.fontprovider.utils.ParcelFileDescriptorUtils;
+import moe.shizuku.fontprovider.utils.SharedMemoryUtils;
 import moe.shizuku.support.utils.ContextUtils;
 
 import static moe.shizuku.fontprovider.BuildConfig.BUILT_IN_FONTS_SIZE;
@@ -51,6 +54,7 @@ public class FontManager {
     private static final Map<String, Integer> FILE_SIZE = new HashMap<>(BUILT_IN_FONTS_SIZE);
 
     private static LruCache<String, MemoryFile> sCache;
+    private static LruCache<String, SharedMemory> sCacheV27;
     private static List<FontInfo> sFonts;
 
     public static void init(Context context) {
@@ -58,19 +62,35 @@ public class FontManager {
             return;
         }
 
-        sCache = new LruCache<String, MemoryFile>(FontProviderSettings.getMaxCache()) {
-            @Override
-            protected void entryRemoved(boolean evicted, String key, MemoryFile oldValue, MemoryFile newValue) {
-                if (evicted) {
-                    oldValue.close();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            sCacheV27 = new LruCache<String, SharedMemory>(FontProviderSettings.getMaxCache()) {
+                @Override
+                protected void entryRemoved(boolean evicted, String key, SharedMemory oldValue, SharedMemory newValue) {
+                    if (evicted) {
+                        oldValue.close();
+                    }
                 }
-            }
 
-            @Override
-            protected int sizeOf(String key, MemoryFile value) {
-                return value.length();
-            }
-        };
+                @Override
+                protected int sizeOf(String key, SharedMemory value) {
+                    return value.getSize();
+                }
+            };
+        } else {
+            sCache = new LruCache<String, MemoryFile>(FontProviderSettings.getMaxCache()) {
+                @Override
+                protected void entryRemoved(boolean evicted, String key, MemoryFile oldValue, MemoryFile newValue) {
+                    if (evicted) {
+                        oldValue.close();
+                    }
+                }
+
+                @Override
+                protected int sizeOf(String key, MemoryFile value) {
+                    return value.length();
+                }
+            };
+        }
 
         sFonts = new ArrayList<>();
 
@@ -201,12 +221,25 @@ public class FontManager {
     public static BundledFontFamily getBundledFontFamily(Context context, FontRequests requests) {
         FontFamily[] families = new FontFamily[0];
         Map<String, ParcelFileDescriptor> fd = new HashMap<>();
+        Map<String, SharedMemory> sm = new HashMap<>();
 
         for (FontRequest request : requests.requests) {
             families = FontFamily.combine(families, getFontFamily(context, request.name, request.weight));
         }
 
-        if (Build.VERSION.SDK_INT >= 24) {
+        if (Build.VERSION.SDK_INT >= 27) {
+            for (FontFamily f : families) {
+                for (Font font : f.fonts) {
+                    SharedMemory smItem = sm.get(font.filename);
+                    if (smItem == null) {
+                        smItem = getSharedMemory(context, font.filename);
+                        if (smItem != null) {
+                            sm.put(font.filename, smItem);
+                        }
+                    }
+                }
+            }
+        } else if (Build.VERSION.SDK_INT >= 24) {
             for (FontFamily f : families) {
                 for (Font font : f.fonts) {
                     ParcelFileDescriptor pfd = fd.get(font.filename);
@@ -219,7 +252,7 @@ public class FontManager {
                 }
             }
         }
-        return new BundledFontFamily(families, fd);
+        return new BundledFontFamily(families, fd, sm);
     }
 
     public static ParcelFileDescriptor getParcelFileDescriptor(Context context, String filename) {
@@ -275,6 +308,29 @@ public class FontManager {
         sCache.put(filename, mf);
 
         return MemoryFileUtils.getFileDescriptor(mf);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O_MR1)
+    public static SharedMemory getSharedMemory(Context context, String filename) {
+        SharedMemory sm = sCacheV27.get(filename);
+
+        if (sm == null) {
+            long time = System.currentTimeMillis();
+
+            Log.i(TAG, "loading file " + filename);
+
+            File file = ContextUtils.getExternalFile(context, filename);
+            if (file.exists()) {
+                sm = SharedMemoryUtils.fromFile(file);
+                if (sm != null) {
+                    FILE_SIZE.put(filename, sm.getSize());
+                    Log.i(TAG, "loading finished in " + (System.currentTimeMillis() - time) + "ms");
+                    sCacheV27.put(filename, sm);
+                }
+            }
+        }
+
+        return sm;
     }
 
     public static int getFileSize(Context context, String filename) {

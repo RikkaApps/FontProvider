@@ -10,4 +10,5 @@ interface IFontProvider {
     FontFamily[] getFontFamily(String name, in int[] weight);
     String getFontFilePath(String filename);
     BundledFontFamily getBundledFontFamily(in FontRequests requests);
+    SharedMemory getFontSharedMemory(String filename);
 }
